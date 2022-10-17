@@ -1,1 +1,1 @@
-# fastapi-crud-project-generator
+# Fastapi crud project generator
