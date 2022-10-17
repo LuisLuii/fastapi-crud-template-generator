@@ -98,22 +98,22 @@ def crud_router_builder(
 
         common_module_template_generator = CommonModuleTemplateGenerator()
 
-        # type
+        # type generation
         common_code_builder = CommonCodeGen()
         common_code_builder.build_type()
         common_code_builder.gen(common_module_template_generator.add_type)
 
-        # module
+        # module generation
         common_utils_code_builder = CommonCodeGen()
         common_utils_code_builder.build_utils()
         common_utils_code_builder.gen(common_module_template_generator.add_utils)
 
-        # http_exception
+        # http_exception generation
         common_http_exception_code_builder = CommonCodeGen()
         common_http_exception_code_builder.build_http_exception()
         common_http_exception_code_builder.gen(common_module_template_generator.add_http_exception)
 
-        # db
+        # db generation
         common_db_code_builder = CommonCodeGen()
         common_db_code_builder.build_db()
         common_db_code_builder.gen(common_module_template_generator.add_db)
@@ -123,6 +123,7 @@ def crud_router_builder(
         if not crud_methods and NO_PRIMARY_KEY == True:
             crud_methods = CrudMethods.get_table_full_crud_method()
 
+        # model generation
         crud_models_builder: CRUDModel = sqlalchemy_to_pydantic
         crud_models: CRUDModel = crud_models_builder(db_model=db_model,
                                                      constraints=constraints,
@@ -138,6 +139,7 @@ def crud_router_builder(
         else:
             path = ""
 
+        # router generation
         def find_one_api():
             crud_code_generator.build_find_one_route(async_mode=async_mode, path=path)
 
