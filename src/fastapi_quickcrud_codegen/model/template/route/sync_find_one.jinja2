@@ -4,10 +4,10 @@ def get_one_by_primary_key(response: Response,
                            query=Depends({{ model_name }}FindOneRequestBody),
                            session=Depends(db_session)):
     filter_list: List[BinaryExpression] = find_query_builder(param=query.__dict__,
-                                                             model=UntitledTable256)
+                                                             model={{ model_name }})
 
     extra_query_expression: List[BinaryExpression] = find_query_builder(param=url_param.__dict__,
-                                                                        model=UntitledTable256)
+                                                                        model={{ model_name }})
     model = {{ model_name }}
     stmt = select(*[model]).where(and_(*filter_list + extra_query_expression))
     sql_executed_result = session.execute(stmt)
