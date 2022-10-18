@@ -29,7 +29,6 @@ class SampleTable(Base):
     int2_value = Column(SmallInteger, nullable=False)
     int4_value = Column(Integer, nullable=False)
     int8_value = Column(BigInteger, default=99)
-    numeric_value = Column(Numeric)
     text_value = Column(Text)
     time_value = Column(Time)
     timestamp_value = Column(DateTime)
@@ -48,6 +47,6 @@ crud_router_builder(
     ],
     exclude_columns=['bytea_value', 'xml_value', 'box_valaue'],
     crud_methods=[CrudMethods.FIND_ONE],
-    async_mode=False,
+    is_async=True,
     sql_type=SqlType.postgresql
 )

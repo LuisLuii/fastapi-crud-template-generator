@@ -48,17 +48,16 @@ from fastapi_quick_crud_template.model.{file_name} import ({model_name}FindOneRe
         # template_generator.add_route(self.file_name, python_source)
         template_generator.add_route(self.file_name, self.import_list + "\n\n" + self.code)
 
-    def build_find_one_route(self, *, async_mode, path):
-        mode = "async" if async_mode else "sync"
-        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/{mode}_find_one.jinja2'
+    def build_find_one_route(self, *, is_async: bool, path: str):
+        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/find_one.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
         TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
         templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
         templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = f'{mode}_find_one.jinja2'
+        TEMPLATE_FILE = f'find_one.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
-            {"model_name": self.model_name, "path": path})
+            {"model_name": self.model_name, "path": path, "is_async": is_async})
         self.code += "\n\n\n" + code
 

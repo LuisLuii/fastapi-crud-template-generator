@@ -109,7 +109,7 @@ from fastapi_quick_crud_template.common.typing import ExtraFieldType, ExtraField
         code = template.render()
         self.code += "\n\n\n" + code
 
-    def build_db_session(self, model_list):
+    def build_db_session(self, model_list: dict, is_async: bool):
         TEMPLATE_FILE_PATH: ClassVar[str] = f'common/memory_sql_session.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -118,7 +118,7 @@ from fastapi_quick_crud_template.common.typing import ExtraFieldType, ExtraField
         templateEnv = jinja2.Environment(loader=templateLoader)
         TEMPLATE_FILE = f'memory_sql_session.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
-        code = template.render({"model_list": model_list})
+        code = template.render({"model_list": model_list, "is_async": is_async})
         self.code += "\n\n\n" + code
 
     def build_app(self, model_list):

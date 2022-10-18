@@ -1,5 +1,5 @@
 @api.get("{{ path }}", status_code=200, response_model={{ model_name }}FindOneResponseModel)
-def get_one_by_primary_key(response: Response,
+{{ 'async' if is_async else '' }} def get_one_by_primary_key(response: Response,
                            url_param=Depends(SampleTablePrimaryKeyModel),
                            query=Depends(SampleTableFindOneRequestBody),
                            session=Depends(db_session)):
@@ -10,7 +10,7 @@ def get_one_by_primary_key(response: Response,
                                                                         model=SampleTable)
     model = SampleTable
     stmt = select(*[model]).where(and_(*filter_list + extra_query_expression))
-    sql_executed_result = session.execute(stmt)
+    sql_executed_result = {{ 'await' if is_async else '' }} session.execute(stmt)
 
     one_row_data = sql_executed_result.fetchall()
     if not one_row_data:
@@ -26,5 +26,5 @@ def get_one_by_primary_key(response: Response,
     if isinstance(response_data, list):
         response_data = response_data[0]
     response.headers["x-total-count"] = str(1)
-    session.commit()
+    {{ 'await' if is_async else '' }} session.commit()
     return response_data

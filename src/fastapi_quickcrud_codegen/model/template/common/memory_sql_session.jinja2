@@ -16,7 +16,7 @@ from fastapi_quick_crud_template.model.{{ model["model_name"] }} import {{ model
     # please manually update if don't want to use in-memory db
 {%- endif %}
 
-{%- if async_mode %}
+{%- if is_async %}
 
 
 SQLALCHEMY_DATABASE_URL = f"sqlite+aiosqlite://"
@@ -49,33 +49,10 @@ session = sessionmaker(bind=engine, autocommit=False)
 
 
 
-{%- if async_mode %}
-
-{% for model in model_list -%}
-async def create_table(engine, {{ model["file_name"] }}):
-    async with engine.begin() as conn:
-        wait conn.run_sync(model._sa_registry.metadata.create_all)
-
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(create_table(engine, Mode))
-{%- endfor %}
-
-
-{%- else %}
-
-
-{% for model in model_list -%}
-{{ model["file_name"] }}.__table__.create(engine, checkfirst=True)
-{%- endfor %}
-{%- endif %}
-
-
-{%- if async_mode %}
-
-
+{%- if is_async %}
 async def db_session():
-    async with session() as session:
-        yield session
+    async with session() as _session:
+        yield _session
 {%- else %}
 
 
@@ -88,4 +65,23 @@ def db_session() -> Generator:
         raise e
     finally:
         db.close()
+{%- endif %}
+
+{%- if is_async %}
+
+{% for model in model_list -%}
+async def create_table(engine, model):
+    async with engine.begin() as conn:
+        await conn.run_sync(model._sa_registry.metadata.create_all)
+loop = asyncio.get_event_loop()
+loop.run_until_complete(create_table(engine, {{ model["file_name"] }}))
+{%- endfor %}
+
+
+{%- else %}
+
+
+{% for model in model_list -%}
+{{ model["file_name"] }}.__table__.create(engine, checkfirst=True)
+{%- endfor %}
 {%- endif %}

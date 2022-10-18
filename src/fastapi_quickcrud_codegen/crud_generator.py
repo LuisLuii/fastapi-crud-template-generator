@@ -26,7 +26,7 @@ OnConflictModelType = TypeVar("OnConflictModelType", bound=BaseModel)
 def crud_router_builder(
         *,
         db_model_list: Union[Table, 'DeclarativeBaseModel'],
-        async_mode: Optional[bool],
+        is_async: Optional[bool],
         sql_type: Optional[SqlType],
         crud_methods: Optional[List[CrudMethods]] = None,
         exclude_columns: Optional[List[str]] = None,
@@ -36,7 +36,7 @@ def crud_router_builder(
     @param db_model:
         The Sqlalchemy Base model/Table you want to use it to build api.
 
-    @param async_mode:
+    @param is_async:
         As your database connection
 
     @param sql_type:
@@ -141,7 +141,7 @@ def crud_router_builder(
 
         # router generation
         def find_one_api():
-            crud_code_generator.build_find_one_route(async_mode=async_mode, path=path)
+            crud_code_generator.build_find_one_route(is_async=is_async, path=path)
 
         api_register = {
             CrudMethods.FIND_ONE.value: find_one_api,
@@ -155,7 +155,7 @@ def crud_router_builder(
 
     # sql session
     common_db_session_code_builder = CommonCodeGen()
-    common_db_session_code_builder.build_db_session(model_list=model_list)
+    common_db_session_code_builder.build_db_session(model_list=model_list, is_async = is_async)
     common_db_session_code_builder.gen(common_module_template_generator.add_memory_sql_session)
 
     # app py
