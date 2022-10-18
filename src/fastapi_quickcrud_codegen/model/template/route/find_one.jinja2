@@ -1,14 +1,14 @@
 @api.get("{{ path }}", status_code=200, response_model={{ model_name }}FindOneResponseModel)
 {{ 'async' if is_async else '' }} def get_one_by_primary_key(response: Response,
-                           url_param=Depends(SampleTablePrimaryKeyModel),
-                           query=Depends(SampleTableFindOneRequestBody),
+                           url_param=Depends({{ model_name }}PrimaryKeyModel),
+                           query=Depends({{ model_name }}FindOneRequestBody),
                            session=Depends(db_session)):
     filter_list: List[BinaryExpression] = find_query_builder(param=query.__dict__,
-                                                             model=SampleTable)
+                                                             model={{ model_name }})
 
     extra_query_expression: List[BinaryExpression] = find_query_builder(param=url_param.__dict__,
-                                                                        model=SampleTable)
-    model = SampleTable
+                                                                        model={{ model_name }})
+    model = {{ model_name }}
     stmt = select(*[model]).where(and_(*filter_list + extra_query_expression))
     sql_executed_result = {{ 'await' if is_async else '' }} session.execute(stmt)
 

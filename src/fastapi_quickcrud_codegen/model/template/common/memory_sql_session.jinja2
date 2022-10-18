@@ -8,9 +8,8 @@ from sqlalchemy.pool import StaticPool
 
 
 {% for model in model_list -%}
-
 from fastapi_quick_crud_template.model.{{ model["model_name"] }} import {{ model["file_name"] }}
-{%- endfor %}
+{% endfor -%}
 
 {%- if is_memory_sql %}
     # please manually update if don't want to use in-memory db
@@ -69,13 +68,14 @@ def db_session() -> Generator:
 
 {%- if is_async %}
 
-{% for model in model_list -%}
 async def create_table(engine, model):
     async with engine.begin() as conn:
         await conn.run_sync(model._sa_registry.metadata.create_all)
 loop = asyncio.get_event_loop()
-loop.run_until_complete(create_table(engine, {{ model["file_name"] }}))
-{%- endfor %}
+
+{% for model in model_list -%}
+    loop.run_until_complete(create_table(engine, {{ model["file_name"] }}))
+{% endfor -%}
 
 
 {%- else %}

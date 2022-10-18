@@ -37,11 +37,29 @@ class SampleTable(Base):
     varchar_value = Column(String)
 
 
+class SampleTableTwo(Base):
+    primary_key_of_table = "primary_key"
+    unique_fields = ['primary_key']
+    __tablename__ = 'test_build_myself_memory_two'
+    __table_args__ = (
+        UniqueConstraint('primary_key'),
+    )
+    primary_key = Column(Integer, primary_key=True, autoincrement=True)
+    bool_value = Column(Boolean, nullable=False, default=False)
+    bytea_value = Column(LargeBinary)
+
+
 crud_router_builder(
     db_model_list=[
         {
             "db_model": SampleTable,
             "prefix": "/my_first_api",
+            "tags": ["sample api"]
+        },
+
+        {
+            "db_model": SampleTableTwo,
+            "prefix": "/my_second_api",
             "tags": ["sample api"]
         }
     ],
