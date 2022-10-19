@@ -118,28 +118,20 @@ class ApiParameterSchemaBuilder:
     partial_supported_data_types = ["INTERVAL", "JSON", "JSONB"]
 
     def __init__(self, db_model: Type, sql_type, exclude_column=None, constraints=None,
-                 exclude_primary_key=False
                  # ,foreign_include=False
                  ):
         self.class_name = db_model.__name__
         self.root_table_name = get_table_name(db_model)
         self.constraints = constraints
-        self.exclude_primary_key = exclude_primary_key
         if exclude_column is None:
             self._exclude_column = []
         else:
             self._exclude_column = exclude_column
         self.alias_mapper: Dict[str, str] = {}  # Table not support alias
-        if self.exclude_primary_key:
-            self.__db_model: Table = db_model
-            self.__db_model_table: Table = db_model.__table__
-            self.__columns = db_model.__table__.c
-            self.db_name: str = db_model.__tablename__
-        else:
-            self.__db_model: DeclarativeClassT = db_model
-            self.__db_model_table: Table = db_model.__table__
-            self.db_name: str = db_model.__tablename__
-            self.__columns = db_model.__table__.c
+        self.__db_model: DeclarativeClassT = db_model
+        self.__db_model_table: Table = db_model.__table__
+        self.db_name: str = db_model.__tablename__
+        self.__columns = db_model.__table__.c
         model = self.__db_model
 
         self.code_gen = ModelCodeGen(self.root_table_name, sql_type)
@@ -166,10 +158,7 @@ class ApiParameterSchemaBuilder:
     def extra_foreign_table(self, db_model=None) -> Dict[ForeignKeyName, dict]:
         if db_model is None:
             db_model = self.__db_model
-        if self.exclude_primary_key:
-            return self._extra_foreign_table_from_table()
-        else:
-            return self._extra_foreign_table_from_declarative_base(db_model)
+        return self._extra_foreign_table_from_declarative_base(db_model)
 
     def _extract_primary(self, db_model_table=None) -> Union[tuple, Tuple[Union[str, Any],
                                                                           DataClassT,
@@ -179,8 +168,6 @@ class ApiParameterSchemaBuilder:
         if db_model_table == None:
             db_model_table = self.__db_model_table
         primary_list = db_model_table.primary_key.columns.values()
-        if not primary_list or self.exclude_primary_key:
-            return (None, None, None)
         if len(primary_list) > 1:
             raise SchemaException(
                 f'multiple primary key / or composite not supported; {self.db_name} ')

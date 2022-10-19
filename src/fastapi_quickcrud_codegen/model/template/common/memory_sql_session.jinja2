@@ -18,7 +18,7 @@ from fastapi_quick_crud_template.model.{{ model["model_name"] }} import {{ model
 {%- if is_async %}
 
 
-SQLALCHEMY_DATABASE_URL = f"sqlite+aiosqlite://"
+SQLALCHEMY_DATABASE_URL = f"{{ database_url }}"
 
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL,
                                               future=True,

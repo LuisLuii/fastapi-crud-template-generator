@@ -105,7 +105,7 @@ def sqlalchemy_to_pydantic(
         exclude_columns: List[str] = None,
         constraints=None,
         # foreign_include: Optional[any] = None,
-        exclude_primary_key=False) -> CRUDModel:
+        ) -> CRUDModel:
     db_model, _ = convert_table_to_model(db_model)
     if exclude_columns is None:
         exclude_columns = []
@@ -117,7 +117,7 @@ def sqlalchemy_to_pydantic(
                                               exclude_column=exclude_columns,
                                               sql_type=sql_type,
                                               # foreign_include=foreign_include,
-                                              exclude_primary_key=exclude_primary_key)
+                                              )
     REQUIRE_PRIMARY_KEY_CRUD_METHOD = [CrudMethods.DELETE_ONE.value,
                                        CrudMethods.FIND_ONE.value,
                                        CrudMethods.PATCH_ONE.value,

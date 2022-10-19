@@ -1,12 +1,10 @@
 from typing import \
     List, \
-    TypeVar, Union, Optional
+    TypeVar, Optional
 
-from fastapi import \
-    APIRouter
+import sqlalchemy
 from pydantic import \
     BaseModel
-from sqlalchemy.sql.schema import Table
 
 from . import sqlalchemy_to_pydantic
 from .generator.common_module_template_generator import CommonModuleTemplateGenerator
@@ -25,91 +23,68 @@ OnConflictModelType = TypeVar("OnConflictModelType", bound=BaseModel)
 
 def crud_router_builder(
         *,
-        db_model_list: Union[Table, 'DeclarativeBaseModel'],
+        db_model_list: List[dict],
         is_async: Optional[bool],
-        sql_type: Optional[SqlType],
+        database_url: Optional[str],
         crud_methods: Optional[List[CrudMethods]] = None,
         exclude_columns: Optional[List[str]] = None,
         # foreign_include: Optional[Base] = None
-) -> APIRouter:
+) :
     """
-    @param db_model:
-        The Sqlalchemy Base model/Table you want to use it to build api.
-
-    @param is_async:
-        As your database connection
-
-    @param sql_type:
-        You sql database type
-
-    @param db_session:
-        The callable variable and return a session generator that will be used to get database connection session for fastapi.
-
-    @param crud_methods:
-        Fastapi Quick CRUD supports a few of crud methods, and they save into the Enum class,
-        get it by : from fastapi_quickcrud_codegen_codegen import CrudMethods
-        example:
-            [CrudMethods.GET_MANY,CrudMethods.ONE]
-        note:
-            if there is no primary key in your SQLAlchemy model, it dose not support request with
-            specific resource, such as GET_ONE, UPDATE_ONE, DELETE_ONE, PATCH_ONE AND POST_REDIRECT_GET
-            this is because POST_REDIRECT_GET need to redirect to GET_ONE api
-
-    @param exclude_columns:
-        Fastapi Quick CRUD will get all the columns in you table to generate a CRUD router,
-        it is allow you exclude some columns you dont want it expose to operated by API
-        note:
-            if the column in exclude list but is it not nullable or no default_value, it may throw error
-            when you do insert
-
-    @param dependencies:
-        A variable that will be added to the path operation decorators.
-
-    @param crud_models:
-        You can use the sqlalchemy_to_pydantic() to build your own Pydantic model CRUD set
-
-    @param foreign_include: BaseModel
-        Used to build foreign tree api
-
-    @return:
-        APIRouter for fastapi
+     Args:
+        db_model_list - Required (str): model list of dict (db_model: Sqlalchemy model, prefix: str, tags: list[str]) for code generate
+        is_async - Optional (bool): True for async; False for sync
+        sql_type - Optional (SqlType): used to match to correct import library
+        crud_methods - Optional (List[CrudMethods]): used to gen crud router
+        exclude_columns - Optional (List[str]): string of list to exclude some column
+    Raises:
+        ValueError: TODO
+    Examples:
+        >>> crud_router_builder(
+                db_model_list=[
+                    {
+                        "db_model": SampleTable,
+                        "prefix": "/my_first_api",
+                        "tags": ["sample api"]
+                    },
+                    {
+                        "db_model": SampleTableTwo,
+                        "prefix": "/my_second_api",
+                        "tags": ["sample api"]
+                    }
+                ],
+                exclude_columns=['bytea_value', 'xml_value', 'box_valaue'],
+                crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY],
+                is_async=True,
+                sql_type=SqlType.postgresql
+            )
     """
+    print("Start Fastapi's CRUD project generation")
+    engine = sqlalchemy.create_engine(database_url)
+    sql_type = SqlType(engine.dialect.name)
+    print(f"\ndatabase type: {sql_type}")
+
+    # : Optional[SqlType]
     model_list = []
 
     common_module_template_generator = CommonModuleTemplateGenerator()
 
-    # type generation
-    common_code_builder = CommonCodeGen()
-    common_code_builder.build_type()
-    common_code_builder.gen(common_module_template_generator.add_type)
-
-    # module generation
-    common_utils_code_builder = CommonCodeGen()
-    common_utils_code_builder.build_utils()
-    common_utils_code_builder.gen(common_module_template_generator.add_utils)
-
-    # http_exception generation
-    common_http_exception_code_builder = CommonCodeGen()
-    common_http_exception_code_builder.build_http_exception()
-    common_http_exception_code_builder.gen(common_module_template_generator.add_http_exception)
-
-    # db generation
-    common_db_code_builder = CommonCodeGen()
-    common_db_code_builder.build_db()
-    common_db_code_builder.gen(common_module_template_generator.add_db)
+    print("\nStart generate model and router module...")
     for db_model_info in db_model_list:
 
         db_model = db_model_info["db_model"]
         prefix = db_model_info["prefix"]
         tags = db_model_info["tags"]
-
+        print(f"\n\t\tGenerating {db_model=} {prefix=} {tags=}")
+        db_model, NO_PRIMARY_KEY = convert_table_to_model(db_model)
+        if NO_PRIMARY_KEY:
+            raise RuntimeError("only support declarative from Sqlalchemy, you can try to give the table a fake pk"
+                               " to work around")
         table_name = db_model.__name__
+
         model_name = get_table_name(db_model)
 
         model_list.append({"model_name": model_name, "file_name": table_name})
-
-
-        db_model, NO_PRIMARY_KEY = convert_table_to_model(db_model)
 
         # code gen
         crud_code_generator = CrudCodeGen(tags=tags, prefix=prefix)
@@ -118,22 +93,19 @@ def crud_router_builder(
 
         constraints = db_model.__table__.constraints
 
-
-
-        if not crud_methods and NO_PRIMARY_KEY == False:
+        if not crud_methods:
             crud_methods = CrudMethods.get_declarative_model_full_crud_method()
-        if not crud_methods and NO_PRIMARY_KEY == True:
-            crud_methods = CrudMethods.get_table_full_crud_method()
+        print(f"\t\tfollowing api method will be generated: {crud_methods=} ")
 
         # model generation
+        print(f"\t\tGenerating model for API")
         crud_models_builder: CRUDModel = sqlalchemy_to_pydantic
         crud_models: CRUDModel = crud_models_builder(db_model=db_model,
                                                      constraints=constraints,
                                                      crud_methods=crud_methods,
                                                      exclude_columns=exclude_columns,
-                                                     sql_type=sql_type,
-                                                     exclude_primary_key=NO_PRIMARY_KEY)
-
+                                                     sql_type=sql_type)
+        print(f"\t\tGenerating model success")
         methods_dependencies = crud_models.get_available_request_method()
         primary_name = crud_models.PRIMARY_KEY_NAME
         if primary_name:
@@ -143,10 +115,14 @@ def crud_router_builder(
 
         # router generation
         def find_one_api():
+            print(f"\t\tGenerating find one API")
             crud_code_generator.build_find_one_route(is_async=is_async, path=path, file_name=model_name, model_name=table_name)
+            print(f"\t\tGenerating find one API success")
 
         def find_many_api():
+            print(f"\t\tGenerating find many API")
             crud_code_generator.build_find_many_route(is_async=is_async, path="", file_name=model_name, model_name=table_name)
+            print(f"\t\tGenerating find many API success")
 
         api_register = {
             CrudMethods.FIND_ONE.value: find_one_api,
@@ -159,12 +135,42 @@ def crud_router_builder(
                 api_register[crud_model_of_this_request_method.value]()
         crud_code_generator.gen(template_generator=crud_template_generator, file_name=model_name)
 
+    print("\nStart generate common module")
+    # type generation
+    print("\t\tStart generate type module")
+    common_code_builder = CommonCodeGen()
+    common_code_builder.build_type()
+    common_code_builder.gen(common_module_template_generator.add_type)
+
+    # module generation
+    print("\t\tStart generate utils module")
+    common_utils_code_builder = CommonCodeGen()
+    common_utils_code_builder.build_utils()
+    common_utils_code_builder.gen(common_module_template_generator.add_utils)
+
+    # http_exception generation
+    print("\t\tStart generate http exception module")
+    common_http_exception_code_builder = CommonCodeGen()
+    common_http_exception_code_builder.build_http_exception()
+    common_http_exception_code_builder.gen(common_module_template_generator.add_http_exception)
+
+    # db generation
+    print("\t\tStart generate db module")
+    common_db_code_builder = CommonCodeGen()
+    common_db_code_builder.build_db()
+    common_db_code_builder.gen(common_module_template_generator.add_db)
+
     # sql session
+    print("\t\tStart generate session module")
     common_db_session_code_builder = CommonCodeGen()
-    common_db_session_code_builder.build_db_session(model_list=model_list, is_async = is_async)
+    common_db_session_code_builder.build_db_session(model_list=model_list, is_async=is_async, database_url=database_url)
     common_db_session_code_builder.gen(common_module_template_generator.add_memory_sql_session)
 
     # app py
+    print("\t\tStart generate app.py")
     common_app_code_builder = CommonCodeGen()
     common_app_code_builder.build_app(model_list=model_list)
     common_app_code_builder.gen(common_module_template_generator.add_app)
+
+
+    print("\nProject generation completed successfully")

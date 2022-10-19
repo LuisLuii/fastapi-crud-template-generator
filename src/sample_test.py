@@ -1,3 +1,4 @@
+import sqlalchemy
 from fastapi import FastAPI
 from sqlalchemy import BigInteger, Boolean, CHAR, Column, Date, DateTime, Float, Integer, \
     Numeric, SmallInteger, String, Text, Time, UniqueConstraint, LargeBinary
@@ -6,7 +7,9 @@ from sqlalchemy.orm import declarative_base
 from fastapi_quickcrud_codegen import crud_router_builder, CrudMethods
 from fastapi_quickcrud_codegen.misc.type import SqlType
 
-app = FastAPI()
+engine = sqlalchemy.create_engine('postgresql+asyncpg://postgres:124@127.0.0.1:5432/postgres')
+print()
+
 
 Base = declarative_base()
 metadata = Base.metadata
@@ -66,5 +69,5 @@ crud_router_builder(
     exclude_columns=['bytea_value', 'xml_value', 'box_valaue'],
     crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY],
     is_async=True,
-    sql_type=SqlType.postgresql
+    database_url="postgresql+asyncpg://postgres:124@127.0.0.1:5432/postgres"
 )
