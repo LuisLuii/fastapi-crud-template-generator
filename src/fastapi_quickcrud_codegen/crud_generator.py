@@ -61,6 +61,11 @@ def crud_router_builder(
     """
     print("Start Fastapi's CRUD project generation")
     engine = sqlalchemy.create_engine(database_url)
+    is_in_memory_db = False
+    if engine and engine.url and not engine.url.host and not engine.url.port:
+        print("\nThis is in-memory db")
+        is_in_memory_db = True
+
     sql_type = SqlType(engine.dialect.name)
     print(f"\ndatabase type: {sql_type}")
 
@@ -163,7 +168,7 @@ def crud_router_builder(
     # sql session
     print("\t\tStart generate session module")
     common_db_session_code_builder = CommonCodeGen()
-    common_db_session_code_builder.build_db_session(model_list=model_list, is_async=is_async, database_url=database_url)
+    common_db_session_code_builder.build_db_session(model_list=model_list, is_async=is_async, database_url=database_url, is_in_memory_db = is_in_memory_db)
     common_db_session_code_builder.gen(common_module_template_generator.add_memory_sql_session)
 
     # app py
