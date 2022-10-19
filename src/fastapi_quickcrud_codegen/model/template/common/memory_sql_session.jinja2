@@ -25,7 +25,7 @@ engine = create_async_engine(SQLALCHEMY_DATABASE_URL,
                                               echo=True,
                                               pool_pre_ping=True,
                                               pool_recycle=7200,
-                                              # connect_args={"check_same_thread": False},
+                                              {{ 'connect_args={"check_same_thread": False}, ' if is_in_memory_db else '' }}
                                               poolclass=StaticPool)
 session = sessionmaker(autocommit=False,
                        autoflush=False,
@@ -40,7 +40,7 @@ engine = create_engine(SQLALCHEMY_DATABASE_URL,
                                         echo=True,
                                         pool_pre_ping=True,
                                         pool_recycle=7200,
-                                        # connect_args={"check_same_thread": False},
+                                        {{ 'connect_args={"check_same_thread": False}, ' if is_in_memory_db else '' }}
                                         poolclass=StaticPool)
 session = sessionmaker(bind=engine, autocommit=False)
 {%- endif %}
