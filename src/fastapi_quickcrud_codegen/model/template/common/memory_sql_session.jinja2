@@ -83,5 +83,5 @@ loop = asyncio.get_event_loop()
 
 {% for model in model_list -%}
 {{ model["file_name"] }}.__table__.create(engine, checkfirst=True)
-{%- endfor %}
+{% endfor -%}
 {%- endif %}

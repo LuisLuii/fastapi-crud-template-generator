@@ -1,5 +1,5 @@
 @api.get("{{ path }}", status_code=200, response_model={{ model_name }}FindManyResponseModel)
-{{ 'async' if is_async else '' }} def get_many(response: Response,
+{{ 'async ' if is_async else '' }}def get_many(response: Response,
                            query=Depends({{ model_name }}FindManyRequestBody),
                            session=Depends(db_session)):
 
@@ -32,7 +32,7 @@
             stmt = stmt.order_by(*order_by_query_list)
     stmt = stmt.limit(limit).offset(offset)
 
-    sql_executed_result = {{ 'await' if is_async else '' }} session.execute(stmt)
+    sql_executed_result = {{ 'await ' if is_async else '' }}session.execute(stmt)
 
     result = sql_executed_result.fetchall()
     if not result:
@@ -49,5 +49,5 @@
     response.headers["x-total-count"] = str(len(response_data))
     response_data = parse_obj_as({{ model_name }}FindManyResponseModel, response)
 
-    {{ 'await' if is_async else '' }} session.commit()
+    {{ 'await ' if is_async else '' }}session.commit()
     return response_data
