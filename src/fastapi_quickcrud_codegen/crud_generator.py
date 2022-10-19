@@ -75,6 +75,28 @@ def crud_router_builder(
         APIRouter for fastapi
     """
     model_list = []
+
+    common_module_template_generator = CommonModuleTemplateGenerator()
+
+    # type generation
+    common_code_builder = CommonCodeGen()
+    common_code_builder.build_type()
+    common_code_builder.gen(common_module_template_generator.add_type)
+
+    # module generation
+    common_utils_code_builder = CommonCodeGen()
+    common_utils_code_builder.build_utils()
+    common_utils_code_builder.gen(common_module_template_generator.add_utils)
+
+    # http_exception generation
+    common_http_exception_code_builder = CommonCodeGen()
+    common_http_exception_code_builder.build_http_exception()
+    common_http_exception_code_builder.gen(common_module_template_generator.add_http_exception)
+
+    # db generation
+    common_db_code_builder = CommonCodeGen()
+    common_db_code_builder.build_db()
+    common_db_code_builder.gen(common_module_template_generator.add_db)
     for db_model_info in db_model_list:
 
         db_model = db_model_info["db_model"]
@@ -90,33 +112,13 @@ def crud_router_builder(
         db_model, NO_PRIMARY_KEY = convert_table_to_model(db_model)
 
         # code gen
-        crud_code_generator = CrudCodeGen(model_name, model_name=table_name, tags=tags, prefix=prefix)
+        crud_code_generator = CrudCodeGen(tags=tags, prefix=prefix)
         # create a file
         crud_template_generator = CrudTemplateGenerator()
 
         constraints = db_model.__table__.constraints
 
-        common_module_template_generator = CommonModuleTemplateGenerator()
 
-        # type generation
-        common_code_builder = CommonCodeGen()
-        common_code_builder.build_type()
-        common_code_builder.gen(common_module_template_generator.add_type)
-
-        # module generation
-        common_utils_code_builder = CommonCodeGen()
-        common_utils_code_builder.build_utils()
-        common_utils_code_builder.gen(common_module_template_generator.add_utils)
-
-        # http_exception generation
-        common_http_exception_code_builder = CommonCodeGen()
-        common_http_exception_code_builder.build_http_exception()
-        common_http_exception_code_builder.gen(common_module_template_generator.add_http_exception)
-
-        # db generation
-        common_db_code_builder = CommonCodeGen()
-        common_db_code_builder.build_db()
-        common_db_code_builder.gen(common_module_template_generator.add_db)
 
         if not crud_methods and NO_PRIMARY_KEY == False:
             crud_methods = CrudMethods.get_declarative_model_full_crud_method()
@@ -141,17 +143,21 @@ def crud_router_builder(
 
         # router generation
         def find_one_api():
-            crud_code_generator.build_find_one_route(is_async=is_async, path=path)
+            crud_code_generator.build_find_one_route(is_async=is_async, path=path, file_name=model_name, model_name=table_name)
+
+        def find_many_api():
+            crud_code_generator.build_find_many_route(is_async=is_async, path="", file_name=model_name, model_name=table_name)
 
         api_register = {
             CrudMethods.FIND_ONE.value: find_one_api,
+            CrudMethods.FIND_MANY.value: find_many_api,
         }
         for request_method in methods_dependencies:
             value_of_dict_crud_model = crud_models.get_model_by_request_method(request_method)
             crud_model_of_this_request_methods = value_of_dict_crud_model.keys()
             for crud_model_of_this_request_method in crud_model_of_this_request_methods:
                 api_register[crud_model_of_this_request_method.value]()
-        crud_code_generator.gen(crud_template_generator)
+        crud_code_generator.gen(template_generator=crud_template_generator, file_name=model_name)
 
     # sql session
     common_db_session_code_builder = CommonCodeGen()

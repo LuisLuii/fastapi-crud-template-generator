@@ -735,7 +735,7 @@ class ApiParameterSchemaBuilder:
                                        f'Query({i["column_default"]}, description={i["column_description"]})'))
 
         self.code_gen.build_dataclass(class_name=self.class_name + "FindManyRequestBody", fields=request_fields,
-                                      value_of_list_to_str_columns=self.uuid_type_columns)
+                                      value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
 
         self.code_gen.build_dataclass(class_name=self.class_name + "FindManyResponseModel", fields=response_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns)

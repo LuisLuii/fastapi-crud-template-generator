@@ -28,6 +28,8 @@ from datetime import datetime, timedelta, date, time
 from decimal import Decimal
 from typing import Optional, List, Union, NewType
 
+import pydantic
+
 from fastapi import Query, Body
 from sqlalchemy import *
 from sqlalchemy.dialects.{db_type} import *
