@@ -29,6 +29,7 @@ from decimal import Decimal
 from typing import Optional, List, Union, NewType
 
 import pydantic
+from pydantic import BaseModel
 
 from fastapi import Query, Body
 from sqlalchemy import *

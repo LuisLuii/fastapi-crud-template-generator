@@ -129,9 +129,15 @@ def crud_router_builder(
             crud_code_generator.build_find_many_route(is_async=is_async, path="", file_name=model_name, model_name=table_name)
             print(f"\t\tGenerating find many API success")
 
+        def create_one_api():
+            print(f"\t\tGenerating insert one API")
+            crud_code_generator.build_insert_one_route(is_async=is_async, path="", file_name=model_name, model_name=table_name)
+            print(f"\t\tGenerating insert one API success")
+
         api_register = {
             CrudMethods.FIND_ONE.value: find_one_api,
             CrudMethods.FIND_MANY.value: find_many_api,
+            CrudMethods.CREATE_ONE.value: create_one_api,
         }
         for request_method in methods_dependencies:
             value_of_dict_crud_model = crud_models.get_model_by_request_method(request_method)

@@ -721,11 +721,10 @@ class ApiParameterSchemaBuilder:
                                        i['column_type'],
                                        f'Query({i["column_default"]}, description={i["column_description"]})'))
 
-        self.code_gen.build_dataclass(class_name=self.class_name + "FindManyRequestBody", fields=request_fields,
+        self.code_gen.build_dataclass(class_name=self.class_name + "FindManyRequestBodyModel", fields=request_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
-
-        self.code_gen.build_dataclass(class_name=self.class_name + "FindManyResponseModel", fields=response_fields,
-                                      value_of_list_to_str_columns=self.uuid_type_columns)
+        self.code_gen.build_base_model(class_name=self.class_name + "FindManyResponseModel", fields=response_fields,
+                                       value_of_list_to_str_columns=self.uuid_type_columns)
 
         self.code_gen.build_base_model_root(class_name=self.class_name + "FindManyResponseRootModel",
                                             field=(
@@ -818,18 +817,18 @@ class ApiParameterSchemaBuilder:
                 request_fields.append((i['column_name'],
                                        i['column_type'],
                                        f'Query({i["column_default"]})'))
-        self.code_gen.build_dataclass(class_name=self.class_name + "FindOneRequestBody", fields=request_fields,
+        self.code_gen.build_dataclass(class_name=self.class_name + "FindOneRequestBodyModel", fields=request_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
 
-        self.code_gen.build_dataclass(class_name=self.class_name + "FindOneResponseModel", fields=response_fields,
-                                      value_of_list_to_str_columns=self.uuid_type_columns)
+        self.code_gen.build_base_model(class_name=self.class_name + "FindOneResponseModel", fields=response_fields,
+                                       value_of_list_to_str_columns=self.uuid_type_columns)
         self.code_gen.build_base_model_root(class_name=self.class_name + "FindOneResponseRootModel",
                                             field=(
                                                 f'{self.class_name + "FindOneResponseModel"}',
                                                 None),
                                             base_model="ExcludeUnsetBaseModel")
 
-        return self.class_name + "PrimaryKeyModel", self.class_name + "FindOneRequestBody", None, self.class_name + "FindOneResponseRootModel", None
+        return self.class_name + "PrimaryKeyModel", self.class_name + "FindOneRequestBodyModel", None, self.class_name + "FindOneResponseRootModel", None
 
     def delete_one(self) -> Tuple:
         query_param: List[dict] = self._get_fizzy_query_param(self.primary_key_str)
@@ -959,12 +958,12 @@ class ApiParameterSchemaBuilder:
             request_validation.append(lambda self_object: self._value_of_list_to_str(self_object,
                                                                                      self.uuid_type_columns))
 
-        self.code_gen.build_dataclass(class_name=self.class_name + "UpdateOneRequestQueryBody",
+        self.code_gen.build_dataclass(class_name=self.class_name + "UpdateOneRequestQueryBodyModel",
                                       fields=request_query_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns,
                                       filter_none=True)
 
-        self.code_gen.build_dataclass(class_name=self.class_name + "UpdateOneRequestBodyBody",
+        self.code_gen.build_dataclass(class_name=self.class_name + "UpdateOneRequestBodyModel",
                                       fields=request_body_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns,
                                       filter_none=True)
@@ -973,7 +972,7 @@ class ApiParameterSchemaBuilder:
                                        fields=response_fields,
                                        value_of_list_to_str_columns=self.uuid_type_columns,
                                        filter_none=True)
-        return self.class_name + "PrimaryKeyModel", self.class_name + "UpdateOneRequestQueryBody", self.class_name + "UpdateOneRequestBodyBody", self.class_name + "UpdateOneResponseModel"
+        return self.class_name + "PrimaryKeyModel", self.class_name + "UpdateOneRequestQueryBodyModel", self.class_name + "UpdateOneRequestBodyModel", self.class_name + "UpdateOneResponseModel"
 
     def update_many(self) -> Tuple:
         """
@@ -1007,11 +1006,10 @@ class ApiParameterSchemaBuilder:
                                          i['column_type'],
                                          f"Query({i['column_default']}, description={i['column_description']})"))
 
-        self.code_gen.build_dataclass(class_name=self.class_name + "UpdateManyRequestQueryBody",
-                                      fields=request_query_fields,
+        self.code_gen.build_dataclass(class_name=self.class_name + "UpdateManyRequestQueryBodyModel",
                                       value_of_list_to_str_columns=self.uuid_type_columns,
                                       filter_none=True)
-        self.code_gen.build_dataclass(class_name=self.class_name + "UpdateManyRequestBodyBody",
+        self.code_gen.build_dataclass(class_name=self.class_name + "UpdateManyRequestBodyModel",
                                       fields=request_body_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns,
                                       filter_none=True)
@@ -1027,7 +1025,7 @@ class ApiParameterSchemaBuilder:
                                             filter_none=True)
         # response_model = _add_orm_model_config_into_pydantic_model(response_model, config=OrmConfig)
 
-        return None, self.class_name + "UpdateManyRequestQueryBody", self.class_name + "UpdateManyRequestBodyBody", f'{self.class_name}UpdateManyResponseItemListModel'
+        return None, self.class_name + "UpdateManyRequestQueryBodyModel", self.class_name + "UpdateManyRequestBodyModel", f'{self.class_name}UpdateManyResponseItemListModel'
 
     def patch_many(self) -> Tuple:
         """
@@ -1061,12 +1059,12 @@ class ApiParameterSchemaBuilder:
                                          i['column_type'],
                                          f"Query({i['column_default']}, description={i['column_description']})"))
 
-        self.code_gen.build_dataclass(class_name=self.class_name + "PatchManyRequestQueryBody",
+        self.code_gen.build_dataclass(class_name=self.class_name + "PatchManyRequestQueryBodyModel",
                                       fields=request_query_fields,
                                       filter_none=True,
                                       value_of_list_to_str_columns=self.uuid_type_columns)
 
-        self.code_gen.build_dataclass(class_name=self.class_name + "PatchManyRequestBody",
+        self.code_gen.build_dataclass(class_name=self.class_name + "PatchManyRequestBodyModel",
                                       fields=request_body_fields,
                                       filter_none=True,
                                       value_of_list_to_str_columns=self.uuid_type_columns)
@@ -1080,7 +1078,7 @@ class ApiParameterSchemaBuilder:
                                             field=(
                                                 f'{f"{self.class_name}PatchManyItemResponseModel"}',
                                                 None))
-        return None, self.class_name + "UpdateManyRequestQueryBody", self.class_name + "UpdateManyRequestBodyBody", f'{self.class_name}UpdateManyResponseItemListModel'
+        return None, self.class_name + "UpdateManyRequestQueryBodyModel", self.class_name + "UpdateManyRequestBodyModel", f'{self.class_name}UpdateManyResponseItemListModel'
 
     def post_redirect_get(self) -> Tuple:
         request_validation = [lambda self_object: _filter_none(self_object)]
