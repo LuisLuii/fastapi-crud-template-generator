@@ -657,8 +657,7 @@ class ApiParameterSchemaBuilder:
                                       fields=request_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns)
         self.code_gen.build_base_model(class_name=self.class_name + "CreateOneResponseModel",
-                                       fields=response_fields,
-                                       value_of_list_to_str_columns=self.uuid_type_columns)
+                                       fields=response_fields)
 
         return None, self.class_name + "CreateOneRequestBodyModel", self.class_name + "CreateOneResponseModel"
 
@@ -690,8 +689,7 @@ class ApiParameterSchemaBuilder:
 
         self.code_gen.build_base_model(class_name=self.class_name + "CreateManyItemResponseModel",
                                        fields=response_fields,
-                                       value_of_list_to_str_columns=self.uuid_type_columns,
-                                       filter_none=True)
+                                       orm_mode=True)
 
         self.code_gen.build_base_model_root(class_name=self.class_name + "CreateManyItemListResponseModel",
                                             field=(
@@ -723,8 +721,7 @@ class ApiParameterSchemaBuilder:
 
         self.code_gen.build_dataclass(class_name=self.class_name + "FindManyRequestBodyModel", fields=request_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
-        self.code_gen.build_base_model(class_name=self.class_name + "FindManyResponseModel", fields=response_fields,
-                                       value_of_list_to_str_columns=self.uuid_type_columns)
+        self.code_gen.build_base_model(class_name=self.class_name + "FindManyResponseModel", fields=response_fields)
 
         self.code_gen.build_base_model_root(class_name=self.class_name + "FindManyResponseRootModel",
                                             field=(
@@ -820,8 +817,7 @@ class ApiParameterSchemaBuilder:
         self.code_gen.build_dataclass(class_name=self.class_name + "FindOneRequestBodyModel", fields=request_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
 
-        self.code_gen.build_base_model(class_name=self.class_name + "FindOneResponseModel", fields=response_fields,
-                                       value_of_list_to_str_columns=self.uuid_type_columns)
+        self.code_gen.build_base_model(class_name=self.class_name + "FindOneResponseModel", fields=response_fields)
         self.code_gen.build_base_model_root(class_name=self.class_name + "FindOneResponseRootModel",
                                             field=(
                                                 f'{self.class_name + "FindOneResponseModel"}',

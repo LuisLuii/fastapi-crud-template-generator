@@ -37,7 +37,7 @@ class TestBuildMyself(Base):
     timestamp_value = Column(DateTime)
     timestamptz_value = Column(DateTime(True))
     timetz_value = Column(Time(True))
-    uuid_value = Column(UUID)
+    uuid_value = Column(UUID(as_uuid=True))
     varchar_value = Column(String)
     array_value = Column(ARRAY(Integer()))
     array_str__value = Column(ARRAY(String()))
@@ -87,7 +87,7 @@ crud_router_builder(
         }
     ],
     exclude_columns=['bytea_value', 'xml_value', 'box_valaue'],
-    crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY],
+    crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE],
     is_async=False,
     database_url="postgresql://postgres:1234@127.0.0.1:5432/postgres"
 )
