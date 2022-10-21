@@ -2,7 +2,6 @@ import uuid
 import warnings
 from copy import deepcopy
 from dataclasses import (make_dataclass)
-from enum import auto
 from typing import (Optional,
                     Any)
 from typing import (Type,
@@ -130,7 +129,6 @@ class ApiParameterSchemaBuilder:
         self.__db_model_table: Table = db_model.__table__
         self.db_name: str = db_model.__tablename__
         self.__columns = db_model.__table__.c
-        model = self.__db_model
 
         self.code_gen = ModelCodeGen(self.root_table_name, sql_type)
         self.code_gen.gen_model(db_model)
@@ -288,29 +286,30 @@ class ApiParameterSchemaBuilder:
                     raise ColumnTypeNotSupportedException(
                         f'The type of column {column_name} ({column_type}) not supported yet')
                     # string filter
-            if python_type.__name__ in ['str']:
+            python_type_str = deepcopy(python_type.__name__)
+            if python_type_str in ['str']:
                 self.str_type_columns.append(column_name)
             # uuid filter
-            elif python_type.__name__ in ['UUID']:
+            elif python_type_str in ['UUID']:
                 self.uuid_type_columns.append(column.name)
-                python_type.__name__ = "uuid.UUID"
+                python_type_str = "uuid.UUID"
             # number filter
-            elif python_type.__name__ in ['int', 'float', 'Decimal']:
+            elif python_type_str in ['int', 'float', 'Decimal']:
                 self.number_type_columns.append(column_name)
             # date filter
-            elif python_type.__name__ in ['date', 'time', 'datetime']:
+            elif python_type_str in ['date', 'time', 'datetime']:
                 self.datetime_type_columns.append(column_name)
             # timedelta filter
-            elif python_type.__name__ in ['timedelta']:
+            elif python_type_str in ['timedelta']:
                 self.timedelta_type_columns.append(column_name)
             # bool filter
-            elif python_type.__name__ in ['bool']:
+            elif python_type_str in ['bool']:
                 self.bool_type_columns.append(column_name)
             # json filter
-            elif python_type.__name__ in ['dict']:
+            elif python_type_str in ['dict']:
                 self.json_type_columns.append(column_name)
             # array filter
-            elif python_type.__name__ in ['list']:
+            elif python_type_str in ['list']:
                 self.array_type_columns.append(column_name)
                 base_column_detail, = column.base_columns
                 if hasattr(base_column_detail.type, 'item_type'):
@@ -326,13 +325,13 @@ class ApiParameterSchemaBuilder:
 
             if column_type == "JSONB":
                 fields.append({'column_name': column_name,
-                               'column_type': f'Union[{python_type.__name__}, list]',
+                               'column_type': f'Union[{python_type_str}, list]',
                                'column_default': default,
                                'column_description': description,
                                'column_foreign': column_foreign})
             else:
                 fields.append({'column_name': column_name,
-                               'column_type': python_type.__name__,
+                               'column_type': python_type_str,
                                'column_default': default,
                                'column_description': description,
                                'column_foreign': column_foreign})
