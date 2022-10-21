@@ -2,3 +2,4 @@
 src/fastapi_quick_crud_template
 src/fastapi_quickcrud_codegen/__pycache__
 *.pyc
+.coverage
