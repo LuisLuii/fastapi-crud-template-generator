@@ -90,4 +90,5 @@ crud_router_builder(
     crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE],
     is_async=False,
     database_url="postgresql://postgres:1234@127.0.0.1:5432/postgres"
+    # database_url="postgresql+asyncpg://postgres:1234@127.0.0.1:5432/postgres"
 )

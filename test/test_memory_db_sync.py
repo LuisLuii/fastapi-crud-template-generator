@@ -134,7 +134,7 @@ app = FastAPI()
 test_build_myself_memory_router,test_build_myself_memory_two_router,
 ]]
 
-uvicorn.run(app, host="0.0.0.0", port=8000, debug=False)"""
+uvicorn.run(app, host="0.0.0.0", port=8000)"""
         validate_app(expected=app_expected)
 
         # common
