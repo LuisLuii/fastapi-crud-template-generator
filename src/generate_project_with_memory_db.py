@@ -68,7 +68,7 @@ crud_router_builder(
     ],
     exclude_columns=['bytea_value', 'xml_value', 'box_valaue'],
     crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE],
-    is_async=True,
-    # database_url="sqlite://"
-    database_url="sqlite+aiosqlite://"
+    is_async=False,
+    database_url="sqlite://"
+    # database_url="sqlite+aiosqlite://"
 )

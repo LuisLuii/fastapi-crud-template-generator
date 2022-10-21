@@ -12,8 +12,7 @@ class CrudCodeGen():
         # self.index = SymbolIndex()
         # lib_path: list[str] = [i for i in sys.path if "FastAPIQuickCRUD" not in i]
         # self.index.build_index(lib_path)
-        self.import_list = f"""
-import copy
+        self.import_list = f"""import copy
 from http import HTTPStatus
 from typing import List, Union
 from os import path

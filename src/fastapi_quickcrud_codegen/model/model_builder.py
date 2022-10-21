@@ -15,8 +15,7 @@ class ModelCodeGen():
         self.table_list = {}
         self.code = ""
         self.model_code = ""
-        self.import_list = f"""
-import uuid
+        self.import_list = f"""import uuid
 from dataclasses import dataclass
 from datetime import datetime, timedelta, date, time
 from decimal import Decimal

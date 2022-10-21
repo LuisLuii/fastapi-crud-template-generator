@@ -15,27 +15,17 @@ class CommonCodeGen():
 
     # todo add tpye for template_generator
     def gen(self, template_generator_method):
-        template_generator_method( self.import_list + "\n\n" + self.code)
+        if self.import_list:
+            template_generator_method( self.import_list + self.code)
+        else:
+            template_generator_method(self.code)
+
 
     def gen_model(self, model):
         if isinstance(model, Table):
             raise TypeError("not support table yet")
         model_code = inspect.getsource(model)
         self.model_code += "\n\n\n" + model_code
-
-    def build_app(self, *, async_mode, model_name):
-        mode = "async" if async_mode else "sync"
-        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/{mode}_find_one.jinja2'
-        template_file_path = Path(TEMPLATE_FILE_PATH)
-
-        TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
-        templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
-        templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = f'{mode}_find_one.jinja2'
-        template = templateEnv.get_template(TEMPLATE_FILE)
-        code = template.render(
-            {"model_name": model_name})
-        self.code += "\n\n\n" + code
 
     def build_api_route(self):
         TEMPLATE_FILE_PATH: ClassVar[str] = f'common/api_route.jinja2'
@@ -59,7 +49,7 @@ class CommonCodeGen():
         TEMPLATE_FILE = f'typing.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render()
-        self.code += "\n\n\n" + code
+        self.code += code
 
     def build_utils(self):
         TEMPLATE_FILE_PATH: ClassVar[str] = f'common/utils.jinja2'
@@ -71,12 +61,8 @@ class CommonCodeGen():
         TEMPLATE_FILE = f'utils.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render()
-        self.import_list = """
-from fastapi_quick_crud_template.common.http_exception import QueryOperatorNotFound
-from fastapi_quick_crud_template.common.typing import ExtraFieldType, ExtraFieldTypePrefix, process_type_map, \
-    process_map
-    
-"""
+        self.import_list = """from fastapi_quick_crud_template.common.http_exception import QueryOperatorNotFound
+from fastapi_quick_crud_template.common.typing import ExtraFieldType, ExtraFieldTypePrefix, process_type_map, process_map"""
         self.code += "\n\n\n" + code
 
     def build_http_exception(self):
@@ -89,7 +75,7 @@ from fastapi_quick_crud_template.common.typing import ExtraFieldType, ExtraField
         TEMPLATE_FILE = f'http_exception.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render()
-        self.code += "\n\n\n" + code
+        self.code += code
 
     def build_db(self):
         TEMPLATE_FILE_PATH: ClassVar[str] = f'common/db.jinja2'
@@ -101,7 +87,7 @@ from fastapi_quick_crud_template.common.typing import ExtraFieldType, ExtraField
         TEMPLATE_FILE = f'db.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render()
-        self.code += "\n\n\n" + code
+        self.code += code
 
     def build_db_session(self, model_list: dict, is_async: bool, database_url: str, is_in_memory_db: bool):
         TEMPLATE_FILE_PATH: ClassVar[str] = f'common/memory_sql_session.jinja2'
@@ -113,7 +99,7 @@ from fastapi_quick_crud_template.common.typing import ExtraFieldType, ExtraField
         TEMPLATE_FILE = f'memory_sql_session.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render({"model_list": model_list, "is_async": is_async, "database_url": database_url, "is_in_memory_db": is_in_memory_db})
-        self.code += "\n\n\n" + code
+        self.code += code
 
     def build_app(self, model_list):
         TEMPLATE_FILE_PATH: ClassVar[str] = f'common/app.jinja2'
@@ -125,4 +111,4 @@ from fastapi_quick_crud_template.common.typing import ExtraFieldType, ExtraField
         TEMPLATE_FILE = f'app.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render({"model_list": model_list})
-        self.code += "\n\n\n" + code
+        self.code += code
