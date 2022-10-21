@@ -13,26 +13,23 @@ from typing import (Type,
                     Union)
 
 import pydantic
-from fastapi import (Body,
-                     Query)
+from fastapi import (Query)
 from pydantic import (BaseModel,
                       create_model,
                       BaseConfig)
 from pydantic.dataclasses import dataclass as pydantic_dataclass
 from sqlalchemy import UniqueConstraint, Table, Column
-from sqlalchemy import inspect
 from sqlalchemy.orm import DeclarativeMeta
 from sqlalchemy.orm import declarative_base
-from strenum import StrEnum
 
+from src.fastapi_quickcrud_codegen.model.model_builder import ModelCodeGen
 from .exceptions import (SchemaException,
-                                                       ColumnTypeNotSupportedException)
+                         ColumnTypeNotSupportedException)
 from .get_table_name import get_table_name
 from .type import (Ordering,
-                                                 ExtraFieldTypePrefix,
-                                                 ExtraFieldType,
-                                                 SqlType, )
-from src.fastapi_quickcrud_codegen.model.model_builder import ModelCodeGen
+                   ExtraFieldTypePrefix,
+                   ExtraFieldType,
+                   SqlType, )
 
 FOREIGN_PATH_PARAM_KEYWORD = "__pk__"
 BaseModelT = TypeVar('BaseModelT', bound=BaseModel)
@@ -66,6 +63,7 @@ def _add_orm_model_config_into_pydantic_model(pydantic_model, **kwargs) -> BaseM
                         **field_definitions,
                         __config__=config,
                         __validators__=validators)
+
 
 def _model_from_dataclass(kls: DataClassT) -> Type[BaseModel]:
     """ Converts a stdlib dataclass to a pydantic BaseModel. """
@@ -137,8 +135,8 @@ class ApiParameterSchemaBuilder:
             = self._extract_primary()
         self.unique_fields: List[str] = self._extract_unique()
 
-        self.code_gen.build_constant(constants= [("PRIMARY_KEY_NAME", self.primary_key_str),
-                                                 ("UNIQUE_LIST", self.unique_fields)])
+        self.code_gen.build_constant(constants=[("PRIMARY_KEY_NAME", self.primary_key_str),
+                                                ("UNIQUE_LIST", self.unique_fields)])
         self.uuid_type_columns = []
         self.str_type_columns = []
         self.number_type_columns = []
@@ -1099,4 +1097,3 @@ class ApiParameterSchemaBuilder:
                                        fields=response_body_fields,
                                        value_of_list_to_str_columns=self.uuid_type_columns)
         return None, self.class_name + "PostAndRedirectRequestModel", self.class_name + "PostAndRedirectResponseModel"
-

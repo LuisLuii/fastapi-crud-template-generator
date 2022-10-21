@@ -109,7 +109,7 @@ def clean_input_fields(param: Union[dict, list], model: Base):
     if isinstance(param, dict):
         stmt = {}
         for column_name, value in param.items():
-            if column_name == '__initialised__':
+            if '_initialised__' in column_name:
                 continue
             column = getattr(model, column_name)
             actual_column_name = column.expression.key

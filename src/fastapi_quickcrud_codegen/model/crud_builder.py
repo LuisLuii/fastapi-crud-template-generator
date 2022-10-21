@@ -89,3 +89,27 @@ class CrudCodeGen():
             f"{model_name}"]
         ), from_=f"fastapi_quick_crud_template.model.{file_name}")
         self.code += "\n\n" + code
+
+    def build_insert_many_route(self, *, is_async: bool, path: str, file_name, model_name):
+        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/insert_many.jinja2'
+        template_file_path = Path(TEMPLATE_FILE_PATH)
+
+        TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
+        templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
+        templateEnv = jinja2.Environment(loader=templateLoader)
+        TEMPLATE_FILE = f'insert_many.jinja2'
+        template = templateEnv.get_template(TEMPLATE_FILE)
+        code = template.render(
+            {"model_name": model_name, "path": path, "is_async": is_async})
+        self.import_helper.add(import_="IntegrityError", from_="sqlalchemy.exc")
+        self.import_helper.add(import_="parse_obj_as", from_="pydantic")
+        self.import_helper.add(import_="clean_input_fields", from_="fastapi_quick_crud_template.common.utils")
+        self.import_helper.add(import_=set(["UnknownOrderType", "UnknownColumn"]), from_="fastapi_quick_crud_template.common.http_exception")
+        self.import_helper.add(import_=set(["Ordering"]), from_="fastapi_quick_crud_template.common.typing")
+
+        self.import_helper.add(import_=set([
+            f"{model_name}CreateManyItemListResponseModel",
+            f"{model_name}CreateManyItemListRequestModel",
+            f"{model_name}"]
+        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        self.code += "\n\n" + code

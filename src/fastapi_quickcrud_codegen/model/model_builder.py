@@ -16,7 +16,7 @@ class ModelCodeGen():
         self.code = ""
         self.model_code = ""
         self.import_helper = ImportBuilder()
-        self.import_helper.add(import_="dataclass", from_="dataclasses")
+        self.import_helper.add(import_=set(["dataclass", "field"]), from_="dataclasses")
         self.import_helper.add(import_=set(['datetime', 'timedelta', 'date', 'time']), from_="datetime")
         self.import_helper.add(import_=set(['Decimal']), from_="decimal")
         self.import_helper.add(import_=set(['Optional', 'List', 'Union', 'NewType']), from_="typing")
