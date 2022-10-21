@@ -1,12 +1,9 @@
 import inspect
 import sys
 from pathlib import Path
-from textwrap import dedent
 from typing import ClassVar
 
-import importmagic
 import jinja2
-from importmagic import SymbolIndex, Scope
 from sqlalchemy import Table
 
 
@@ -14,9 +11,6 @@ class CommonCodeGen():
     def __init__(self):
         self.code = ""
         self.model_code = ""
-        self.index = SymbolIndex()
-        lib_path: list[str] = [i for i in sys.path if "fastapi_quickcrud_codegen" not in i]
-        self.index.build_index(lib_path)
         self.import_list = ""
 
     # todo add tpye for template_generator

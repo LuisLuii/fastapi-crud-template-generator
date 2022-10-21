@@ -3,7 +3,7 @@ from typing import ClassVar
 
 import jinja2
 
-from fastapi_quickcrud_codegen.generator.crud_template_generator import CrudTemplateGenerator
+from ..generator.crud_template_generator import CrudTemplateGenerator
 
 
 class CrudCodeGen():

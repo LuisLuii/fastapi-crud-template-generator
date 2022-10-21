@@ -26,16 +26,14 @@ from sqlalchemy.orm import DeclarativeMeta
 from sqlalchemy.orm import declarative_base
 from strenum import StrEnum
 
-from fastapi_quickcrud_codegen.generator.model_template_generator import model_template_gen
-from fastapi_quickcrud_codegen.misc.covert_model import convert_table_to_model
-from fastapi_quickcrud_codegen.misc.exceptions import (SchemaException,
+from .exceptions import (SchemaException,
                                                        ColumnTypeNotSupportedException)
-from fastapi_quickcrud_codegen.misc.get_table_name import get_table_name
-from fastapi_quickcrud_codegen.misc.type import (Ordering,
+from .get_table_name import get_table_name
+from .type import (Ordering,
                                                  ExtraFieldTypePrefix,
                                                  ExtraFieldType,
                                                  SqlType, )
-from fastapi_quickcrud_codegen.model.model_builder import ModelCodeGen
+from src.fastapi_quickcrud_codegen.model.model_builder import ModelCodeGen
 
 FOREIGN_PATH_PARAM_KEYWORD = "__pk__"
 BaseModelT = TypeVar('BaseModelT', bound=BaseModel)

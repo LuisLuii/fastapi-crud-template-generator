@@ -5,7 +5,7 @@ import sys
 
 from sqlalchemy import Table
 
-from fastapi_quickcrud_codegen.misc.constant import GENERATION_FOLDER, ROUTE, COMMON
+from ..misc.constant import GENERATION_FOLDER, ROUTE, COMMON
 
 
 class CommonModuleTemplateGenerator:

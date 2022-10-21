@@ -1,15 +1,12 @@
 import inspect
 import sys
 from pathlib import Path
-from textwrap import dedent
 from typing import ClassVar
 
-import importmagic
 import jinja2
-from importmagic import SymbolIndex, Scope
 from sqlalchemy import Table
 
-from fastapi_quickcrud_codegen.generator.model_template_generator import model_template_gen
+from ..generator.model_template_generator import model_template_gen
 
 
 class ModelCodeGen():
@@ -18,9 +15,6 @@ class ModelCodeGen():
         self.table_list = {}
         self.code = ""
         self.model_code = ""
-        self.index = SymbolIndex()
-        lib_path: list[str] = [i for i in sys.path if "FastAPIQuickCRUD" not in i]
-        self.index.build_index(lib_path)
         self.import_list = f"""
 import uuid
 from dataclasses import dataclass
@@ -42,12 +36,6 @@ from fastapi_quick_crud_template.common.typing import ItemComparisonOperators, P
 """
 
     def gen(self):
-        # src = dedent(self.model_code + "\n\n" +self.code)
-        # scope = Scope.from_source(src)
-        #
-        # unresolved, unreferenced = scope.find_unresolved_and_unreferenced_symbols()
-        # python_source = importmagic.update_imports(src, self.index, unresolved, unreferenced)
-        # model_template_gen.add_model(self.file_name, python_source)
         return model_template_gen.add_model(self.file_name, self.import_list + "\n\n" + self.model_code + "\n\n" + self.code)
 
     def gen_model(self, model):
