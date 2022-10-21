@@ -41,10 +41,8 @@ class SampleTable(Base):
     timetz_value = Column(Time(True))
     uuid_value = Column(UUID(as_uuid=True))
     varchar_value = Column(String)
-    # xml_value = Column(NullType)
     array_value = Column(ARRAY(Integer()))
     array_str__value = Column(ARRAY(String()))
-    # box_valaue = Column(NullType)
 
 
 class SampleTableTwo(Base):
@@ -342,10 +340,8 @@ class SampleTable(Base):
     timetz_value = Column(Time(True))
     uuid_value = Column(UUID(as_uuid=True))
     varchar_value = Column(String)
-    # xml_value = Column(NullType)
     array_value = Column(ARRAY(Integer()))
     array_str__value = Column(ARRAY(String()))
-    # box_valaue = Column(NullType)
 
 
 
