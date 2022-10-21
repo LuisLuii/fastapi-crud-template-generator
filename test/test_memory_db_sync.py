@@ -147,7 +147,7 @@ loop.run_until_complete(create_table(engine, SampleTableTwo))
         validate_common_sql_session(common_sql_session_expected)
 
         # model
-        model_test_build_myself_memory_two_expected = '''from dataclasses import dataclass
+        model_test_build_myself_memory_two_expected = '''from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from typing import List, NewType, Optional, Union
@@ -282,7 +282,7 @@ class SampleTableTwoCreateOneResponseModel(BaseModel):
         orm_mode = True'''
         validate_model("test_build_myself_memory_two", model_test_build_myself_memory_two_expected)
 
-        model_test_build_myself_memory_expected = '''from dataclasses import dataclass
+        model_test_build_myself_memory_expected = '''from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from typing import List, NewType, Optional, Union

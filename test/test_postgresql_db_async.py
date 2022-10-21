@@ -146,7 +146,7 @@ async def db_session():
         validate_common_sql_session(common_sql_session_expected)
 
         # model
-        model_test_build_myself_two_expected = '''from dataclasses import dataclass
+        model_test_build_myself_two_expected = '''from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from typing import List, NewType, Optional, Union
@@ -281,7 +281,7 @@ class SampleTableTwoCreateOneResponseModel(BaseModel):
         orm_mode = True'''
         validate_model("test_build_myself_two", model_test_build_myself_two_expected)
 
-        model_test_build_myself_expected = '''from dataclasses import dataclass
+        model_test_build_myself_expected = '''from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta
 from decimal import Decimal
 from typing import List, NewType, Optional, Union
