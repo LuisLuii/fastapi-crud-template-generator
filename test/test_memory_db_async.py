@@ -5,7 +5,7 @@ from sqlalchemy import *
 from sqlalchemy.dialects.sqlite import *
 from sqlalchemy.orm import declarative_base
 
-from fastapi_quickcrud_codegen import crud_router_builder, CrudMethods
+from src.fastapi_quickcrud_codegen import crud_router_builder, CrudMethods
 from test.misc.common import *
 
 Base = declarative_base()
