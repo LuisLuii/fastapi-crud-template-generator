@@ -100,7 +100,7 @@ def crud_router_builder(
 
         if not crud_methods:
             crud_methods = CrudMethods.get_declarative_model_full_crud_method()
-        print(f"\t\tfollowing api method will be generated: {crud_methods=} ")
+        print(f"\t\tfollowing api method will be generated: crud_methods:{crud_methods} ")
 
         # model generation
         print(f"\t\tGenerating model for API")
