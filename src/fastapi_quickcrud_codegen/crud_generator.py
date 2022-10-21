@@ -12,7 +12,7 @@ from .generator.crud_template_generator import CrudTemplateGenerator
 from .misc.crud_model import CRUDModel
 from .misc.get_table_name import get_table_name
 from .misc.type import CrudMethods, SqlType
-from .misc.utils import convert_table_to_model
+from .misc.utils import is_table
 from .model.common_builder import CommonCodeGen
 from .model.crud_builder import CrudCodeGen
 
@@ -81,8 +81,8 @@ def crud_router_builder(
         prefix = db_model_info["prefix"]
         tags = db_model_info["tags"]
         print(f"\n\t\tGenerating db_model:{db_model} prefix:{prefix} tags:{tags}")
-        db_model, NO_PRIMARY_KEY = convert_table_to_model(db_model)
-        if NO_PRIMARY_KEY:
+        this_modeL_is_table = is_table(db_model)
+        if this_modeL_is_table:
             raise RuntimeError("only support declarative from Sqlalchemy, you can try to give the table a fake pk"
                                " to work around")
         table_name = db_model.__name__

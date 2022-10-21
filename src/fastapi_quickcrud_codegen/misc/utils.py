@@ -7,9 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.elements import \
     or_, \
     BinaryExpression
-from sqlalchemy.sql.schema import Table
 
-from .covert_model import convert_table_to_model
 from .crud_model import CRUDModel
 from .exceptions import QueryOperatorNotFound, PrimaryMissing, UnknownColumn
 from .schema_builder import ApiParameterSchemaBuilder
@@ -34,11 +32,18 @@ __all__ = [
     'Base',
     'clean_input_fields',
     'group_find_many_join',
-    'convert_table_to_model']
+    'is_table']
 
 unsupported_data_types = ["BLOB"]
 partial_supported_data_types = ["INTERVAL", "JSON", "JSONB"]
 
+from sqlalchemy.sql.schema import Table
+
+
+def is_table(db_model):
+    if isinstance(db_model, Table):
+        return True
+    return False
 
 def clean_input_fields(param: Union[dict, list], model: Base):
     assert isinstance(param, dict) or isinstance(param, list) or isinstance(param, set)
@@ -106,7 +111,6 @@ def sqlalchemy_to_pydantic(
         constraints=None,
         # foreign_include: Optional[any] = None,
         ) -> CRUDModel:
-    db_model, _ = convert_table_to_model(db_model)
     if exclude_columns is None:
         exclude_columns = []
     # if foreign_include is None:

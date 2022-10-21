@@ -21,23 +21,6 @@ class CommonCodeGen():
             template_generator_method(self.code)
 
 
-    def gen_model(self, model):
-        if isinstance(model, Table):
-            raise TypeError("not support table yet")
-        model_code = inspect.getsource(model)
-        self.model_code += "\n\n\n" + model_code
-
-    def build_api_route(self):
-        TEMPLATE_FILE_PATH: ClassVar[str] = f'common/api_route.jinja2'
-        template_file_path = Path(TEMPLATE_FILE_PATH)
-
-        TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
-        templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
-        templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = f'api_route.jinja2'
-        template = templateEnv.get_template(TEMPLATE_FILE)
-        code = template.render()
-        self.code += "\n\n\n" + code
 
     def build_type(self):
         TEMPLATE_FILE_PATH: ClassVar[str] = f'common/typing.jinja2'
