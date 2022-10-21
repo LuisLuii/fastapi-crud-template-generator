@@ -80,7 +80,7 @@ def crud_router_builder(
         db_model = db_model_info["db_model"]
         prefix = db_model_info["prefix"]
         tags = db_model_info["tags"]
-        print(f"\n\t\tGenerating {db_model=} {prefix=} {tags=}")
+        print(f"\n\t\tGenerating db_model:{db_model} prefix:{prefix} tags:{tags}")
         db_model, NO_PRIMARY_KEY = convert_table_to_model(db_model)
         if NO_PRIMARY_KEY:
             raise RuntimeError("only support declarative from Sqlalchemy, you can try to give the table a fake pk"
