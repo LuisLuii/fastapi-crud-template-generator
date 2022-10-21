@@ -294,20 +294,24 @@ process_map = {
 
     PGSQLMatchingPatternInString.does_not_match_regex_with_case_insensitive:
         lambda field, values: or_(field.op("!~*")(value) for value in values)
-}"""
+}
+
+
+class Ordering(StrEnum):
+    DESC = auto()
+    ASC = auto()"""
     validate_common_typing(common_typing_expected)
     #   utils
-    common_utils_expected = """from fastapi_quick_crud_template.common.http_exception import QueryOperatorNotFound
-from fastapi_quick_crud_template.common.typing import ExtraFieldType, ExtraFieldTypePrefix, process_type_map, process_map
-
-
-from typing import TypeVar, List, Union
+    common_utils_expected = """from typing import TypeVar, List, Union
 from copy import deepcopy
 
 from sqlalchemy import or_
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql.elements import BinaryExpression
 from pydantic import BaseModel
+
+from fastapi_quick_crud_template.common.http_exception import QueryOperatorNotFound, UnknownColumn
+from fastapi_quick_crud_template.common.typing import ExtraFieldType, ExtraFieldTypePrefix, process_map, process_type_map
 
 
 Base = TypeVar("Base", bound=declarative_base)
@@ -404,7 +408,28 @@ class ExcludeUnsetBaseModel(BaseModel):
         if kwargs and kwargs.get("exclude_none") is not None:
             kwargs["exclude_unset"] = True
             return BaseModel.dict(self, *args, **kwargs)
-"""
+
+def clean_input_fields(param: Union[dict, list], model: Base):
+    assert isinstance(param, dict) or isinstance(param, list) or isinstance(param, set)
+
+    if isinstance(param, dict):
+        stmt = {}
+        for column_name, value in param.items():
+            if column_name == '__initialised__':
+                continue
+            column = getattr(model, column_name)
+            actual_column_name = column.expression.key
+            stmt[actual_column_name] = value
+        return stmt
+    if isinstance(param, list) or isinstance(param, set):
+        stmt = []
+        for column_name in param:
+            if not hasattr(model, column_name):
+                raise UnknownColumn(f'column {column_name} is not exited')
+            column = getattr(model, column_name)
+            actual_column_name = column.expression.key
+            stmt.append(actual_column_name)
+        return stmt"""
     validate_common_utils(common_utils_expected)
 
     # model

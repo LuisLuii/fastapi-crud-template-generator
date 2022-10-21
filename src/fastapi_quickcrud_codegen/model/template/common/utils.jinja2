@@ -6,6 +6,7 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql.elements import BinaryExpression
 from pydantic import BaseModel
 
+{{ import }}
 
 Base = TypeVar("Base", bound=declarative_base)
 
@@ -102,3 +103,24 @@ class ExcludeUnsetBaseModel(BaseModel):
             kwargs["exclude_unset"] = True
             return BaseModel.dict(self, *args, **kwargs)
 
+def clean_input_fields(param: Union[dict, list], model: Base):
+    assert isinstance(param, dict) or isinstance(param, list) or isinstance(param, set)
+
+    if isinstance(param, dict):
+        stmt = {}
+        for column_name, value in param.items():
+            if column_name == '__initialised__':
+                continue
+            column = getattr(model, column_name)
+            actual_column_name = column.expression.key
+            stmt[actual_column_name] = value
+        return stmt
+    if isinstance(param, list) or isinstance(param, set):
+        stmt = []
+        for column_name in param:
+            if not hasattr(model, column_name):
+                raise UnknownColumn(f'column {column_name} is not exited')
+            column = getattr(model, column_name)
+            actual_column_name = column.expression.key
+            stmt.append(actual_column_name)
+        return stmt

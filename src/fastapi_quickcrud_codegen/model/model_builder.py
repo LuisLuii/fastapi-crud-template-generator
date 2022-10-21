@@ -1,5 +1,4 @@
 import inspect
-import sys
 from pathlib import Path
 from typing import ClassVar
 
@@ -7,6 +6,7 @@ import jinja2
 from sqlalchemy import Table
 
 from ..generator.model_template_generator import model_template_gen
+from ..utils.import_builder import ImportBuilder
 
 
 class ModelCodeGen():
@@ -15,27 +15,24 @@ class ModelCodeGen():
         self.table_list = {}
         self.code = ""
         self.model_code = ""
-        self.import_list = f"""import uuid
-from dataclasses import dataclass
-from datetime import datetime, timedelta, date, time
-from decimal import Decimal
-from typing import Optional, List, Union, NewType
-
-import pydantic
-from pydantic import BaseModel
-
-from fastapi import Query, Body
-from sqlalchemy import *
-from sqlalchemy.dialects.{db_type} import *
-
-from fastapi_quick_crud_template.common.utils import value_of_list_to_str, ExcludeUnsetBaseModel, filter_none
-from fastapi_quick_crud_template.common.db import Base
-from fastapi_quick_crud_template.common.typing import ItemComparisonOperators, PGSQLMatchingPatternInString, \
-    ExtraFieldTypePrefix, RangeToComparisonOperators, MatchingPatternInStringBase, RangeFromComparisonOperators
-"""
+        self.import_helper = ImportBuilder()
+        self.import_helper.add(import_="dataclass", from_="dataclasses")
+        self.import_helper.add(import_=set(['datetime', 'timedelta', 'date', 'time']), from_="datetime")
+        self.import_helper.add(import_=set(['Decimal']), from_="decimal")
+        self.import_helper.add(import_=set(['Optional', 'List', 'Union', 'NewType']), from_="typing")
+        self.import_helper.add(import_=set(['pydantic']))
+        self.import_helper.add(import_=set(['BaseModel']), from_="pydantic")
+        self.import_helper.add(import_=set(['Query', 'Body']), from_="fastapi")
+        self.import_helper.add(import_=set(['*']), from_="sqlalchemy")
+        self.import_helper.add(import_=set(['*']), from_=f"sqlalchemy.dialects.{db_type}")
+        self.import_helper.add(import_=set(['value_of_list_to_str', 'ExcludeUnsetBaseModel', 'filter_none']), from_=f"fastapi_quick_crud_template.common.utils")
+        self.import_helper.add(import_=set(['Base']), from_=f"fastapi_quick_crud_template.common.db")
+        self.import_helper.add(import_=set(['ItemComparisonOperators', 'PGSQLMatchingPatternInString',
+    'ExtraFieldTypePrefix', 'RangeToComparisonOperators', 'MatchingPatternInStringBase', 'RangeFromComparisonOperators']), from_=f"fastapi_quick_crud_template.common.typing")
+        self.import_helper.add(import_="uuid")
 
     def gen(self):
-        return model_template_gen.add_model(self.file_name, self.import_list + "\n\n" + self.model_code + "\n\n" + self.code)
+        return model_template_gen.add_model(self.file_name, self.import_helper.to_code() + "\n\n" + self.model_code + "\n\n" + self.code)
 
     def gen_model(self, model):
         if isinstance(model, Table):

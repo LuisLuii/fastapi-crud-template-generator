@@ -1,32 +1,27 @@
 from pathlib import Path
-from typing import ClassVar
+from typing import ClassVar, Union
 
 import jinja2
 
 from ..generator.crud_template_generator import CrudTemplateGenerator
+from ..utils.import_builder import ImportBuilder
 
 
 class CrudCodeGen():
     def __init__(self, tags, prefix):
         self.code = "\n\n\n" + "api = APIRouter(tags=" + str(tags) + ',' + "prefix=" + '"' + prefix + '")' + "\n\n"
-        # self.index = SymbolIndex()
-        # lib_path: list[str] = [i for i in sys.path if "FastAPIQuickCRUD" not in i]
-        # self.index.build_index(lib_path)
-        self.import_list = f"""import copy
-from http import HTTPStatus
-from typing import List, Union
-from os import path
+        self.import_helper = ImportBuilder()
+        self.import_helper.add(import_="HTTPStatus", from_="http")
+        self.import_helper.add(import_=set(["List", "Union"]), from_="typing")
+        self.import_helper.add(import_=set(["and_", "select"]), from_="sqlalchemy")
+        self.import_helper.add(import_=set(["Depends", "Response", "APIRouter"]), from_="fastapi")
+        self.import_helper.add(import_=set(["BinaryExpression"]), from_="sqlalchemy.sql.elements")
+        self.import_helper.add(import_=set(["find_query_builder"]), from_="fastapi_quick_crud_template.common.utils")
+        self.import_helper.add(import_=set(["db_session"]), from_="fastapi_quick_crud_template.common.sql_session")
 
-from sqlalchemy import and_, select
-from fastapi import Depends, Response, APIRouter
-from sqlalchemy.sql.elements import BinaryExpression
-
-from fastapi_quick_crud_template.common.utils import find_query_builder
-from fastapi_quick_crud_template.common.sql_session import db_session
-        """
 
     def gen(self, *, template_generator: CrudTemplateGenerator, file_name: str):
-        template_generator.add_route(file_name, self.import_list + "\n\n" + self.code)
+        template_generator.add_route(file_name, self.import_helper.to_code() + self.code)
 
     def build_find_one_route(self, *, is_async: bool, path: str, file_name, model_name):
         TEMPLATE_FILE_PATH: ClassVar[str] = f'route/find_one.jinja2'
@@ -39,14 +34,13 @@ from fastapi_quick_crud_template.common.sql_session import db_session
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
             {"model_name": model_name, "path": path, "is_async": is_async})
-
-        self.import_list += "\n" + f"""
-from fastapi_quick_crud_template.model.{file_name} import ( {model_name}FindOneResponseModel, 
-                                                            {model_name}FindOneRequestBodyModel, 
-                                                            {model_name}PrimaryKeyModel,
-                                                            {model_name})
-        """
-        self.code += "\n\n\n" + code
+        self.import_helper.add(import_=set([
+            f"{model_name}FindOneResponseModel",
+            f"{model_name}FindOneRequestBodyModel",
+            f"{model_name}PrimaryKeyModel",
+            f"{model_name}"]
+        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        self.code += "\n\n" + code
 
     def build_find_many_route(self, *, is_async: bool, path: str, file_name, model_name):
         TEMPLATE_FILE_PATH: ClassVar[str] = f'route/find_many.jinja2'
@@ -59,17 +53,18 @@ from fastapi_quick_crud_template.model.{file_name} import ( {model_name}FindOneR
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
             {"model_name": model_name, "path": path, "is_async": is_async})
-        self.import_list += "\n" + f"""
-from pydantic import parse_obj_as
 
-from fastapi_quick_crud_template.common.http_exception import UnknownOrderType, UnknownColumn
-from fastapi_quickcrud_codegen.misc.type import Ordering
-from fastapi_quick_crud_template.model.{file_name} import ( {model_name}FindManyResponseModel, 
-                                                            {model_name}FindManyRequestBodyModel, 
-                                                            {model_name}FindManyResponseRootModel, 
-                                                            {model_name})
-            """
-        self.code += "\n\n\n" + code
+        self.import_helper.add(import_=set([
+            f"{model_name}FindManyResponseModel",
+            f"{model_name}FindManyRequestBodyModel",
+            f"{model_name}FindManyResponseRootModel",
+            f"{model_name}"]
+        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        self.import_helper.add(import_="parse_obj_as", from_="pydantic")
+        self.import_helper.add(import_=set(["UnknownOrderType", "UnknownColumn"]), from_="fastapi_quick_crud_template.common.http_exception")
+        self.import_helper.add(import_=set(["Ordering"]), from_="fastapi_quick_crud_template.common.typing")
+
+        self.code += "\n\n" + code
 
     def build_insert_one_route(self, *, is_async: bool, path: str, file_name, model_name):
         TEMPLATE_FILE_PATH: ClassVar[str] = f'route/insert_one.jinja2'
@@ -82,16 +77,15 @@ from fastapi_quick_crud_template.model.{file_name} import ( {model_name}FindMany
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
             {"model_name": model_name, "path": path, "is_async": is_async})
-        self.import_list += "\n" + f"""
-from sqlalchemy.exc import IntegrityError
+        self.import_helper.add(import_="IntegrityError", from_="sqlalchemy.exc")
+        self.import_helper.add(import_="parse_obj_as", from_="pydantic")
+        self.import_helper.add(import_="clean_input_fields", from_="fastapi_quick_crud_template.common.utils")
+        self.import_helper.add(import_=set(["UnknownOrderType", "UnknownColumn"]), from_="fastapi_quick_crud_template.common.http_exception")
+        self.import_helper.add(import_=set(["Ordering"]), from_="fastapi_quick_crud_template.common.typing")
 
-from pydantic import parse_obj_as
-
-from fastapi_quickcrud_codegen.misc.utils import clean_input_fields
-from fastapi_quick_crud_template.common.http_exception import UnknownOrderType, UnknownColumn
-from fastapi_quickcrud_codegen.misc.type import Ordering
-from fastapi_quick_crud_template.model.{file_name} import ( {model_name}CreateOneResponseModel, 
-                                                            {model_name}CreateOneRequestBodyModel, 
-                                                            {model_name})
-        """
-        self.code += "\n\n\n" + code
+        self.import_helper.add(import_=set([
+            f"{model_name}CreateOneResponseModel",
+            f"{model_name}CreateOneRequestBodyModel",
+            f"{model_name}"]
+        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        self.code += "\n\n" + code

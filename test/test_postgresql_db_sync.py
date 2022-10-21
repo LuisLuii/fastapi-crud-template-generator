@@ -151,22 +151,18 @@ def db_session() -> Generator:
         validate_common_sql_session(common_sql_session_expected)
 
         # model
-        model_test_build_myself_two_expected = '''import uuid
-from dataclasses import dataclass
-from datetime import datetime, timedelta, date, time
+        model_test_build_myself_two_expected = '''from dataclasses import dataclass
+from datetime import date, datetime, time, timedelta
 from decimal import Decimal
-from typing import Optional, List, Union, NewType
-
-import pydantic
+from typing import List, NewType, Optional, Union
+import pydantic, uuid
 from pydantic import BaseModel
-
-from fastapi import Query, Body
+from fastapi import Body, Query
 from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import *
-
-from fastapi_quick_crud_template.common.utils import value_of_list_to_str, ExcludeUnsetBaseModel, filter_none
+from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filter_none, value_of_list_to_str
 from fastapi_quick_crud_template.common.db import Base
-from fastapi_quick_crud_template.common.typing import ItemComparisonOperators, PGSQLMatchingPatternInString,     ExtraFieldTypePrefix, RangeToComparisonOperators, MatchingPatternInStringBase, RangeFromComparisonOperators
+from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
 
 
@@ -290,22 +286,18 @@ class SampleTableTwoCreateOneResponseModel(BaseModel):
         orm_mode = True'''
         validate_model("test_build_myself_two", model_test_build_myself_two_expected)
 
-        model_test_build_myself_expected = '''import uuid
-from dataclasses import dataclass
-from datetime import datetime, timedelta, date, time
+        model_test_build_myself_expected = '''from dataclasses import dataclass
+from datetime import date, datetime, time, timedelta
 from decimal import Decimal
-from typing import Optional, List, Union, NewType
-
-import pydantic
+from typing import List, NewType, Optional, Union
+import pydantic, uuid
 from pydantic import BaseModel
-
-from fastapi import Query, Body
+from fastapi import Body, Query
 from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import *
-
-from fastapi_quick_crud_template.common.utils import value_of_list_to_str, ExcludeUnsetBaseModel, filter_none
+from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filter_none, value_of_list_to_str
 from fastapi_quick_crud_template.common.db import Base
-from fastapi_quick_crud_template.common.typing import ItemComparisonOperators, PGSQLMatchingPatternInString,     ExtraFieldTypePrefix, RangeToComparisonOperators, MatchingPatternInStringBase, RangeFromComparisonOperators
+from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
 
 
@@ -698,52 +690,22 @@ class SampleTableCreateOneResponseModel(BaseModel):
         validate_model("test_build_myself", model_test_build_myself_expected)
 
         # route
-        route_test_build_myself_two_expected = '''import copy
-from http import HTTPStatus
+        route_test_build_myself_two_expected = '''from http import HTTPStatus
 from typing import List, Union
-from os import path
-
 from sqlalchemy import and_, select
-from fastapi import Depends, Response, APIRouter
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
-
-from fastapi_quick_crud_template.common.utils import find_query_builder
+from fastapi_quick_crud_template.common.utils import clean_input_fields, find_query_builder
 from fastapi_quick_crud_template.common.sql_session import db_session
-        
-
-from fastapi_quick_crud_template.model.test_build_myself_two import ( SampleTableTwoFindOneResponseModel, 
-                                                            SampleTableTwoFindOneRequestBodyModel, 
-                                                            SampleTableTwoPrimaryKeyModel,
-                                                            SampleTableTwo)
-        
-
+from fastapi_quick_crud_template.model.test_build_myself_two import SampleTableTwo, SampleTableTwoCreateOneRequestBodyModel, SampleTableTwoCreateOneResponseModel, SampleTableTwoFindManyRequestBodyModel, SampleTableTwoFindManyResponseModel, SampleTableTwoFindManyResponseRootModel, SampleTableTwoFindOneRequestBodyModel, SampleTableTwoFindOneResponseModel, SampleTableTwoPrimaryKeyModel
 from pydantic import parse_obj_as
-
-from fastapi_quick_crud_template.common.http_exception import UnknownOrderType, UnknownColumn
-from fastapi_quickcrud_codegen.misc.type import Ordering
-from fastapi_quick_crud_template.model.test_build_myself_two import ( SampleTableTwoFindManyResponseModel, 
-                                                            SampleTableTwoFindManyRequestBodyModel, 
-                                                            SampleTableTwoFindManyResponseRootModel, 
-                                                            SampleTableTwo)
-            
-
+from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
+from fastapi_quick_crud_template.common.typing import Ordering
 from sqlalchemy.exc import IntegrityError
-
-from pydantic import parse_obj_as
-
-from fastapi_quickcrud_codegen.misc.utils import clean_input_fields
-from fastapi_quick_crud_template.common.http_exception import UnknownOrderType, UnknownColumn
-from fastapi_quickcrud_codegen.misc.type import Ordering
-from fastapi_quick_crud_template.model.test_build_myself_two import ( SampleTableTwoCreateOneResponseModel, 
-                                                            SampleTableTwoCreateOneRequestBodyModel, 
-                                                            SampleTableTwo)
-        
-
 
 
 
 api = APIRouter(tags=['sample api'],prefix="/my_second_api")
-
 
 
 
@@ -774,7 +736,6 @@ def get_one_by_primary_key(response: Response,
     response.headers["x-total-count"] = str(1)
     session.commit()
     return response_data
-
 
 
 @api.get("", status_code=200, response_model=SampleTableTwoFindManyResponseRootModel)
@@ -831,7 +792,6 @@ def get_many(response: Response,
     session.commit()
     return response_data
 
-
 @api.post("", status_code=201, response_model=SampleTableTwoCreateOneResponseModel)
 def insert_one(response: Response,
                            request_body=Depends(SampleTableTwoCreateOneRequestBodyModel),
@@ -861,52 +821,22 @@ def insert_one(response: Response,
     session.commit()
     return result'''
         validate_route("test_build_myself_two", route_test_build_myself_two_expected)
-        route_test_build_myself_expected = '''import copy
-from http import HTTPStatus
+        route_test_build_myself_expected = '''from http import HTTPStatus
 from typing import List, Union
-from os import path
-
 from sqlalchemy import and_, select
-from fastapi import Depends, Response, APIRouter
+from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
-
-from fastapi_quick_crud_template.common.utils import find_query_builder
+from fastapi_quick_crud_template.common.utils import clean_input_fields, find_query_builder
 from fastapi_quick_crud_template.common.sql_session import db_session
-        
-
-from fastapi_quick_crud_template.model.test_build_myself import ( SampleTableFindOneResponseModel, 
-                                                            SampleTableFindOneRequestBodyModel, 
-                                                            SampleTablePrimaryKeyModel,
-                                                            SampleTable)
-        
-
+from fastapi_quick_crud_template.model.test_build_myself import SampleTable, SampleTableCreateOneRequestBodyModel, SampleTableCreateOneResponseModel, SampleTableFindManyRequestBodyModel, SampleTableFindManyResponseModel, SampleTableFindManyResponseRootModel, SampleTableFindOneRequestBodyModel, SampleTableFindOneResponseModel, SampleTablePrimaryKeyModel
 from pydantic import parse_obj_as
-
-from fastapi_quick_crud_template.common.http_exception import UnknownOrderType, UnknownColumn
-from fastapi_quickcrud_codegen.misc.type import Ordering
-from fastapi_quick_crud_template.model.test_build_myself import ( SampleTableFindManyResponseModel, 
-                                                            SampleTableFindManyRequestBodyModel, 
-                                                            SampleTableFindManyResponseRootModel, 
-                                                            SampleTable)
-            
-
+from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
+from fastapi_quick_crud_template.common.typing import Ordering
 from sqlalchemy.exc import IntegrityError
-
-from pydantic import parse_obj_as
-
-from fastapi_quickcrud_codegen.misc.utils import clean_input_fields
-from fastapi_quick_crud_template.common.http_exception import UnknownOrderType, UnknownColumn
-from fastapi_quickcrud_codegen.misc.type import Ordering
-from fastapi_quick_crud_template.model.test_build_myself import ( SampleTableCreateOneResponseModel, 
-                                                            SampleTableCreateOneRequestBodyModel, 
-                                                            SampleTable)
-        
-
 
 
 
 api = APIRouter(tags=['sample api'],prefix="/my_first_api")
-
 
 
 
@@ -937,7 +867,6 @@ def get_one_by_primary_key(response: Response,
     response.headers["x-total-count"] = str(1)
     session.commit()
     return response_data
-
 
 
 @api.get("", status_code=200, response_model=SampleTableFindManyResponseRootModel)
@@ -993,7 +922,6 @@ def get_many(response: Response,
     response.headers["x-total-count"] = str(len(response_data_list))
     session.commit()
     return response_data
-
 
 @api.post("", status_code=201, response_model=SampleTableCreateOneResponseModel)
 def insert_one(response: Response,

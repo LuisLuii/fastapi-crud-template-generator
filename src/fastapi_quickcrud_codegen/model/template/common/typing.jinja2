@@ -152,3 +152,8 @@ process_map = {
     PGSQLMatchingPatternInString.does_not_match_regex_with_case_insensitive:
         lambda field, values: or_(field.op("!~*")(value) for value in values)
 }
+
+
+class Ordering(StrEnum):
+    DESC = auto()
+    ASC = auto()

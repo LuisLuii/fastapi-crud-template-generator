@@ -1,10 +1,9 @@
-import inspect
-import sys
 from pathlib import Path
 from typing import ClassVar
 
 import jinja2
-from sqlalchemy import Table
+
+from ..utils.import_builder import ImportBuilder
 
 
 class CommonCodeGen():
@@ -12,15 +11,11 @@ class CommonCodeGen():
         self.code = ""
         self.model_code = ""
         self.import_list = ""
+        self.import_helper = ImportBuilder()
 
     # todo add tpye for template_generator
     def gen(self, template_generator_method):
-        if self.import_list:
-            template_generator_method( self.import_list + self.code)
-        else:
-            template_generator_method(self.code)
-
-
+        template_generator_method(self.code)
 
     def build_type(self):
         TEMPLATE_FILE_PATH: ClassVar[str] = f'common/typing.jinja2'
@@ -43,10 +38,15 @@ class CommonCodeGen():
         templateEnv = jinja2.Environment(loader=templateLoader)
         TEMPLATE_FILE = f'utils.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
-        code = template.render()
-        self.import_list = """from fastapi_quick_crud_template.common.http_exception import QueryOperatorNotFound
-from fastapi_quick_crud_template.common.typing import ExtraFieldType, ExtraFieldTypePrefix, process_type_map, process_map"""
-        self.code += "\n\n\n" + code
+        self.import_helper.add(import_=set(["QueryOperatorNotFound", "UnknownColumn"]),
+                               from_="fastapi_quick_crud_template.common.http_exception")
+        self.import_helper.add(
+            import_=set(["ExtraFieldType", "ExtraFieldTypePrefix", "process_type_map", "process_map"]),
+            from_="fastapi_quick_crud_template.common.typing")
+
+        code = template.render({"import": self.import_helper.to_code()})
+
+        self.code += code
 
     def build_http_exception(self):
         TEMPLATE_FILE_PATH: ClassVar[str] = f'common/http_exception.jinja2'
@@ -81,7 +81,8 @@ from fastapi_quick_crud_template.common.typing import ExtraFieldType, ExtraField
         templateEnv = jinja2.Environment(loader=templateLoader)
         TEMPLATE_FILE = f'memory_sql_session.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
-        code = template.render({"model_list": model_list, "is_async": is_async, "database_url": database_url, "is_in_memory_db": is_in_memory_db})
+        code = template.render({"model_list": model_list, "is_async": is_async, "database_url": database_url,
+                                "is_in_memory_db": is_in_memory_db})
         self.code += code
 
     def build_app(self, model_list):
