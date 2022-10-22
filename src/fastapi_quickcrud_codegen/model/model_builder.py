@@ -91,22 +91,6 @@ class ModelCodeGen():
                                 "filter_none": filter_none})
         self.code += "\n\n\n" + code
 
-    def build_enum(self, *, class_name, fields, description=None):
-        if class_name in self.table_list:
-            return self.table_list[class_name]
-        TEMPLATE_FILE_PATH: ClassVar[str] = ''
-        template_file_path = Path(TEMPLATE_FILE_PATH)
-        BASE_CLASS: ClassVar[str] = 'pydantic.BaseModel'
-
-        TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
-        templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
-        templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = "Enum.jinja2"
-        template = templateEnv.get_template(TEMPLATE_FILE)
-        code = template.render({"class_name": class_name, "fields": fields, "description": description})
-        self.table_list[class_name] = code
-        self.code += "\n\n\n" + code
-
     def build_constant(self, *, constants):
         TEMPLATE_FILE_PATH: ClassVar[str] = ''
         template_file_path = Path(TEMPLATE_FILE_PATH)
