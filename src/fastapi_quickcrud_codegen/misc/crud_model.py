@@ -3,7 +3,6 @@ from typing import (Optional,
                     List)
 
 from pydantic import BaseModel
-from pydantic.main import ModelMetaclass
 
 from .exceptions import (RequestMissing,
                          InvalidRequestMethod)

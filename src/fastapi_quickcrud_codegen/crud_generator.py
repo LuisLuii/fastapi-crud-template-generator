@@ -6,13 +6,13 @@ import sqlalchemy
 from pydantic import \
     BaseModel
 
-from . import sqlalchemy_to_pydantic
+from .utils.sqlalchemy_to_pydantic import sqlalchemy_to_pydantic
 from .generator.common_module_template_generator import CommonModuleTemplateGenerator
 from .generator.crud_template_generator import CrudTemplateGenerator
 from .misc.crud_model import CRUDModel
 from .misc.get_table_name import get_table_name
 from .misc.type import CrudMethods, SqlType
-from .misc.utils import is_table
+from .utils.is_table import is_table
 from .model.common_builder import CommonCodeGen
 from .model.crud_builder import CrudCodeGen
 

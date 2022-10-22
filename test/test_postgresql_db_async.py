@@ -269,6 +269,11 @@ class SampleTableTwoFindManyResponseRootModel(ExcludeUnsetBaseModel):
 class SampleTableTwoCreateOneRequestBodyModel:
     primary_key: int = Body(None, description=None)
     bool_value: bool = Body(False, description=None)
+    def __post_init__(self):
+        """
+        auto gen by FastApi quick CRUD
+        """
+        filter_none(self)
 
 
 class SampleTableTwoCreateOneResponseModel(BaseModel):
@@ -652,6 +657,7 @@ class SampleTableCreateOneRequestBodyModel:
         auto gen by FastApi quick CRUD
         """
         value_of_list_to_str(self, ['uuid_value'])
+        filter_none(self)
 
 
 class SampleTableCreateOneResponseModel(BaseModel):

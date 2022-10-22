@@ -1,9 +1,5 @@
-import inspect
 import os
-import shutil
 import sys
-
-from sqlalchemy import Table
 
 from ..misc.constant import GENERATION_FOLDER, ROUTE, COMMON
 

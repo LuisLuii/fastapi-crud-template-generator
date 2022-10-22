@@ -5,9 +5,6 @@ class ImportBuilder():
     def __init__(self):
         self.import_list = {}
 
-    def __len__(self):
-        return len(self.import_list)
-
     def add(self, *, import_: Union[set, str], from_: str = None):
         if isinstance(import_, str):
             import_ = set([import_])

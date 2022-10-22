@@ -22,14 +22,14 @@ from sqlalchemy import UniqueConstraint, Table, Column
 from sqlalchemy.orm import DeclarativeMeta
 from sqlalchemy.orm import declarative_base
 
-from src.fastapi_quickcrud_codegen.model.model_builder import ModelCodeGen
-from .exceptions import (SchemaException,
-                         ColumnTypeNotSupportedException)
-from .get_table_name import get_table_name
-from .type import (Ordering,
-                   ExtraFieldTypePrefix,
-                   ExtraFieldType,
-                   SqlType, )
+from ..misc.exceptions import (SchemaException,
+                               ColumnTypeNotSupportedException)
+from ..misc.get_table_name import get_table_name
+from ..misc.type import (Ordering,
+                         ExtraFieldTypePrefix,
+                         ExtraFieldType,
+                         SqlType, )
+from ..model.model_builder import ModelCodeGen
 
 FOREIGN_PATH_PARAM_KEYWORD = "__pk__"
 BaseModelT = TypeVar('BaseModelT', bound=BaseModel)
@@ -629,7 +629,6 @@ class ApiParameterSchemaBuilder:
         return None, self.class_name + "UpsertManyItemListRequestBodyModel", self.class_name + "UpsertManyItemListResponseModel"
 
     def create_one(self) -> Tuple:
-        request_validation = [lambda self_object: _filter_none(self_object)]
         request_fields = []
         response_fields = []
 
@@ -643,14 +642,11 @@ class ApiParameterSchemaBuilder:
                                     i['column_type'],
                                     f'Body({i["column_default"]}, description={i["column_description"]})'))
 
-        # Ready the uuid to str validator
-        if self.uuid_type_columns:
-            request_validation.append(lambda self_object: self._value_of_list_to_str(self_object,
-                                                                                     self.uuid_type_columns))
-
         self.code_gen.build_dataclass(class_name=self.class_name + "CreateOneRequestBodyModel",
                                       fields=request_fields,
-                                      value_of_list_to_str_columns=self.uuid_type_columns)
+                                      value_of_list_to_str_columns=self.uuid_type_columns,
+                                      filter_none=True)
+
         self.code_gen.build_base_model(class_name=self.class_name + "CreateOneResponseModel",
                                        fields=response_fields)
 
@@ -666,21 +662,19 @@ class ApiParameterSchemaBuilder:
                                   i['column_type'],
                                   f'field(default=Body({i["column_default"]}, description={i["column_description"]}))'))
 
-            if i["column_default"] == "None":
-                i["column_default"] = "..."
             response_fields.append((i['column_name'],
                                     i['column_type'],
                                     f'Body({i["column_default"]}, description={i["column_description"]})'))
 
         self.code_gen.build_dataclass(class_name=self.class_name + "CreateManyItemRequestModel",
-                                      fields=insert_fields,
-                                      value_of_list_to_str_columns=self.uuid_type_columns,
-                                      filter_none=True)
+                                      fields=insert_fields)
 
         insert_list_field = [('insert', f"List[{self.class_name + 'CreateManyItemRequestModel'}]", "Body(...)")]
 
         self.code_gen.build_dataclass(class_name=self.class_name + "CreateManyItemListRequestModel",
-                                      fields=insert_list_field)
+                                      fields=insert_list_field,
+                                      value_of_list_to_str_columns=self.uuid_type_columns,
+                                      filter_none=True)
 
         self.code_gen.build_base_model(class_name=self.class_name + "CreateManyItemResponseModel",
                                        fields=response_fields,

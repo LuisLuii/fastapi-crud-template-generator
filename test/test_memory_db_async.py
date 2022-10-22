@@ -269,6 +269,11 @@ class SampleTableTwoFindManyResponseRootModel(ExcludeUnsetBaseModel):
 class SampleTableTwoCreateOneRequestBodyModel:
     primary_key: int = Body(None, description=None)
     bool_value: bool = Body(False, description=None)
+    def __post_init__(self):
+        """
+        auto gen by FastApi quick CRUD
+        """
+        filter_none(self)
 
 
 class SampleTableTwoCreateOneResponseModel(BaseModel):
@@ -600,6 +605,11 @@ class SampleTableCreateOneRequestBodyModel:
     timestamptz_value: datetime = Body(None, description=None)
     timetz_value: time = Body(None, description=None)
     varchar_value: str = Body(None, description=None)
+    def __post_init__(self):
+        """
+        auto gen by FastApi quick CRUD
+        """
+        filter_none(self)
 
 
 class SampleTableCreateOneResponseModel(BaseModel):
