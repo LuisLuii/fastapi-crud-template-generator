@@ -52,7 +52,7 @@ class SampleTableTwo(Base):
 class Testing(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        is_async = False
+        is_async = True
         if is_async:
             database_url = "sqlite+aiosqlite://"
         else:
@@ -117,31 +117,32 @@ from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTab
 from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo
 
 
-SQLALCHEMY_DATABASE_URL = f"sqlite://"
+SQLALCHEMY_DATABASE_URL = f"sqlite+aiosqlite://"
 
 
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL,
-                                        future=True,
-                                        echo=True,
-                                        pool_pre_ping=True,
-                                        pool_recycle=7200,
-                                        connect_args={"check_same_thread": False}, 
-                                        poolclass=StaticPool)
-session = sessionmaker(bind=engine, autocommit=False)
+engine = create_async_engine(SQLALCHEMY_DATABASE_URL,
+                                              future=True,
+                                              echo=True,
+                                              pool_pre_ping=True,
+                                              pool_recycle=7200,
+                                              connect_args={"check_same_thread": False}, 
+                                              poolclass=StaticPool)
+session = sessionmaker(autocommit=False,
+                       autoflush=False,
+                       bind=engine,
+                       class_=AsyncSession)
+async def db_session():
+    async with session() as _session:
+        yield _session
 
 
-def db_session() -> Generator:
-    try:
-        db = session()
-        yield db
-    except Exception as e:
-        db.rollback()
-        raise e
-    finally:
-        db.close()
-SampleTable.__table__.create(engine, checkfirst=True)
-SampleTableTwo.__table__.create(engine, checkfirst=True)
+async def create_table(engine, model):
+    async with engine.begin() as conn:
+        await conn.run_sync(model._sa_registry.metadata.create_all)
+loop = asyncio.get_event_loop()
+loop.run_until_complete(create_table(engine, SampleTable))
+loop.run_until_complete(create_table(engine, SampleTableTwo))
 '''
         validate_common_sql_session(common_sql_session_expected)
 
@@ -656,7 +657,7 @@ api = APIRouter(tags=['sample api'],prefix="/my_second_api")
 
 
 @api.get("/{primary_key}", status_code=200, response_model=SampleTableTwoFindOneResponseModel)
-def get_one_by_primary_key(response: Response,
+async def get_one_by_primary_key(response: Response,
                            url_param=Depends(SampleTableTwoPrimaryKeyModel),
                            query=Depends(SampleTableTwoFindOneRequestBodyModel),
                            session=Depends(db_session)):
@@ -669,7 +670,7 @@ def get_one_by_primary_key(response: Response,
                                                                         model=SampleTableTwo)
     model = SampleTableTwo
     stmt = select(*[model]).where(and_(*filter_list + extra_query_expression))
-    sql_executed_result = session.execute(stmt)
+    sql_executed_result = await session.execute(stmt)
 
     one_row_data = sql_executed_result.fetchall()
     if not one_row_data or len(one_row_data) < 1:
@@ -680,12 +681,12 @@ def get_one_by_primary_key(response: Response,
     for column in SampleTableTwoFindOneResponseModel.__fields__:
         response_data[column] = getattr(result_value, column)
     response.headers["x-total-count"] = str(1)
-    session.commit()
+    await session.commit()
     return response_data
 
 
 @api.get("", status_code=200, response_model=SampleTableTwoFindManyResponseRootModel)
-def get_many(response: Response,
+async def get_many(response: Response,
                            query=Depends(SampleTableTwoFindManyRequestBodyModel),
                            session=Depends(db_session)):
 
@@ -718,7 +719,7 @@ def get_many(response: Response,
             stmt = stmt.order_by(*order_by_query_list)
     stmt = stmt.limit(limit).offset(offset)
 
-    sql_executed_result = session.execute(stmt)
+    sql_executed_result = await session.execute(stmt)
 
     result = sql_executed_result.fetchall()
     if not result:
@@ -735,11 +736,11 @@ def get_many(response: Response,
 
     response_data = parse_obj_as(SampleTableTwoFindManyResponseRootModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
-    session.commit()
+    await session.commit()
     return response_data
 
 @api.post("", status_code=201, response_model=SampleTableTwoCreateOneResponseModel)
-def insert_one(response: Response,
+async def insert_one(response: Response,
                            request_body=Depends(SampleTableTwoCreateOneRequestBodyModel),
                            session=Depends(db_session)):
     insert_arg_dict: Union[list, dict] = request_body.__dict__
@@ -754,7 +755,7 @@ def insert_one(response: Response,
             new_inserted_data.append(model(**i))
     session.add_all(new_inserted_data)
     try:
-        session.flush()
+        await session.flush()
     except IntegrityError as e:
         err_msg, = e.orig.args
         if 'unique constraint' not in err_msg.lower():
@@ -764,7 +765,7 @@ def insert_one(response: Response,
     inserted_data, = new_inserted_data
     result = parse_obj_as(SampleTableTwoCreateOneResponseModel, inserted_data)
     response.headers["x-total-count"] = str(1)
-    session.commit()
+    await session.commit()
     return result'''
         validate_route("test_build_myself_memory_two", route_test_build_myself_memory_two_expected)
         model_test_build_myself_memory_expected = '''from http import HTTPStatus
@@ -787,7 +788,7 @@ api = APIRouter(tags=['sample api'],prefix="/my_first_api")
 
 
 @api.get("/{primary_key}", status_code=200, response_model=SampleTableFindOneResponseModel)
-def get_one_by_primary_key(response: Response,
+async def get_one_by_primary_key(response: Response,
                            url_param=Depends(SampleTablePrimaryKeyModel),
                            query=Depends(SampleTableFindOneRequestBodyModel),
                            session=Depends(db_session)):
@@ -800,7 +801,7 @@ def get_one_by_primary_key(response: Response,
                                                                         model=SampleTable)
     model = SampleTable
     stmt = select(*[model]).where(and_(*filter_list + extra_query_expression))
-    sql_executed_result = session.execute(stmt)
+    sql_executed_result = await session.execute(stmt)
 
     one_row_data = sql_executed_result.fetchall()
     if not one_row_data or len(one_row_data) < 1:
@@ -811,12 +812,12 @@ def get_one_by_primary_key(response: Response,
     for column in SampleTableFindOneResponseModel.__fields__:
         response_data[column] = getattr(result_value, column)
     response.headers["x-total-count"] = str(1)
-    session.commit()
+    await session.commit()
     return response_data
 
 
 @api.get("", status_code=200, response_model=SampleTableFindManyResponseRootModel)
-def get_many(response: Response,
+async def get_many(response: Response,
                            query=Depends(SampleTableFindManyRequestBodyModel),
                            session=Depends(db_session)):
 
@@ -849,7 +850,7 @@ def get_many(response: Response,
             stmt = stmt.order_by(*order_by_query_list)
     stmt = stmt.limit(limit).offset(offset)
 
-    sql_executed_result = session.execute(stmt)
+    sql_executed_result = await session.execute(stmt)
 
     result = sql_executed_result.fetchall()
     if not result:
@@ -866,11 +867,11 @@ def get_many(response: Response,
 
     response_data = parse_obj_as(SampleTableFindManyResponseRootModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
-    session.commit()
+    await session.commit()
     return response_data
 
 @api.post("", status_code=201, response_model=SampleTableCreateOneResponseModel)
-def insert_one(response: Response,
+async def insert_one(response: Response,
                            request_body=Depends(SampleTableCreateOneRequestBodyModel),
                            session=Depends(db_session)):
     insert_arg_dict: Union[list, dict] = request_body.__dict__
@@ -885,7 +886,7 @@ def insert_one(response: Response,
             new_inserted_data.append(model(**i))
     session.add_all(new_inserted_data)
     try:
-        session.flush()
+        await session.flush()
     except IntegrityError as e:
         err_msg, = e.orig.args
         if 'unique constraint' not in err_msg.lower():
@@ -895,6 +896,6 @@ def insert_one(response: Response,
     inserted_data, = new_inserted_data
     result = parse_obj_as(SampleTableCreateOneResponseModel, inserted_data)
     response.headers["x-total-count"] = str(1)
-    session.commit()
+    await session.commit()
     return result'''
         validate_route("test_build_myself_memory", model_test_build_myself_memory_expected)
