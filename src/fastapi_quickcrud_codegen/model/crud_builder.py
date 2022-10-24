@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import ClassVar, Union
+from typing import ClassVar
 
 import jinja2
 
@@ -18,7 +18,6 @@ class CrudCodeGen():
         self.import_helper.add(import_=set(["BinaryExpression"]), from_="sqlalchemy.sql.elements")
         self.import_helper.add(import_=set(["find_query_builder"]), from_="fastapi_quick_crud_template.common.utils")
         self.import_helper.add(import_=set(["db_session"]), from_="fastapi_quick_crud_template.common.sql_session")
-
 
     def gen(self, *, template_generator: CrudTemplateGenerator, file_name: str):
         template_generator.add_route(file_name, self.import_helper.to_code() + self.code)
@@ -61,7 +60,8 @@ class CrudCodeGen():
             f"{model_name}"]
         ), from_=f"fastapi_quick_crud_template.model.{file_name}")
         self.import_helper.add(import_="parse_obj_as", from_="pydantic")
-        self.import_helper.add(import_=set(["UnknownOrderType", "UnknownColumn"]), from_="fastapi_quick_crud_template.common.http_exception")
+        self.import_helper.add(import_=set(["UnknownOrderType", "UnknownColumn"]),
+                               from_="fastapi_quick_crud_template.common.http_exception")
         self.import_helper.add(import_=set(["Ordering"]), from_="fastapi_quick_crud_template.common.typing")
 
         self.code += "\n\n" + code
@@ -80,7 +80,8 @@ class CrudCodeGen():
         self.import_helper.add(import_="IntegrityError", from_="sqlalchemy.exc")
         self.import_helper.add(import_="parse_obj_as", from_="pydantic")
         self.import_helper.add(import_="clean_input_fields", from_="fastapi_quick_crud_template.common.utils")
-        self.import_helper.add(import_=set(["UnknownOrderType", "UnknownColumn"]), from_="fastapi_quick_crud_template.common.http_exception")
+        self.import_helper.add(import_=set(["UnknownOrderType", "UnknownColumn"]),
+                               from_="fastapi_quick_crud_template.common.http_exception")
         self.import_helper.add(import_=set(["Ordering"]), from_="fastapi_quick_crud_template.common.typing")
 
         self.import_helper.add(import_=set([
@@ -104,12 +105,40 @@ class CrudCodeGen():
         self.import_helper.add(import_="IntegrityError", from_="sqlalchemy.exc")
         self.import_helper.add(import_="parse_obj_as", from_="pydantic")
         self.import_helper.add(import_="clean_input_fields", from_="fastapi_quick_crud_template.common.utils")
-        self.import_helper.add(import_=set(["UnknownOrderType", "UnknownColumn"]), from_="fastapi_quick_crud_template.common.http_exception")
+        self.import_helper.add(import_=set(["UnknownOrderType", "UnknownColumn"]),
+                               from_="fastapi_quick_crud_template.common.http_exception")
         self.import_helper.add(import_=set(["Ordering"]), from_="fastapi_quick_crud_template.common.typing")
 
         self.import_helper.add(import_=set([
             f"{model_name}CreateManyItemListResponseModel",
             f"{model_name}CreateManyItemListRequestModel",
+            f"{model_name}"]
+        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        self.code += "\n\n" + code
+
+    def build_update_one_route(self, *, is_async: bool, path: str, file_name, model_name):
+        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/update_one.jinja2'
+        template_file_path = Path(TEMPLATE_FILE_PATH)
+
+        TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
+        templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
+        templateEnv = jinja2.Environment(loader=templateLoader)
+        TEMPLATE_FILE = f'update_one.jinja2'
+        template = templateEnv.get_template(TEMPLATE_FILE)
+        code = template.render(
+            {"model_name": model_name, "path": path, "is_async": is_async})
+        self.import_helper.add(import_="IntegrityError", from_="sqlalchemy.exc")
+        self.import_helper.add(import_="parse_obj_as", from_="pydantic")
+        self.import_helper.add(import_="clean_input_fields", from_="fastapi_quick_crud_template.common.utils")
+        self.import_helper.add(import_=set(["UnknownOrderType", "UnknownColumn"]),
+                               from_="fastapi_quick_crud_template.common.http_exception")
+        self.import_helper.add(import_=set(["Ordering"]), from_="fastapi_quick_crud_template.common.typing")
+
+        self.import_helper.add(import_=set([
+            f"{model_name}UpdateOneRequestBodyModel",
+            f"{model_name}UpdateOneRequestQueryBodyModel",
+            f"{model_name}UpdateOneResponseModel",
+            f"{model_name}PrimaryKeyModel",
             f"{model_name}"]
         ), from_=f"fastapi_quick_crud_template.model.{file_name}")
         self.code += "\n\n" + code

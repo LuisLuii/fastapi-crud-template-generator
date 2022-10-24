@@ -720,70 +720,6 @@ class ApiParameterSchemaBuilder:
 
         return self.class_name + "FindManyRequestBody", None, f'{self.class_name}FindManyResponseItemListModel'
 
-    def _extra_relation_primary_key(self, relation_dbs):
-        primary_key_columns = []
-        foreign_table_name = ""
-        primary_column_names = []
-        for db_model_table in relation_dbs:
-            table_name = db_model_table.key
-            foreign_table_name += table_name + "_"
-            primary_list = db_model_table.primary_key.columns.values()
-            primary_key_column, = primary_list
-            column_type = str(primary_key_column.type)
-            try:
-                python_type = primary_key_column.type.python_type
-                if column_type in self.unsupported_data_types:
-                    raise ColumnTypeNotSupportedException(
-                        f'The type of column {primary_key_column.key} ({column_type}) not supported yet')
-                if column_type in self.partial_supported_data_types:
-                    warnings.warn(
-                        f'The type of column {primary_key_column.key} ({column_type}) '
-                        f'is not support data query (as a query parameters )')
-
-            except NotImplementedError:
-                if column_type == "UUID":
-                    python_type = uuid.UUID
-                else:
-                    raise ColumnTypeNotSupportedException(
-                        f'The type of column {primary_key_column.key} ({column_type}) not supported yet')
-            # handle if python type is UUID
-            if python_type.__name__ in ['str',
-                                        'int',
-                                        'float',
-                                        'Decimal',
-                                        'UUID',
-                                        'bool',
-                                        'date',
-                                        'time',
-                                        'datetime']:
-                column_type = python_type
-            else:
-                raise ColumnTypeNotSupportedException(
-                    f'The type of column {primary_key_column.key} ({column_type}) not supported yet')
-            default = self._extra_default_value(primary_key_column)
-            if default is ...:
-                warnings.warn(
-                    f'The column of {primary_key_column.key} has not default value '
-                    f'and it is not nullable and in exclude_list'
-                    f'it may throw error when you insert data ')
-            description = self._get_field_description(primary_key_column)
-            primary_column_name = str(primary_key_column.key)
-            alias_primary_column_name = table_name + FOREIGN_PATH_PARAM_KEYWORD + str(primary_key_column.key)
-            primary_column_names.append(alias_primary_column_name)
-            primary_key_columns.append((alias_primary_column_name, column_type, Query(default,
-                                                                                      description=description)))
-
-        # TODO test foreign uuid key
-        primary_columns_model: DataClassT = make_dataclass(f'{foreign_table_name + str(uuid.uuid4())}_PrimaryKeyModel',
-                                                           primary_key_columns,
-                                                           namespace={
-                                                               '__post_init__': lambda
-                                                                   self_object: self._value_of_list_to_str(
-                                                                   self_object, self.uuid_type_columns)
-                                                           })
-        assert primary_column_names and primary_columns_model and primary_key_columns
-        return primary_column_names, primary_columns_model, primary_key_columns
-
     def find_one(self) -> Tuple:
         query_param: List[dict] = self._get_fizzy_query_param(self.primary_key_str)
         response_fields = []
@@ -938,10 +874,6 @@ class ApiParameterSchemaBuilder:
                                          i['column_type'],
                                          f"Query({i['column_default']}, description={i['column_description']})"))
 
-        request_validation = [lambda self_object: _filter_none(self_object)]
-        if self.uuid_type_columns:
-            request_validation.append(lambda self_object: self._value_of_list_to_str(self_object,
-                                                                                     self.uuid_type_columns))
 
         self.code_gen.build_dataclass(class_name=self.class_name + "UpdateOneRequestQueryBodyModel",
                                       fields=request_query_fields,
@@ -953,10 +885,9 @@ class ApiParameterSchemaBuilder:
                                       value_of_list_to_str_columns=self.uuid_type_columns,
                                       filter_none=True)
 
+        # I have removed filter none and valuexxx for response model
         self.code_gen.build_base_model(class_name=self.class_name + "UpdateOneResponseModel",
-                                       fields=response_fields,
-                                       value_of_list_to_str_columns=self.uuid_type_columns,
-                                       filter_none=True)
+                                       fields=response_fields)
         return self.class_name + "PrimaryKeyModel", self.class_name + "UpdateOneRequestQueryBodyModel", self.class_name + "UpdateOneRequestBodyModel", self.class_name + "UpdateOneResponseModel"
 
     def update_many(self) -> Tuple:
