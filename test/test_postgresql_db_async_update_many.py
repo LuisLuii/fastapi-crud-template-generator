@@ -60,7 +60,7 @@ class SampleTableTwo(Base):
 class Testing(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        is_async = False
+        is_async = True
         if is_async:
             database_url = "postgresql+asyncpg://postgres:1234@127.0.0.1:5432/postgres"
         else:
@@ -80,7 +80,7 @@ class Testing(unittest.TestCase):
                 }
             ],
             exclude_columns=['bytea_value', 'xml_value', 'box_valaue'],
-            crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.UPDATE_ONE],
+            crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE, CrudMethods.UPDATE_MANY],
             is_async=is_async,
             database_url=database_url
         )
@@ -125,29 +125,24 @@ from fastapi_quick_crud_template.model.test_build_myself import SampleTable
 from fastapi_quick_crud_template.model.test_build_myself_two import SampleTableTwo
 
 
-SQLALCHEMY_DATABASE_URL = f"postgresql://postgres:1234@127.0.0.1:5432/postgres"
+SQLALCHEMY_DATABASE_URL = f"postgresql+asyncpg://postgres:1234@127.0.0.1:5432/postgres"
 
 
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL,
-                                        future=True,
-                                        echo=True,
-                                        pool_pre_ping=True,
-                                        pool_recycle=7200,
-                                        
-                                        poolclass=StaticPool)
-session = sessionmaker(bind=engine, autocommit=False)
-
-
-def db_session() -> Generator:
-    try:
-        db = session()
-        yield db
-    except Exception as e:
-        db.rollback()
-        raise e
-    finally:
-        db.close()'''
+engine = create_async_engine(SQLALCHEMY_DATABASE_URL,
+                                              future=True,
+                                              echo=True,
+                                              pool_pre_ping=True,
+                                              pool_recycle=7200,
+                                              
+                                              poolclass=StaticPool)
+session = sessionmaker(autocommit=False,
+                       autoflush=False,
+                       bind=engine,
+                       class_=AsyncSession)
+async def db_session():
+    async with session() as _session:
+        yield _session'''
         validate_common_sql_session(common_sql_session_expected)
 
         # model
@@ -271,7 +266,34 @@ class SampleTableTwoFindManyResponseRootModel(ExcludeUnsetBaseModel):
 
 
 @dataclass
-class SampleTableTwoUpdateOneRequestQueryBodyModel:
+class SampleTableTwoCreateOneRequestBodyModel:
+    primary_key: int = Body(None, description=None)
+    bool_value: bool = Body(False, description=None)
+    def __post_init__(self):
+        """
+        auto gen by FastApi quick CRUD
+        """
+        filter_none(self)
+
+
+class SampleTableTwoCreateOneResponseModel(BaseModel):
+    """
+    auto gen by FastApi quick CRUD
+    """
+    primary_key: int = Body(None, description=None)
+    bool_value: bool = Body(False, description=None)
+    class Config:
+        orm_mode = True
+
+
+@dataclass
+class SampleTableTwoUpdateManyRequestQueryBodyModel:
+    primary_key____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
+    primary_key____to_____comparison_operator: Optional[RangeToComparisonOperators] = Query(RangeToComparisonOperators.Less_than.Less_than_or_equal_to, description=None)
+    primary_key____from: Optional[NewType(ExtraFieldTypePrefix.From, int)] = Query(None, description=None)
+    primary_key____to: Optional[NewType(ExtraFieldTypePrefix.To, int)] = Query(None, description=None)
+    primary_key____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
+    primary_key____list: Optional[List[int]] = Query(None, description=None)
     bool_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     bool_value____list: Optional[List[bool]] = Query(None, description=None)
     def __post_init__(self):
@@ -282,7 +304,7 @@ class SampleTableTwoUpdateOneRequestQueryBodyModel:
 
 
 @dataclass
-class SampleTableTwoUpdateOneRequestBodyModel:
+class SampleTableTwoUpdateManyRequestBodyModel:
     bool_value: bool = Body(..., description=None)
     def __post_init__(self):
         """
@@ -291,12 +313,18 @@ class SampleTableTwoUpdateOneRequestBodyModel:
         filter_none(self)
 
 
-class SampleTableTwoUpdateOneResponseModel(BaseModel):
+class SampleTableTwoUpdateManyResponseItemModel(BaseModel):
     """
     auto gen by FastApi quick CRUD
     """
     primary_key: int = Body(None)
     bool_value: bool = Body(False)
+    class Config:
+        orm_mode = True
+
+
+class SampleTableTwoUpdateManyResponseItemListModel(BaseModel):
+    __root__: List[SampleTableTwoUpdateManyResponseItemModel]
     class Config:
         orm_mode = True'''
         validate_model("test_build_myself_two", model_test_build_myself_two_expected)
@@ -644,7 +672,75 @@ class SampleTableFindManyResponseRootModel(ExcludeUnsetBaseModel):
 
 
 @dataclass
-class SampleTableUpdateOneRequestQueryBodyModel:
+class SampleTableCreateOneRequestBodyModel:
+    primary_key: int = Body(None, description=None)
+    bool_value: bool = Body(None, description=None)
+    char_value: str = Body(None, description=None)
+    date_value: date = Body(None, description=None)
+    float4_value: float = Body(..., description=None)
+    float8_value: float = Body(None, description=None)
+    int2_value: int = Body(..., description=None)
+    int4_value: int = Body(..., description=None)
+    int8_value: int = Body(None, description=None)
+    interval_value: timedelta = Body(None, description=None)
+    json_value: dict = Body(None, description=None)
+    jsonb_value: Union[dict, list] = Body(None, description=None)
+    numeric_value: Decimal = Body(None, description=None)
+    text_value: str = Body(None, description=None)
+    time_value: time = Body(None, description=None)
+    timestamp_value: datetime = Body(None, description=None)
+    timestamptz_value: datetime = Body(None, description=None)
+    timetz_value: time = Body(None, description=None)
+    uuid_value: uuid.UUID = Body(None, description=None)
+    varchar_value: str = Body(None, description=None)
+    array_value: List[int] = Body(None, description=None)
+    array_str__value: List[str] = Body(None, description=None)
+    def __post_init__(self):
+        """
+        auto gen by FastApi quick CRUD
+        """
+        value_of_list_to_str(self, ['uuid_value'])
+        filter_none(self)
+
+
+class SampleTableCreateOneResponseModel(BaseModel):
+    """
+    auto gen by FastApi quick CRUD
+    """
+    primary_key: int = Body(None, description=None)
+    bool_value: bool = Body(None, description=None)
+    char_value: str = Body(None, description=None)
+    date_value: date = Body(None, description=None)
+    float4_value: float = Body(..., description=None)
+    float8_value: float = Body(None, description=None)
+    int2_value: int = Body(..., description=None)
+    int4_value: int = Body(..., description=None)
+    int8_value: int = Body(None, description=None)
+    interval_value: timedelta = Body(None, description=None)
+    json_value: dict = Body(None, description=None)
+    jsonb_value: Union[dict, list] = Body(None, description=None)
+    numeric_value: Decimal = Body(None, description=None)
+    text_value: str = Body(None, description=None)
+    time_value: time = Body(None, description=None)
+    timestamp_value: datetime = Body(None, description=None)
+    timestamptz_value: datetime = Body(None, description=None)
+    timetz_value: time = Body(None, description=None)
+    uuid_value: uuid.UUID = Body(None, description=None)
+    varchar_value: str = Body(None, description=None)
+    array_value: List[int] = Body(None, description=None)
+    array_str__value: List[str] = Body(None, description=None)
+    class Config:
+        orm_mode = True
+
+
+@dataclass
+class SampleTableUpdateManyRequestQueryBodyModel:
+    primary_key____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
+    primary_key____to_____comparison_operator: Optional[RangeToComparisonOperators] = Query(RangeToComparisonOperators.Less_than.Less_than_or_equal_to, description=None)
+    primary_key____from: Optional[NewType(ExtraFieldTypePrefix.From, int)] = Query(None, description=None)
+    primary_key____to: Optional[NewType(ExtraFieldTypePrefix.To, int)] = Query(None, description=None)
+    primary_key____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
+    primary_key____list: Optional[List[int]] = Query(None, description=None)
     bool_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     bool_value____list: Optional[List[bool]] = Query(None, description=None)
     char_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
@@ -736,7 +832,7 @@ class SampleTableUpdateOneRequestQueryBodyModel:
 
 
 @dataclass
-class SampleTableUpdateOneRequestBodyModel:
+class SampleTableUpdateManyRequestBodyModel:
     bool_value: bool = Body(..., description=None)
     char_value: str = Body(..., description=None)
     date_value: date = Body(..., description=None)
@@ -766,7 +862,7 @@ class SampleTableUpdateOneRequestBodyModel:
         filter_none(self)
 
 
-class SampleTableUpdateOneResponseModel(BaseModel):
+class SampleTableUpdateManyResponseItemModel(BaseModel):
     """
     auto gen by FastApi quick CRUD
     """
@@ -793,6 +889,12 @@ class SampleTableUpdateOneResponseModel(BaseModel):
     array_value: List[int] = Body(None)
     array_str__value: List[str] = Body(None)
     class Config:
+        orm_mode = True
+
+
+class SampleTableUpdateManyResponseItemListModel(BaseModel):
+    __root__: List[SampleTableUpdateManyResponseItemModel]
+    class Config:
         orm_mode = True'''
         validate_model("test_build_myself", model_test_build_myself_expected)
 
@@ -804,7 +906,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
 from fastapi_quick_crud_template.common.utils import clean_input_fields, find_query_builder
 from fastapi_quick_crud_template.common.sql_session import db_session
-from fastapi_quick_crud_template.model.test_build_myself_two import SampleTableTwo, SampleTableTwoFindManyRequestBodyModel, SampleTableTwoFindManyResponseModel, SampleTableTwoFindManyResponseRootModel, SampleTableTwoFindOneRequestBodyModel, SampleTableTwoFindOneResponseModel, SampleTableTwoPrimaryKeyModel, SampleTableTwoUpdateOneRequestBodyModel, SampleTableTwoUpdateOneRequestQueryBodyModel, SampleTableTwoUpdateOneResponseModel
+from fastapi_quick_crud_template.model.test_build_myself_two import SampleTableTwo, SampleTableTwoCreateOneRequestBodyModel, SampleTableTwoCreateOneResponseModel, SampleTableTwoFindManyRequestBodyModel, SampleTableTwoFindManyResponseModel, SampleTableTwoFindManyResponseRootModel, SampleTableTwoFindOneRequestBodyModel, SampleTableTwoFindOneResponseModel, SampleTableTwoPrimaryKeyModel, SampleTableTwoUpdateManyRequestBodyModel, SampleTableTwoUpdateManyRequestQueryBodyModel, SampleTableTwoUpdateManyResponseItemListModel
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
 from fastapi_quick_crud_template.common.typing import Ordering
@@ -817,7 +919,7 @@ api = APIRouter(tags=['sample api'],prefix="/my_second_api")
 
 
 @api.get("/{primary_key}", status_code=200, response_model=SampleTableTwoFindOneResponseModel)
-def get_one_by_primary_key(response: Response,
+async def get_one_by_primary_key(response: Response,
                            url_param=Depends(SampleTableTwoPrimaryKeyModel),
                            query=Depends(SampleTableTwoFindOneRequestBodyModel),
                            session=Depends(db_session)):
@@ -830,7 +932,7 @@ def get_one_by_primary_key(response: Response,
                                                                         model=SampleTableTwo)
     model = SampleTableTwo
     stmt = select(*[model]).where(and_(*filter_list + extra_query_expression))
-    sql_executed_result = session.execute(stmt)
+    sql_executed_result = await session.execute(stmt)
 
     one_row_data = sql_executed_result.fetchall()
     if not one_row_data or len(one_row_data) < 1:
@@ -841,12 +943,12 @@ def get_one_by_primary_key(response: Response,
     for column in SampleTableTwoFindOneResponseModel.__fields__:
         response_data[column] = getattr(result_value, column)
     response.headers["x-total-count"] = str(1)
-    session.commit()
+    await session.commit()
     return response_data
 
 
 @api.get("", status_code=200, response_model=SampleTableTwoFindManyResponseRootModel)
-def get_many(response: Response,
+async def get_many(response: Response,
                            query=Depends(SampleTableTwoFindManyRequestBodyModel),
                            session=Depends(db_session)):
 
@@ -879,7 +981,7 @@ def get_many(response: Response,
             stmt = stmt.order_by(*order_by_query_list)
     stmt = stmt.limit(limit).offset(offset)
 
-    sql_executed_result = session.execute(stmt)
+    sql_executed_result = await session.execute(stmt)
 
     result = sql_executed_result.fetchall()
     if not result:
@@ -896,39 +998,67 @@ def get_many(response: Response,
 
     response_data = parse_obj_as(SampleTableTwoFindManyResponseRootModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
-    session.commit()
+    await session.commit()
     return response_data
 
-@api.put("/{primary_key}", status_code=200, response_model=SampleTableTwoUpdateOneResponseModel)
-def entire_update_by_primary_key(
+@api.post("", status_code=201, response_model=SampleTableTwoCreateOneResponseModel)
+async def insert_one(response: Response,
+                           request_body=Depends(SampleTableTwoCreateOneRequestBodyModel),
+                           session=Depends(db_session)):
+    insert_arg_dict: Union[list, dict] = request_body.__dict__
+    if not isinstance(insert_arg_dict, list):
+        insert_arg_dict = [insert_arg_dict]
+    model = SampleTableTwo
+    insert_arg_dict: list[dict] = [clean_input_fields(model=model, param=insert_arg)
+                                   for insert_arg in insert_arg_dict]
+    new_inserted_data = []
+    if isinstance(insert_arg_dict, list):
+        for i in insert_arg_dict:
+            new_inserted_data.append(model(**i))
+    session.add_all(new_inserted_data)
+    try:
+        await session.flush()
+    except IntegrityError as e:
+        err_msg, = e.orig.args
+        if 'unique constraint' not in err_msg.lower():
+            raise e
+        result = Response(status_code=HTTPStatus.CONFLICT)
+        return result
+    inserted_data, = new_inserted_data
+    result = parse_obj_as(SampleTableTwoCreateOneResponseModel, inserted_data)
+    response.headers["x-total-count"] = str(1)
+    await session.commit()
+    return result
+
+@api.put("", status_code=200, response_model=SampleTableTwoUpdateManyResponseItemListModel)
+async def entire_update_many_by_query(
                                                 response: Response,
-                                                primary_key: SampleTableTwoPrimaryKeyModel = Depends(),
-                                                update_data: SampleTableTwoUpdateOneRequestBodyModel = Depends(),
-                                                extra_query: SampleTableTwoUpdateOneRequestQueryBodyModel = Depends(),
+                                                update_data: SampleTableTwoUpdateManyRequestBodyModel = Depends(),
+                                                extra_query: SampleTableTwoUpdateManyRequestQueryBodyModel = Depends(),
                                                 session=Depends(db_session)):
     model = SampleTableTwo
 
-    filter_args = primary_key.__dict__
     extra_args = extra_query.__dict__
     update_args = update_data.__dict__
-    filter_list: List[BinaryExpression] = find_query_builder(param=filter_args,
-                                                                 model=model)
-    if extra_args:
-        filter_list += find_query_builder(param=extra_query.__dict__,
-            model=model)
+    filter_list: List[BinaryExpression] = find_query_builder(param=extra_args,
+                                                             model=model)
     stmt = select(model).where(and_(*filter_list))
-    data_instance = session.execute(stmt)
-    data_instance = data_instance.scalar()
+    data_instance = await session.execute(stmt)
+    data_instance_list = [i for i in data_instance.scalars()]
 
-    if not data_instance:
+
+    if not data_instance_list:
         return Response(status_code=HTTPStatus.NOT_FOUND)
     try:
-        for update_arg_name, update_arg_value in update_args.items():
-            setattr(data_instance, update_arg_name, update_arg_value)
+        response_data = []
+        for i in data_instance_list:
+            for update_arg_name, update_arg_value in update_args.items():
+                        setattr(i, update_arg_name, update_arg_value)
+            response_data.append(i)
 
-        result = parse_obj_as(SampleTableTwoUpdateOneResponseModel, data_instance)
+        result = parse_obj_as(SampleTableTwoUpdateManyResponseItemListModel, response_data)
         response.headers["x-total-count"] = str(1)
-        session.commit()
+        await session.commit()
 
         return result
 
@@ -946,7 +1076,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
 from fastapi_quick_crud_template.common.utils import clean_input_fields, find_query_builder
 from fastapi_quick_crud_template.common.sql_session import db_session
-from fastapi_quick_crud_template.model.test_build_myself import SampleTable, SampleTableFindManyRequestBodyModel, SampleTableFindManyResponseModel, SampleTableFindManyResponseRootModel, SampleTableFindOneRequestBodyModel, SampleTableFindOneResponseModel, SampleTablePrimaryKeyModel, SampleTableUpdateOneRequestBodyModel, SampleTableUpdateOneRequestQueryBodyModel, SampleTableUpdateOneResponseModel
+from fastapi_quick_crud_template.model.test_build_myself import SampleTable, SampleTableCreateOneRequestBodyModel, SampleTableCreateOneResponseModel, SampleTableFindManyRequestBodyModel, SampleTableFindManyResponseModel, SampleTableFindManyResponseRootModel, SampleTableFindOneRequestBodyModel, SampleTableFindOneResponseModel, SampleTablePrimaryKeyModel, SampleTableUpdateManyRequestBodyModel, SampleTableUpdateManyRequestQueryBodyModel, SampleTableUpdateManyResponseItemListModel
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
 from fastapi_quick_crud_template.common.typing import Ordering
@@ -959,7 +1089,7 @@ api = APIRouter(tags=['sample api'],prefix="/my_first_api")
 
 
 @api.get("/{primary_key}", status_code=200, response_model=SampleTableFindOneResponseModel)
-def get_one_by_primary_key(response: Response,
+async def get_one_by_primary_key(response: Response,
                            url_param=Depends(SampleTablePrimaryKeyModel),
                            query=Depends(SampleTableFindOneRequestBodyModel),
                            session=Depends(db_session)):
@@ -972,7 +1102,7 @@ def get_one_by_primary_key(response: Response,
                                                                         model=SampleTable)
     model = SampleTable
     stmt = select(*[model]).where(and_(*filter_list + extra_query_expression))
-    sql_executed_result = session.execute(stmt)
+    sql_executed_result = await session.execute(stmt)
 
     one_row_data = sql_executed_result.fetchall()
     if not one_row_data or len(one_row_data) < 1:
@@ -983,12 +1113,12 @@ def get_one_by_primary_key(response: Response,
     for column in SampleTableFindOneResponseModel.__fields__:
         response_data[column] = getattr(result_value, column)
     response.headers["x-total-count"] = str(1)
-    session.commit()
+    await session.commit()
     return response_data
 
 
 @api.get("", status_code=200, response_model=SampleTableFindManyResponseRootModel)
-def get_many(response: Response,
+async def get_many(response: Response,
                            query=Depends(SampleTableFindManyRequestBodyModel),
                            session=Depends(db_session)):
 
@@ -1021,7 +1151,7 @@ def get_many(response: Response,
             stmt = stmt.order_by(*order_by_query_list)
     stmt = stmt.limit(limit).offset(offset)
 
-    sql_executed_result = session.execute(stmt)
+    sql_executed_result = await session.execute(stmt)
 
     result = sql_executed_result.fetchall()
     if not result:
@@ -1038,39 +1168,67 @@ def get_many(response: Response,
 
     response_data = parse_obj_as(SampleTableFindManyResponseRootModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
-    session.commit()
+    await session.commit()
     return response_data
 
-@api.put("/{primary_key}", status_code=200, response_model=SampleTableUpdateOneResponseModel)
-def entire_update_by_primary_key(
+@api.post("", status_code=201, response_model=SampleTableCreateOneResponseModel)
+async def insert_one(response: Response,
+                           request_body=Depends(SampleTableCreateOneRequestBodyModel),
+                           session=Depends(db_session)):
+    insert_arg_dict: Union[list, dict] = request_body.__dict__
+    if not isinstance(insert_arg_dict, list):
+        insert_arg_dict = [insert_arg_dict]
+    model = SampleTable
+    insert_arg_dict: list[dict] = [clean_input_fields(model=model, param=insert_arg)
+                                   for insert_arg in insert_arg_dict]
+    new_inserted_data = []
+    if isinstance(insert_arg_dict, list):
+        for i in insert_arg_dict:
+            new_inserted_data.append(model(**i))
+    session.add_all(new_inserted_data)
+    try:
+        await session.flush()
+    except IntegrityError as e:
+        err_msg, = e.orig.args
+        if 'unique constraint' not in err_msg.lower():
+            raise e
+        result = Response(status_code=HTTPStatus.CONFLICT)
+        return result
+    inserted_data, = new_inserted_data
+    result = parse_obj_as(SampleTableCreateOneResponseModel, inserted_data)
+    response.headers["x-total-count"] = str(1)
+    await session.commit()
+    return result
+
+@api.put("", status_code=200, response_model=SampleTableUpdateManyResponseItemListModel)
+async def entire_update_many_by_query(
                                                 response: Response,
-                                                primary_key: SampleTablePrimaryKeyModel = Depends(),
-                                                update_data: SampleTableUpdateOneRequestBodyModel = Depends(),
-                                                extra_query: SampleTableUpdateOneRequestQueryBodyModel = Depends(),
+                                                update_data: SampleTableUpdateManyRequestBodyModel = Depends(),
+                                                extra_query: SampleTableUpdateManyRequestQueryBodyModel = Depends(),
                                                 session=Depends(db_session)):
     model = SampleTable
 
-    filter_args = primary_key.__dict__
     extra_args = extra_query.__dict__
     update_args = update_data.__dict__
-    filter_list: List[BinaryExpression] = find_query_builder(param=filter_args,
-                                                                 model=model)
-    if extra_args:
-        filter_list += find_query_builder(param=extra_query.__dict__,
-            model=model)
+    filter_list: List[BinaryExpression] = find_query_builder(param=extra_args,
+                                                             model=model)
     stmt = select(model).where(and_(*filter_list))
-    data_instance = session.execute(stmt)
-    data_instance = data_instance.scalar()
+    data_instance = await session.execute(stmt)
+    data_instance_list = [i for i in data_instance.scalars()]
 
-    if not data_instance:
+
+    if not data_instance_list:
         return Response(status_code=HTTPStatus.NOT_FOUND)
     try:
-        for update_arg_name, update_arg_value in update_args.items():
-            setattr(data_instance, update_arg_name, update_arg_value)
+        response_data = []
+        for i in data_instance_list:
+            for update_arg_name, update_arg_value in update_args.items():
+                        setattr(i, update_arg_name, update_arg_value)
+            response_data.append(i)
 
-        result = parse_obj_as(SampleTableUpdateOneResponseModel, data_instance)
+        result = parse_obj_as(SampleTableUpdateManyResponseItemListModel, response_data)
         response.headers["x-total-count"] = str(1)
-        session.commit()
+        await session.commit()
 
         return result
 
