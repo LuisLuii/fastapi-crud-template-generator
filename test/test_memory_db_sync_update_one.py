@@ -927,7 +927,7 @@ def insert_one(response: Response,
     session.commit()
     return result
 
-@api.put("/{primary_key}", status_code=201, response_model=SampleTableTwoUpdateOneResponseModel)
+@api.put("/{primary_key}", status_code=200, response_model=SampleTableTwoUpdateOneResponseModel)
 def entire_update_by_primary_key(
                                                 response: Response,
                                                 primary_key: SampleTableTwoPrimaryKeyModel = Depends(),
@@ -1098,7 +1098,7 @@ def insert_one(response: Response,
     session.commit()
     return result
 
-@api.put("/{primary_key}", status_code=201, response_model=SampleTableUpdateOneResponseModel)
+@api.put("/{primary_key}", status_code=200, response_model=SampleTableUpdateOneResponseModel)
 def entire_update_by_primary_key(
                                                 response: Response,
                                                 primary_key: SampleTablePrimaryKeyModel = Depends(),

@@ -1,4 +1,4 @@
-@api.put("{{ path }}", status_code=201, response_model={{ model_name }}UpdateOneResponseModel)
+@api.put("{{ path }}", status_code=200, response_model={{ model_name }}UpdateOneResponseModel)
 {{ 'async ' if is_async else '' }}def entire_update_by_primary_key(
                                                 response: Response,
                                                 primary_key: {{ model_name }}PrimaryKeyModel = Depends(),

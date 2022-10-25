@@ -924,22 +924,20 @@ class ApiParameterSchemaBuilder:
 
         self.code_gen.build_dataclass(class_name=self.class_name + "UpdateManyRequestQueryBodyModel",
                                       value_of_list_to_str_columns=self.uuid_type_columns,
+                                      fields=request_query_fields,
                                       filter_none=True)
         self.code_gen.build_dataclass(class_name=self.class_name + "UpdateManyRequestBodyModel",
                                       fields=request_body_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns,
                                       filter_none=True)
+
         self.code_gen.build_base_model(class_name=self.class_name + "UpdateManyResponseItemModel",
-                                       fields=response_fields,
-                                       value_of_list_to_str_columns=self.uuid_type_columns,
-                                       filter_none=True)
-        self.code_gen.build_base_model_root(class_name=f'{self.class_name}UpdateManyResponseItemListModel',
+                                       fields=response_fields)
+
+        self.code_gen.build_base_model_root(class_name=self.class_name + "UpdateManyResponseItemListModel",
                                             field=(
-                                                f'Union[List[{f"{self.class_name}UpdateManyResponseItemModel"}]]',
-                                                None),
-                                            value_of_list_to_str_columns=self.uuid_type_columns,
-                                            filter_none=True)
-        # response_model = _add_orm_model_config_into_pydantic_model(response_model, config=OrmConfig)
+                                                f'{self.class_name + "UpdateManyResponseItemModel"}',
+                                                None))
 
         return None, self.class_name + "UpdateManyRequestQueryBodyModel", self.class_name + "UpdateManyRequestBodyModel", f'{self.class_name}UpdateManyResponseItemListModel'
 
