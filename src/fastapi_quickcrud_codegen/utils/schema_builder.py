@@ -811,7 +811,7 @@ class ApiParameterSchemaBuilder:
 
         return None, self.class_name + "DeleteManyRequestBodyModel", None, self.class_name + "DeleteManyItemListResponseModel"
 
-    def patch(self) -> Tuple:
+    def patch_one(self) -> Tuple:
         query_param: List[dict] = self._get_fizzy_query_param(self.primary_key_str)
 
         response_fields = []
@@ -845,11 +845,9 @@ class ApiParameterSchemaBuilder:
                                       value_of_list_to_str_columns=self.uuid_type_columns)
 
         self.code_gen.build_base_model(class_name=self.class_name + "PatchOneResponseModel",
-                                       fields=response_fields,
-                                       filter_none=True,
-                                       value_of_list_to_str_columns=self.uuid_type_columns)
+                                       fields=response_fields)
 
-        return self._primary_key_dataclass_model, self.class_name + "PatchOneRequestQueryModel", self.class_name + "PatchOneRequestBodyModel", self.class_name + "PatchOneResponseModel"
+        return self.class_name + "PrimaryKeyModel", self.class_name + "PatchOneRequestQueryModel", self.class_name + "PatchOneRequestBodyModel", self.class_name + "PatchOneResponseModel"
 
     def update_one(self) -> Tuple:
         query_param: List[dict] = self._get_fizzy_query_param(self.primary_key_str)

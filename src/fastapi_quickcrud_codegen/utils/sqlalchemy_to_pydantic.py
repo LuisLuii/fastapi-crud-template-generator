@@ -92,7 +92,7 @@ def sqlalchemy_to_pydantic(
                 request_response_mode_set[request_method] = {}
             request_response_mode_set[request_method][crud_method.value] = True
         elif crud_method.value == CrudMethods.PATCH_ONE.value:
-            model_builder.patch()
+            model_builder.patch_one()
             request_method = CRUDRequestMapping.get_request_method_by_crud_method(crud_method.value).value
             if request_method not in request_response_mode_set:
                 request_response_mode_set[request_method] = {}

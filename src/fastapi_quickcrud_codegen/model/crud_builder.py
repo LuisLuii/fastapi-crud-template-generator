@@ -168,3 +168,25 @@ class CrudCodeGen():
             f"{model_name}"]
         ), from_=f"fastapi_quick_crud_template.model.{file_name}")
         self.code += "\n\n" + code
+
+    def build_patch_one_route(self, *, is_async: bool, path: str, file_name, model_name):
+        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/patch_one.jinja2'
+        template_file_path = Path(TEMPLATE_FILE_PATH)
+
+        TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
+        templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
+        templateEnv = jinja2.Environment(loader=templateLoader)
+        TEMPLATE_FILE = f'patch_one.jinja2'
+        template = templateEnv.get_template(TEMPLATE_FILE)
+        code = template.render(
+            {"model_name": model_name, "path": path, "is_async": is_async})
+        self.import_helper.add(import_="IntegrityError", from_="sqlalchemy.exc")
+        self.import_helper.add(import_="parse_obj_as", from_="pydantic")
+        self.import_helper.add(import_=set([
+            f"{model_name}PatchOneRequestQueryModel",
+            f"{model_name}PatchOneRequestBodyModel",
+            f"{model_name}PatchOneResponseModel",
+            f"{model_name}PrimaryKeyModel",
+            f"{model_name}"]
+        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        self.code += "\n\n" + code
