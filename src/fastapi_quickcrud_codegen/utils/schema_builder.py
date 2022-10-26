@@ -875,7 +875,7 @@ class ApiParameterSchemaBuilder:
                                          f"Query({i['column_default']}, description={i['column_description']})"))
 
 
-        self.code_gen.build_dataclass(class_name=self.class_name + "UpdateOneRequestQueryBodyModel",
+        self.code_gen.build_dataclass(class_name=self.class_name + "UpdateOneRequestQueryModel",
                                       fields=request_query_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns,
                                       filter_none=True)
@@ -888,7 +888,7 @@ class ApiParameterSchemaBuilder:
         # I have removed filter none and valuexxx for response model
         self.code_gen.build_base_model(class_name=self.class_name + "UpdateOneResponseModel",
                                        fields=response_fields)
-        return self.class_name + "PrimaryKeyModel", self.class_name + "UpdateOneRequestQueryBodyModel", self.class_name + "UpdateOneRequestBodyModel", self.class_name + "UpdateOneResponseModel"
+        return self.class_name + "PrimaryKeyModel", self.class_name + "UpdateOneRequestQueryModel", self.class_name + "UpdateOneRequestBodyModel", self.class_name + "UpdateOneResponseModel"
 
     def update_many(self) -> Tuple:
         """
@@ -922,7 +922,7 @@ class ApiParameterSchemaBuilder:
                                          i['column_type'],
                                          f"Query({i['column_default']}, description={i['column_description']})"))
 
-        self.code_gen.build_dataclass(class_name=self.class_name + "UpdateManyRequestQueryBodyModel",
+        self.code_gen.build_dataclass(class_name=self.class_name + "UpdateManyRequestQueryModel",
                                       value_of_list_to_str_columns=self.uuid_type_columns,
                                       fields=request_query_fields,
                                       filter_none=True)
@@ -939,7 +939,7 @@ class ApiParameterSchemaBuilder:
                                                 f'{self.class_name + "UpdateManyResponseItemModel"}',
                                                 None))
 
-        return None, self.class_name + "UpdateManyRequestQueryBodyModel", self.class_name + "UpdateManyRequestBodyModel", f'{self.class_name}UpdateManyResponseItemListModel'
+        return None, self.class_name + "UpdateManyRequestQueryModel", self.class_name + "UpdateManyRequestBodyModel", f'{self.class_name}UpdateManyResponseItemListModel'
 
     def patch_many(self) -> Tuple:
         """
@@ -973,7 +973,7 @@ class ApiParameterSchemaBuilder:
                                          i['column_type'],
                                          f"Query({i['column_default']}, description={i['column_description']})"))
 
-        self.code_gen.build_dataclass(class_name=self.class_name + "PatchManyRequestQueryBodyModel",
+        self.code_gen.build_dataclass(class_name=self.class_name + "PatchManyRequestQueryModel",
                                       fields=request_query_fields,
                                       filter_none=True,
                                       value_of_list_to_str_columns=self.uuid_type_columns)
@@ -992,7 +992,7 @@ class ApiParameterSchemaBuilder:
                                             field=(
                                                 f'{f"{self.class_name}PatchManyItemResponseModel"}',
                                                 None))
-        return None, self.class_name + "UpdateManyRequestQueryBodyModel", self.class_name + "UpdateManyRequestBodyModel", f'{self.class_name}UpdateManyResponseItemListModel'
+        return None, self.class_name + "UpdateManyRequestQueryModel", self.class_name + "UpdateManyRequestBodyModel", f'{self.class_name}UpdateManyResponseItemListModel'
 
     def post_redirect_get(self) -> Tuple:
         request_validation = [lambda self_object: _filter_none(self_object)]
