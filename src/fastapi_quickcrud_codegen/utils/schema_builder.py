@@ -982,15 +982,13 @@ class ApiParameterSchemaBuilder:
                                       value_of_list_to_str_columns=self.uuid_type_columns)
 
         self.code_gen.build_base_model(class_name=self.class_name + "PatchManyItemResponseModel",
-                                       fields=response_fields,
-                                       filter_none=True,
-                                       value_of_list_to_str_columns=self.uuid_type_columns)
+                                       fields=response_fields)
 
         self.code_gen.build_base_model_root(class_name=f'{self.class_name}PatchManyItemListResponseModel',
                                             field=(
                                                 f'{f"{self.class_name}PatchManyItemResponseModel"}',
                                                 None))
-        return None, self.class_name + "UpdateManyRequestQueryModel", self.class_name + "UpdateManyRequestBodyModel", f'{self.class_name}UpdateManyResponseItemListModel'
+        return None, self.class_name + "PatchManyRequestQueryModel", self.class_name + "PatchManyRequestBodyModel", f'{self.class_name}PatchManyItemListResponseModel'
 
     def post_redirect_get(self) -> Tuple:
         request_validation = [lambda self_object: _filter_none(self_object)]
