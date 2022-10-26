@@ -1,23 +1,11 @@
-import sqlalchemy
-from fastapi import FastAPI
-from sqlalchemy import BigInteger, Boolean, CHAR, Column, Date, DateTime, Float, Integer, \
-    Numeric, SmallInteger, String, Text, Time, UniqueConstraint, LargeBinary
+from sqlalchemy import *
 from sqlalchemy.orm import declarative_base
-
-from fastapi_quickcrud_codegen import crud_router_builder, CrudMethods
-from fastapi_quickcrud_codegen.misc.type import SqlType
-
-engine = sqlalchemy.create_engine('postgresql+asyncpg://postgres:124@127.0.0.1:5432/postgres')
-print()
-
 
 Base = declarative_base()
 metadata = Base.metadata
 
 
 class SampleTable(Base):
-    primary_key_of_table = "primary_key"
-    unique_fields = ['primary_key', 'int4_value', 'float4_value']
     __tablename__ = 'test_build_myself_memory'
     __table_args__ = (
         UniqueConstraint('primary_key', 'int4_value', 'float4_value'),
@@ -52,6 +40,8 @@ class SampleTableTwo(Base):
     bytea_value = Column(LargeBinary)
 
 
+from fastapi_quickcrud_codegen import crud_router_builder, CrudMethods
+
 crud_router_builder(
     db_model_list=[
         {
@@ -67,8 +57,8 @@ crud_router_builder(
         }
     ],
     exclude_columns=['bytea_value', 'xml_value', 'box_valaue'],
-    crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE, CrudMethods.UPDATE_MANY, CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE],
+    crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE, CrudMethods.UPDATE_MANY,
+                  CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE],
     is_async=True,
-    # database_url="sqlite://"
     database_url="sqlite+aiosqlite://"
 )
