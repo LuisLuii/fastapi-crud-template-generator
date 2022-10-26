@@ -180,7 +180,7 @@ class SampleTableTwo(Base):
 
 @dataclass
 class SampleTableTwoPrimaryKeyModel:
-    primary_key: int = Query(None)
+    primary_key: int = Query(None, description=None)
 
 
 
@@ -419,7 +419,7 @@ class SampleTable(Base):
 
 @dataclass
 class SampleTablePrimaryKeyModel:
-    primary_key: int = Query(None)
+    primary_key: int = Query(None, description=None)
 
 
 

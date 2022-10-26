@@ -131,12 +131,6 @@ class ApiParameterSchemaBuilder:
         self.code_gen = ModelCodeGen(self.root_table_name, sql_type)
         self.code_gen.gen_model(db_model)
 
-        self.primary_key_str, self._primary_key_dataclass_model, self._primary_key_field_definition \
-            = self._extract_primary()
-        self.unique_fields: List[str] = self._extract_unique()
-
-        self.code_gen.build_constant(constants=[("PRIMARY_KEY_NAME", self.primary_key_str),
-                                                ("UNIQUE_LIST", self.unique_fields)])
         self.uuid_type_columns = []
         self.str_type_columns = []
         self.number_type_columns = []
@@ -147,7 +141,12 @@ class ApiParameterSchemaBuilder:
         self.array_type_columns = []
         self.foreign_table_response_model_sets: Dict[TableNameT, ResponseModelT] = {}
         self.all_field: List[dict] = self._extract_all_field()
+        self.primary_key_str = self._extract_primary()
+        self.unique_fields: List[str] = self._extract_unique()
+        self.code_gen.build_constant(constants=[("PRIMARY_KEY_NAME", self.primary_key_str),
+                                                ("UNIQUE_LIST", self.unique_fields)])
         self.sql_type = sql_type
+
 
     def extra_foreign_table(self, db_model=None) -> Dict[ForeignKeyName, dict]:
         if db_model is None:
@@ -208,22 +207,13 @@ class ApiParameterSchemaBuilder:
         primary_column_name = str(primary_key_column.key)
         primary_field_definitions = (primary_column_name, column_type, default)
         class_name = f'{self.class_name}PrimaryKeyModel'
-        self.code_gen.build_dataclass(class_name=class_name, fields=[(primary_field_definitions[0],
-                                                                      primary_field_definitions[1],
-                                                                      f'Query({primary_field_definitions[2]})')])
-        primary_columns_model: DataClassT = make_dataclass(f'{self.class_name + str(uuid.uuid4())}_PrimaryKeyModel',
-                                                           [(primary_field_definitions[0],
-                                                             primary_field_definitions[1],
-                                                             Query(primary_field_definitions[2],
-                                                                   description=description))],
-                                                           namespace={
-                                                               '__post_init__': lambda
-                                                                   self_object: self._value_of_list_to_str(
-                                                                   self_object, self.uuid_type_columns)
-                                                           })
+        self.code_gen.build_dataclass(class_name=class_name,
+                                      fields=[(primary_field_definitions[0],
+                                               primary_field_definitions[1],
+                                               f'Query({primary_field_definitions[2]}, description={description})')],
+                                      value_of_list_to_str_columns=self.uuid_type_columns)
 
-        assert primary_column_name and primary_columns_model and primary_field_definitions
-        return primary_column_name, primary_columns_model, primary_field_definitions
+        return primary_column_name
 
     def _extract_unique(self) -> List[str]:
         unique_constraint = None
@@ -248,9 +238,9 @@ class ApiParameterSchemaBuilder:
 
     @staticmethod
     def _get_field_description(column: Column) -> str:
-        if not hasattr(column, 'comment'):
-            return ""
-        return column.comment
+        if not hasattr(column, 'comment') or not column.comment:
+            return None
+        return f'"{column.comment}"'
 
     def _extract_all_field(self, columns=None) -> List[dict]:
         fields: List[dict] = []
@@ -367,22 +357,6 @@ class ApiParameterSchemaBuilder:
                             else:
                                 str_value_ = str(value_)
                             setattr(request_or_response_object, received_column_name, str_value_)
-
-    @staticmethod
-    def _assign_join_table_instance(request_or_response_object, join_table_mapping):
-        received_request = deepcopy(request_or_response_object.__dict__)
-        join_table_replace = {}
-        if 'join_foreign_table' in received_request:
-            for join_table in received_request['join_foreign_table']:
-                if join_table in join_table_mapping:
-                    join_table_replace[str(join_table)] = join_table_mapping[join_table]
-            setattr(request_or_response_object, 'join_foreign_table', join_table_replace)
-
-    @staticmethod
-    def _get_many_string_matching_patterns_description_builder():
-        return '''<br >Composite string field matching pattern<h5/> 
-                   <br /> Allow to select more than one pattern for string query
-                   <br /> <a> https://www.postgresql.org/docs/9.3/functions-matching.html <a/>'''
 
     @staticmethod
     def _get_many_order_by_columns_description_builder(all_columns, regex_validation, primary_name):

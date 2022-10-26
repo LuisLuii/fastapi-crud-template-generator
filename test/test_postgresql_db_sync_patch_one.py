@@ -185,7 +185,7 @@ class SampleTableTwo(Base):
 
 @dataclass
 class SampleTableTwoPrimaryKeyModel:
-    primary_key: int = Query(None)
+    primary_key: int = Query(None, description=None)
 
 
 
@@ -387,7 +387,12 @@ class SampleTable(Base):
 
 @dataclass
 class SampleTablePrimaryKeyModel:
-    primary_key: int = Query(None)
+    primary_key: int = Query(None, description=None)
+    def __post_init__(self):
+        """
+        auto gen by FastApi quick CRUD
+        """
+        value_of_list_to_str(self, ['uuid_value'])
 
 
 
