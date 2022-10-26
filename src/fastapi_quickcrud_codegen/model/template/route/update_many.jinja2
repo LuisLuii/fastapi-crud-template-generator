@@ -2,7 +2,7 @@
 {{ 'async ' if is_async else '' }}def entire_update_many_by_query(
                                                 response: Response,
                                                 update_data: {{ model_name }}UpdateManyRequestBodyModel = Depends(),
-                                                extra_query: {{ model_name }}UpdateManyRequestQueryBodyModel = Depends(),
+                                                extra_query: {{ model_name }}UpdateManyRequestQueryModel = Depends(),
                                                 session=Depends(db_session)):
     model = {{ model_name }}
 

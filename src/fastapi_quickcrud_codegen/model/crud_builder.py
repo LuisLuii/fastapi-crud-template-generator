@@ -136,7 +136,7 @@ class CrudCodeGen():
 
         self.import_helper.add(import_=set([
             f"{model_name}UpdateOneRequestBodyModel",
-            f"{model_name}UpdateOneRequestQueryBodyModel",
+            f"{model_name}UpdateOneRequestQueryModel",
             f"{model_name}UpdateOneResponseModel",
             f"{model_name}PrimaryKeyModel",
             f"{model_name}"]
@@ -162,7 +162,7 @@ class CrudCodeGen():
         self.import_helper.add(import_=set(["Ordering"]), from_="fastapi_quick_crud_template.common.typing")
 
         self.import_helper.add(import_=set([
-            f"{model_name}UpdateManyRequestQueryBodyModel",
+            f"{model_name}UpdateManyRequestQueryModel",
             f"{model_name}UpdateManyRequestBodyModel",
             f"{model_name}UpdateManyResponseItemListModel",
             f"{model_name}"]

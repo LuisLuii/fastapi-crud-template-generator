@@ -3,7 +3,7 @@
                                                 response: Response,
                                                 primary_key: {{ model_name }}PrimaryKeyModel = Depends(),
                                                 update_data: {{ model_name }}UpdateOneRequestBodyModel = Depends(),
-                                                extra_query: {{ model_name }}UpdateOneRequestQueryBodyModel = Depends(),
+                                                extra_query: {{ model_name }}UpdateOneRequestQueryModel = Depends(),
                                                 session=Depends(db_session)):
     model = {{ model_name }}
 

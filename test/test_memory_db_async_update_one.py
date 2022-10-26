@@ -288,7 +288,7 @@ class SampleTableTwoCreateOneResponseModel(BaseModel):
 
 
 @dataclass
-class SampleTableTwoUpdateOneRequestQueryBodyModel:
+class SampleTableTwoUpdateOneRequestQueryModel:
     bool_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     bool_value____list: Optional[List[bool]] = Query(None, description=None)
     def __post_init__(self):
@@ -668,7 +668,7 @@ class SampleTableCreateOneResponseModel(BaseModel):
 
 
 @dataclass
-class SampleTableUpdateOneRequestQueryBodyModel:
+class SampleTableUpdateOneRequestQueryModel:
     bool_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     bool_value____list: Optional[List[bool]] = Query(None, description=None)
     char_value____str_____matching_pattern: Optional[List[MatchingPatternInStringBase]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
@@ -804,7 +804,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
 from fastapi_quick_crud_template.common.utils import clean_input_fields, find_query_builder
 from fastapi_quick_crud_template.common.sql_session import db_session
-from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo, SampleTableTwoCreateOneRequestBodyModel, SampleTableTwoCreateOneResponseModel, SampleTableTwoFindManyRequestBodyModel, SampleTableTwoFindManyResponseModel, SampleTableTwoFindManyResponseRootModel, SampleTableTwoFindOneRequestBodyModel, SampleTableTwoFindOneResponseModel, SampleTableTwoPrimaryKeyModel, SampleTableTwoUpdateOneRequestBodyModel, SampleTableTwoUpdateOneRequestQueryBodyModel, SampleTableTwoUpdateOneResponseModel
+from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo, SampleTableTwoCreateOneRequestBodyModel, SampleTableTwoCreateOneResponseModel, SampleTableTwoFindManyRequestBodyModel, SampleTableTwoFindManyResponseModel, SampleTableTwoFindManyResponseRootModel, SampleTableTwoFindOneRequestBodyModel, SampleTableTwoFindOneResponseModel, SampleTableTwoPrimaryKeyModel, SampleTableTwoUpdateOneRequestBodyModel, SampleTableTwoUpdateOneRequestQueryModel, SampleTableTwoUpdateOneResponseModel
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
 from fastapi_quick_crud_template.common.typing import Ordering
@@ -933,7 +933,7 @@ async def entire_update_by_primary_key(
                                                 response: Response,
                                                 primary_key: SampleTableTwoPrimaryKeyModel = Depends(),
                                                 update_data: SampleTableTwoUpdateOneRequestBodyModel = Depends(),
-                                                extra_query: SampleTableTwoUpdateOneRequestQueryBodyModel = Depends(),
+                                                extra_query: SampleTableTwoUpdateOneRequestQueryModel = Depends(),
                                                 session=Depends(db_session)):
     model = SampleTableTwo
 
@@ -975,7 +975,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
 from fastapi_quick_crud_template.common.utils import clean_input_fields, find_query_builder
 from fastapi_quick_crud_template.common.sql_session import db_session
-from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable, SampleTableCreateOneRequestBodyModel, SampleTableCreateOneResponseModel, SampleTableFindManyRequestBodyModel, SampleTableFindManyResponseModel, SampleTableFindManyResponseRootModel, SampleTableFindOneRequestBodyModel, SampleTableFindOneResponseModel, SampleTablePrimaryKeyModel, SampleTableUpdateOneRequestBodyModel, SampleTableUpdateOneRequestQueryBodyModel, SampleTableUpdateOneResponseModel
+from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable, SampleTableCreateOneRequestBodyModel, SampleTableCreateOneResponseModel, SampleTableFindManyRequestBodyModel, SampleTableFindManyResponseModel, SampleTableFindManyResponseRootModel, SampleTableFindOneRequestBodyModel, SampleTableFindOneResponseModel, SampleTablePrimaryKeyModel, SampleTableUpdateOneRequestBodyModel, SampleTableUpdateOneRequestQueryModel, SampleTableUpdateOneResponseModel
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
 from fastapi_quick_crud_template.common.typing import Ordering
@@ -1104,7 +1104,7 @@ async def entire_update_by_primary_key(
                                                 response: Response,
                                                 primary_key: SampleTablePrimaryKeyModel = Depends(),
                                                 update_data: SampleTableUpdateOneRequestBodyModel = Depends(),
-                                                extra_query: SampleTableUpdateOneRequestQueryBodyModel = Depends(),
+                                                extra_query: SampleTableUpdateOneRequestQueryModel = Depends(),
                                                 session=Depends(db_session)):
     model = SampleTable
 
