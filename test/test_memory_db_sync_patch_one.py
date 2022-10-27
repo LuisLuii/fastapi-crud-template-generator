@@ -1105,8 +1105,8 @@ def entire_update_by_primary_key(
         filter_list += find_query_builder(param=extra_query.__dict__,
             model=model)
     stmt = select(model).where(and_(*filter_list))
-    data_instance = session.execute(stmt)
-    data_instance = data_instance.scalar()
+    sql_executed_result = session.execute(stmt)
+    data_instance = sql_executed_result.scalar()
 
     if not data_instance:
         return Response(status_code=HTTPStatus.NOT_FOUND)
@@ -1145,8 +1145,8 @@ def partial_update_one_by_primary_key(
         filter_list += find_query_builder(param=extra_query.__dict__,
             model=model)
     stmt = select(model).where(and_(*filter_list))
-    data_instance = session.execute(stmt)
-    data_instance = data_instance.scalar()
+    sql_executed_result = session.execute(stmt)
+    data_instance = sql_executed_result.scalar()
 
     if not data_instance:
         return Response(status_code=HTTPStatus.NOT_FOUND)
@@ -1316,8 +1316,8 @@ def entire_update_by_primary_key(
         filter_list += find_query_builder(param=extra_query.__dict__,
             model=model)
     stmt = select(model).where(and_(*filter_list))
-    data_instance = session.execute(stmt)
-    data_instance = data_instance.scalar()
+    sql_executed_result = session.execute(stmt)
+    data_instance = sql_executed_result.scalar()
 
     if not data_instance:
         return Response(status_code=HTTPStatus.NOT_FOUND)
@@ -1356,8 +1356,8 @@ def partial_update_one_by_primary_key(
         filter_list += find_query_builder(param=extra_query.__dict__,
             model=model)
     stmt = select(model).where(and_(*filter_list))
-    data_instance = session.execute(stmt)
-    data_instance = data_instance.scalar()
+    sql_executed_result = session.execute(stmt)
+    data_instance = sql_executed_result.scalar()
 
     if not data_instance:
         return Response(status_code=HTTPStatus.NOT_FOUND)

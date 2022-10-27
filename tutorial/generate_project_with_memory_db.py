@@ -10,7 +10,7 @@ class SampleTable(Base):
     __table_args__ = (
         UniqueConstraint('primary_key', 'int4_value', 'float4_value'),
     )
-    primary_key = Column(Integer, primary_key=True, autoincrement=True)
+    primary_key = Column(Integer, primary_key=True, autoincrement=True, comment="hello")
     bool_value = Column(Boolean, nullable=False, default=False)
     bytea_value = Column(LargeBinary)
     char_value = Column(CHAR(10, collation='NOCASE'))
@@ -57,8 +57,7 @@ crud_router_builder(
         }
     ],
     exclude_columns=['bytea_value', 'xml_value', 'box_valaue'],
-    crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE, CrudMethods.UPDATE_MANY,
-                  CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE],
+    crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE, CrudMethods.UPDATE_ONE],
     is_async=True,
     database_url="sqlite+aiosqlite://"
 )

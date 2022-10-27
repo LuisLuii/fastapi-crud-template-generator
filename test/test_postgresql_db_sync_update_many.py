@@ -941,8 +941,8 @@ def entire_update_many_by_query(
     filter_list: List[BinaryExpression] = find_query_builder(param=extra_args,
                                                              model=model)
     stmt = select(model).where(and_(*filter_list))
-    data_instance = session.execute(stmt)
-    data_instance_list = [i for i in data_instance.scalars()]
+    sql_executed_result = session.execute(stmt)
+    data_instance_list = [i for i in sql_executed_result.scalars()]
 
 
     if not data_instance_list:
@@ -1082,8 +1082,8 @@ def entire_update_many_by_query(
     filter_list: List[BinaryExpression] = find_query_builder(param=extra_args,
                                                              model=model)
     stmt = select(model).where(and_(*filter_list))
-    data_instance = session.execute(stmt)
-    data_instance_list = [i for i in data_instance.scalars()]
+    sql_executed_result = session.execute(stmt)
+    data_instance_list = [i for i in sql_executed_result.scalars()]
 
 
     if not data_instance_list:
