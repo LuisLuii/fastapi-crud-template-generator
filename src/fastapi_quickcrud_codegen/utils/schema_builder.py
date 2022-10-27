@@ -741,16 +741,14 @@ class ApiParameterSchemaBuilder:
                                    i['column_type'],
                                    f"Query({i['column_default']}, description={i['column_description']})"))
 
-        self.code_gen.build_dataclass(class_name=self.class_name + "DeleteOneRequestBodyModel",
+        self.code_gen.build_dataclass(class_name=self.class_name + "DeleteOneRequestQueryModel",
                                       fields=request_fields,
                                       filter_none=True,
                                       value_of_list_to_str_columns=self.uuid_type_columns)
 
         self.code_gen.build_base_model(class_name=self.class_name + "DeleteOneResponseModel",
-                                       fields=response_fields,
-                                       filter_none=True,
-                                       value_of_list_to_str_columns=self.uuid_type_columns)
-        return self._primary_key_dataclass_model, self.class_name + "DeleteOneRequestBodyModel", None, self.class_name + "DeleteOneResponseModel"
+                                       fields=response_fields)
+        return self.class_name + "PrimaryKeyModel", self.class_name + "DeleteOneRequestQueryModel", None, self.class_name + "DeleteOneResponseModel"
 
     def delete_many(self) -> Tuple:
         query_param: List[dict] = self._get_fizzy_query_param()
@@ -774,9 +772,7 @@ class ApiParameterSchemaBuilder:
                                       value_of_list_to_str_columns=self.uuid_type_columns)
 
         self.code_gen.build_base_model(class_name=self.class_name + "DeleteManyItemResponseModel",
-                                       fields=response_fields,
-                                       filter_none=True,
-                                       value_of_list_to_str_columns=self.uuid_type_columns)
+                                       fields=response_fields)
 
         self.code_gen.build_base_model_root(class_name=self.class_name + "DeleteManyItemListResponseModel",
                                             field=(
