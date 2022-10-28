@@ -166,7 +166,7 @@ def crud_router_builder(
 
         def delete_many_api():
             print(f"\t\tGenerating delete many API")
-            crud_code_generator.build_patch_many_route(is_async=is_async, path="", file_name=model_name, model_name=table_name)
+            crud_code_generator.build_delete_many_route(is_async=is_async, path="", file_name=model_name, model_name=table_name)
             print(f"\t\tdelete many API generate successfully")
 
         api_register = {
