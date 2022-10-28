@@ -979,7 +979,7 @@ async def entire_update_many_by_query(
             response_data.append(i)
 
         result = parse_obj_as(SampleTableTwoUpdateManyResponseItemListModel, response_data)
-        response.headers["x-total-count"] = str(1)
+        response.headers["x-total-count"] = str(len(response_data))
         await session.commit()
 
         return result
@@ -1149,7 +1149,7 @@ async def entire_update_many_by_query(
             response_data.append(i)
 
         result = parse_obj_as(SampleTableUpdateManyResponseItemListModel, response_data)
-        response.headers["x-total-count"] = str(1)
+        response.headers["x-total-count"] = str(len(response_data))
         await session.commit()
 
         return result
