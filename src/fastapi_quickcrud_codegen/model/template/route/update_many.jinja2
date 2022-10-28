@@ -25,7 +25,7 @@
             response_data.append(i)
 
         result = parse_obj_as({{ model_name }}UpdateManyResponseItemListModel, response_data)
-        response.headers["x-total-count"] = str(1)
+        response.headers["x-total-count"] = str(len(response_data))
         {{ 'await ' if is_async else '' }}session.commit()
 
         return result
