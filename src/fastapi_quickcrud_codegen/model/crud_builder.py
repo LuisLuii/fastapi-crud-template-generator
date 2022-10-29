@@ -56,7 +56,7 @@ class CrudCodeGen():
         self.import_helper.add(import_=set([
             f"{model_name}FindManyResponseModel",
             f"{model_name}FindManyRequestBodyModel",
-            f"{model_name}FindManyResponseRootModel",
+            f"{model_name}FindManyItemListResponseModel",
             f"{model_name}"]
         ), from_=f"fastapi_quick_crud_template.model.{file_name}")
         self.import_helper.add(import_="parse_obj_as", from_="pydantic")
@@ -164,7 +164,7 @@ class CrudCodeGen():
         self.import_helper.add(import_=set([
             f"{model_name}UpdateManyRequestQueryModel",
             f"{model_name}UpdateManyRequestBodyModel",
-            f"{model_name}UpdateManyResponseItemListModel",
+            f"{model_name}UpdateManyItemListResponseModel",
             f"{model_name}"]
         ), from_=f"fastapi_quick_crud_template.model.{file_name}")
         self.code += "\n\n" + code

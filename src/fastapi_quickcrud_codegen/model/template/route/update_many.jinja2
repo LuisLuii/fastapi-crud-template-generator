@@ -1,4 +1,4 @@
-@api.put("{{ path }}", status_code=200, response_model={{ model_name }}UpdateManyResponseItemListModel)
+@api.put("{{ path }}", status_code=200, response_model={{ model_name }}UpdateManyItemListResponseModel)
 {{ 'async ' if is_async else '' }}def entire_update_many_by_query(
                                                 response: Response,
                                                 update_data: {{ model_name }}UpdateManyRequestBodyModel = Depends(),
@@ -24,7 +24,7 @@
                         setattr(i, update_arg_name, update_arg_value)
             response_data.append(i)
 
-        result = parse_obj_as({{ model_name }}UpdateManyResponseItemListModel, response_data)
+        result = parse_obj_as({{ model_name }}UpdateManyItemListResponseModel, response_data)
         response.headers["x-total-count"] = str(len(response_data))
         {{ 'await ' if is_async else '' }}session.commit()
 

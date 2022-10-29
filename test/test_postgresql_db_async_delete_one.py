@@ -213,7 +213,7 @@ class SampleTableTwoFindOneResponseModel(BaseModel):
         orm_mode = True
 
 
-class SampleTableTwoFindOneResponseRootModel(ExcludeUnsetBaseModel):
+class SampleTableTwoFindOneItemListResponseModel(ExcludeUnsetBaseModel):
     __root__: List[SampleTableTwoFindOneResponseModel]
     class Config:
         orm_mode = True
@@ -259,7 +259,7 @@ class SampleTableTwoFindManyResponseModel(BaseModel):
         orm_mode = True
 
 
-class SampleTableTwoFindManyResponseRootModel(ExcludeUnsetBaseModel):
+class SampleTableTwoFindManyItemListResponseModel(ExcludeUnsetBaseModel):
     __root__: List[SampleTableTwoFindManyResponseModel]
     class Config:
         orm_mode = True
@@ -501,7 +501,7 @@ class SampleTableFindOneResponseModel(BaseModel):
         orm_mode = True
 
 
-class SampleTableFindOneResponseRootModel(ExcludeUnsetBaseModel):
+class SampleTableFindOneItemListResponseModel(ExcludeUnsetBaseModel):
     __root__: List[SampleTableFindOneResponseModel]
     class Config:
         orm_mode = True
@@ -648,7 +648,7 @@ class SampleTableFindManyResponseModel(BaseModel):
         orm_mode = True
 
 
-class SampleTableFindManyResponseRootModel(ExcludeUnsetBaseModel):
+class SampleTableFindManyItemListResponseModel(ExcludeUnsetBaseModel):
     __root__: List[SampleTableFindManyResponseModel]
     class Config:
         orm_mode = True
@@ -846,7 +846,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
 from fastapi_quick_crud_template.common.utils import clean_input_fields, find_query_builder
 from fastapi_quick_crud_template.common.sql_session import db_session
-from fastapi_quick_crud_template.model.test_build_myself_two import SampleTableTwo, SampleTableTwoCreateOneRequestBodyModel, SampleTableTwoCreateOneResponseModel, SampleTableTwoDeleteOneRequestQueryModel, SampleTableTwoDeleteOneResponseModel, SampleTableTwoFindManyRequestBodyModel, SampleTableTwoFindManyResponseModel, SampleTableTwoFindManyResponseRootModel, SampleTableTwoFindOneRequestBodyModel, SampleTableTwoFindOneResponseModel, SampleTableTwoPrimaryKeyModel
+from fastapi_quick_crud_template.model.test_build_myself_two import SampleTableTwo, SampleTableTwoCreateOneRequestBodyModel, SampleTableTwoCreateOneResponseModel, SampleTableTwoDeleteOneRequestQueryModel, SampleTableTwoDeleteOneResponseModel, SampleTableTwoFindManyItemListResponseModel, SampleTableTwoFindManyRequestBodyModel, SampleTableTwoFindManyResponseModel, SampleTableTwoFindOneRequestBodyModel, SampleTableTwoFindOneResponseModel, SampleTableTwoPrimaryKeyModel
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
 from fastapi_quick_crud_template.common.typing import Ordering
@@ -887,7 +887,7 @@ async def get_one_by_primary_key(response: Response,
     return response_data
 
 
-@api.get("", status_code=200, response_model=SampleTableTwoFindManyResponseRootModel)
+@api.get("", status_code=200, response_model=SampleTableTwoFindManyItemListResponseModel)
 async def get_many(response: Response,
                            query=Depends(SampleTableTwoFindManyRequestBodyModel),
                            session=Depends(db_session)):
@@ -936,7 +936,7 @@ async def get_many(response: Response,
     if not response_data_list:
         return Response(status_code=HTTPStatus.NO_CONTENT)
 
-    response_data = parse_obj_as(SampleTableTwoFindManyResponseRootModel, response_data_list)
+    response_data = parse_obj_as(SampleTableTwoFindManyItemListResponseModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
     await session.commit()
     return response_data
@@ -1008,7 +1008,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
 from fastapi_quick_crud_template.common.utils import clean_input_fields, find_query_builder
 from fastapi_quick_crud_template.common.sql_session import db_session
-from fastapi_quick_crud_template.model.test_build_myself import SampleTable, SampleTableCreateOneRequestBodyModel, SampleTableCreateOneResponseModel, SampleTableDeleteOneRequestQueryModel, SampleTableDeleteOneResponseModel, SampleTableFindManyRequestBodyModel, SampleTableFindManyResponseModel, SampleTableFindManyResponseRootModel, SampleTableFindOneRequestBodyModel, SampleTableFindOneResponseModel, SampleTablePrimaryKeyModel
+from fastapi_quick_crud_template.model.test_build_myself import SampleTable, SampleTableCreateOneRequestBodyModel, SampleTableCreateOneResponseModel, SampleTableDeleteOneRequestQueryModel, SampleTableDeleteOneResponseModel, SampleTableFindManyItemListResponseModel, SampleTableFindManyRequestBodyModel, SampleTableFindManyResponseModel, SampleTableFindOneRequestBodyModel, SampleTableFindOneResponseModel, SampleTablePrimaryKeyModel
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
 from fastapi_quick_crud_template.common.typing import Ordering
@@ -1049,7 +1049,7 @@ async def get_one_by_primary_key(response: Response,
     return response_data
 
 
-@api.get("", status_code=200, response_model=SampleTableFindManyResponseRootModel)
+@api.get("", status_code=200, response_model=SampleTableFindManyItemListResponseModel)
 async def get_many(response: Response,
                            query=Depends(SampleTableFindManyRequestBodyModel),
                            session=Depends(db_session)):
@@ -1098,7 +1098,7 @@ async def get_many(response: Response,
     if not response_data_list:
         return Response(status_code=HTTPStatus.NO_CONTENT)
 
-    response_data = parse_obj_as(SampleTableFindManyResponseRootModel, response_data_list)
+    response_data = parse_obj_as(SampleTableFindManyItemListResponseModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
     await session.commit()
     return response_data

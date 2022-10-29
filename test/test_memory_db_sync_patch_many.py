@@ -213,7 +213,7 @@ class SampleTableTwoFindOneResponseModel(BaseModel):
         orm_mode = True
 
 
-class SampleTableTwoFindOneResponseRootModel(ExcludeUnsetBaseModel):
+class SampleTableTwoFindOneItemListResponseModel(ExcludeUnsetBaseModel):
     __root__: List[SampleTableTwoFindOneResponseModel]
     class Config:
         orm_mode = True
@@ -259,7 +259,7 @@ class SampleTableTwoFindManyResponseModel(BaseModel):
         orm_mode = True
 
 
-class SampleTableTwoFindManyResponseRootModel(ExcludeUnsetBaseModel):
+class SampleTableTwoFindManyItemListResponseModel(ExcludeUnsetBaseModel):
     __root__: List[SampleTableTwoFindManyResponseModel]
     class Config:
         orm_mode = True
@@ -323,7 +323,7 @@ class SampleTableTwoUpdateManyResponseItemModel(BaseModel):
         orm_mode = True
 
 
-class SampleTableTwoUpdateManyResponseItemListModel(BaseModel):
+class SampleTableTwoUpdateManyItemListResponseModel(BaseModel):
     __root__: List[SampleTableTwoUpdateManyResponseItemModel]
     class Config:
         orm_mode = True
@@ -537,7 +537,7 @@ class SampleTableFindOneResponseModel(BaseModel):
         orm_mode = True
 
 
-class SampleTableFindOneResponseRootModel(ExcludeUnsetBaseModel):
+class SampleTableFindOneItemListResponseModel(ExcludeUnsetBaseModel):
     __root__: List[SampleTableFindOneResponseModel]
     class Config:
         orm_mode = True
@@ -668,7 +668,7 @@ class SampleTableFindManyResponseModel(BaseModel):
         orm_mode = True
 
 
-class SampleTableFindManyResponseRootModel(ExcludeUnsetBaseModel):
+class SampleTableFindManyItemListResponseModel(ExcludeUnsetBaseModel):
     __root__: List[SampleTableFindManyResponseModel]
     class Config:
         orm_mode = True
@@ -856,7 +856,7 @@ class SampleTableUpdateManyResponseItemModel(BaseModel):
         orm_mode = True
 
 
-class SampleTableUpdateManyResponseItemListModel(BaseModel):
+class SampleTableUpdateManyItemListResponseModel(BaseModel):
     __root__: List[SampleTableUpdateManyResponseItemModel]
     class Config:
         orm_mode = True
@@ -1011,7 +1011,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
 from fastapi_quick_crud_template.common.utils import clean_input_fields, find_query_builder
 from fastapi_quick_crud_template.common.sql_session import db_session
-from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo, SampleTableTwoCreateOneRequestBodyModel, SampleTableTwoCreateOneResponseModel, SampleTableTwoFindManyRequestBodyModel, SampleTableTwoFindManyResponseModel, SampleTableTwoFindManyResponseRootModel, SampleTableTwoFindOneRequestBodyModel, SampleTableTwoFindOneResponseModel, SampleTableTwoPatchManyItemListResponseModel, SampleTableTwoPatchManyRequestBodyModel, SampleTableTwoPatchManyRequestQueryModel, SampleTableTwoPrimaryKeyModel, SampleTableTwoUpdateManyRequestBodyModel, SampleTableTwoUpdateManyRequestQueryModel, SampleTableTwoUpdateManyResponseItemListModel
+from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo, SampleTableTwoCreateOneRequestBodyModel, SampleTableTwoCreateOneResponseModel, SampleTableTwoFindManyItemListResponseModel, SampleTableTwoFindManyRequestBodyModel, SampleTableTwoFindManyResponseModel, SampleTableTwoFindOneRequestBodyModel, SampleTableTwoFindOneResponseModel, SampleTableTwoPatchManyItemListResponseModel, SampleTableTwoPatchManyRequestBodyModel, SampleTableTwoPatchManyRequestQueryModel, SampleTableTwoPrimaryKeyModel, SampleTableTwoUpdateManyItemListResponseModel, SampleTableTwoUpdateManyRequestBodyModel, SampleTableTwoUpdateManyRequestQueryModel
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
 from fastapi_quick_crud_template.common.typing import Ordering
@@ -1052,7 +1052,7 @@ def get_one_by_primary_key(response: Response,
     return response_data
 
 
-@api.get("", status_code=200, response_model=SampleTableTwoFindManyResponseRootModel)
+@api.get("", status_code=200, response_model=SampleTableTwoFindManyItemListResponseModel)
 def get_many(response: Response,
                            query=Depends(SampleTableTwoFindManyRequestBodyModel),
                            session=Depends(db_session)):
@@ -1101,7 +1101,7 @@ def get_many(response: Response,
     if not response_data_list:
         return Response(status_code=HTTPStatus.NO_CONTENT)
 
-    response_data = parse_obj_as(SampleTableTwoFindManyResponseRootModel, response_data_list)
+    response_data = parse_obj_as(SampleTableTwoFindManyItemListResponseModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
     session.commit()
     return response_data
@@ -1135,7 +1135,7 @@ def insert_one(response: Response,
     session.commit()
     return result
 
-@api.put("", status_code=200, response_model=SampleTableTwoUpdateManyResponseItemListModel)
+@api.put("", status_code=200, response_model=SampleTableTwoUpdateManyItemListResponseModel)
 def entire_update_many_by_query(
                                                 response: Response,
                                                 update_data: SampleTableTwoUpdateManyRequestBodyModel = Depends(),
@@ -1161,7 +1161,7 @@ def entire_update_many_by_query(
                         setattr(i, update_arg_name, update_arg_value)
             response_data.append(i)
 
-        result = parse_obj_as(SampleTableTwoUpdateManyResponseItemListModel, response_data)
+        result = parse_obj_as(SampleTableTwoUpdateManyItemListResponseModel, response_data)
         response.headers["x-total-count"] = str(len(response_data))
         session.commit()
 
@@ -1220,7 +1220,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
 from fastapi_quick_crud_template.common.utils import clean_input_fields, find_query_builder
 from fastapi_quick_crud_template.common.sql_session import db_session
-from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable, SampleTableCreateOneRequestBodyModel, SampleTableCreateOneResponseModel, SampleTableFindManyRequestBodyModel, SampleTableFindManyResponseModel, SampleTableFindManyResponseRootModel, SampleTableFindOneRequestBodyModel, SampleTableFindOneResponseModel, SampleTablePatchManyItemListResponseModel, SampleTablePatchManyRequestBodyModel, SampleTablePatchManyRequestQueryModel, SampleTablePrimaryKeyModel, SampleTableUpdateManyRequestBodyModel, SampleTableUpdateManyRequestQueryModel, SampleTableUpdateManyResponseItemListModel
+from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable, SampleTableCreateOneRequestBodyModel, SampleTableCreateOneResponseModel, SampleTableFindManyItemListResponseModel, SampleTableFindManyRequestBodyModel, SampleTableFindManyResponseModel, SampleTableFindOneRequestBodyModel, SampleTableFindOneResponseModel, SampleTablePatchManyItemListResponseModel, SampleTablePatchManyRequestBodyModel, SampleTablePatchManyRequestQueryModel, SampleTablePrimaryKeyModel, SampleTableUpdateManyItemListResponseModel, SampleTableUpdateManyRequestBodyModel, SampleTableUpdateManyRequestQueryModel
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
 from fastapi_quick_crud_template.common.typing import Ordering
@@ -1261,7 +1261,7 @@ def get_one_by_primary_key(response: Response,
     return response_data
 
 
-@api.get("", status_code=200, response_model=SampleTableFindManyResponseRootModel)
+@api.get("", status_code=200, response_model=SampleTableFindManyItemListResponseModel)
 def get_many(response: Response,
                            query=Depends(SampleTableFindManyRequestBodyModel),
                            session=Depends(db_session)):
@@ -1310,7 +1310,7 @@ def get_many(response: Response,
     if not response_data_list:
         return Response(status_code=HTTPStatus.NO_CONTENT)
 
-    response_data = parse_obj_as(SampleTableFindManyResponseRootModel, response_data_list)
+    response_data = parse_obj_as(SampleTableFindManyItemListResponseModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
     session.commit()
     return response_data
@@ -1344,7 +1344,7 @@ def insert_one(response: Response,
     session.commit()
     return result
 
-@api.put("", status_code=200, response_model=SampleTableUpdateManyResponseItemListModel)
+@api.put("", status_code=200, response_model=SampleTableUpdateManyItemListResponseModel)
 def entire_update_many_by_query(
                                                 response: Response,
                                                 update_data: SampleTableUpdateManyRequestBodyModel = Depends(),
@@ -1370,7 +1370,7 @@ def entire_update_many_by_query(
                         setattr(i, update_arg_name, update_arg_value)
             response_data.append(i)
 
-        result = parse_obj_as(SampleTableUpdateManyResponseItemListModel, response_data)
+        result = parse_obj_as(SampleTableUpdateManyItemListResponseModel, response_data)
         response.headers["x-total-count"] = str(len(response_data))
         session.commit()
 

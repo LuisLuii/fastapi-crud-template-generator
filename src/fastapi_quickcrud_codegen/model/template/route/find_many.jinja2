@@ -1,4 +1,4 @@
-@api.get("{{ path }}", status_code=200, response_model={{ model_name }}FindManyResponseRootModel)
+@api.get("{{ path }}", status_code=200, response_model={{ model_name }}FindManyItemListResponseModel)
 {{ 'async ' if is_async else '' }}def get_many(response: Response,
                            query=Depends({{ model_name }}FindManyRequestBodyModel),
                            session=Depends(db_session)):
@@ -47,7 +47,7 @@
     if not response_data_list:
         return Response(status_code=HTTPStatus.NO_CONTENT)
 
-    response_data = parse_obj_as({{ model_name }}FindManyResponseRootModel, response_data_list)
+    response_data = parse_obj_as({{ model_name }}FindManyItemListResponseModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
     {{ 'await ' if is_async else '' }}session.commit()
     return response_data

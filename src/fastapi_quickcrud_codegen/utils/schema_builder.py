@@ -686,13 +686,13 @@ class ApiParameterSchemaBuilder:
                                       value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
         self.code_gen.build_base_model(class_name=self.class_name + "FindManyResponseModel", fields=response_fields)
 
-        self.code_gen.build_base_model_root(class_name=self.class_name + "FindManyResponseRootModel",
+        self.code_gen.build_base_model_root(class_name=self.class_name + "FindManyItemListResponseModel",
                                             field=(
                                                 f'{self.class_name + "FindManyResponseModel"}',
                                                 None),
                                             base_model="ExcludeUnsetBaseModel")
 
-        return self.class_name + "FindManyRequestBody", None, f'{self.class_name}FindManyResponseItemListModel'
+        return self.class_name + "FindManyRequestBody", None, f'{self.class_name}FindManyItemListResponseModel'
 
     def find_one(self) -> Tuple:
         query_param: List[dict] = self._get_fizzy_query_param(self.primary_key_str)
@@ -717,13 +717,13 @@ class ApiParameterSchemaBuilder:
                                       value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
 
         self.code_gen.build_base_model(class_name=self.class_name + "FindOneResponseModel", fields=response_fields)
-        self.code_gen.build_base_model_root(class_name=self.class_name + "FindOneResponseRootModel",
+        self.code_gen.build_base_model_root(class_name=self.class_name + "FindOneItemListResponseModel",
                                             field=(
                                                 f'{self.class_name + "FindOneResponseModel"}',
                                                 None),
                                             base_model="ExcludeUnsetBaseModel")
 
-        return self.class_name + "PrimaryKeyModel", self.class_name + "FindOneRequestBodyModel", None, self.class_name + "FindOneResponseRootModel", None
+        return self.class_name + "PrimaryKeyModel", self.class_name + "FindOneRequestBodyModel", None, self.class_name + "FindOneItemListResponseModel", None
 
     def delete_one(self) -> Tuple:
         query_param: List[dict] = self._get_fizzy_query_param(self.primary_key_str)
@@ -902,12 +902,12 @@ class ApiParameterSchemaBuilder:
         self.code_gen.build_base_model(class_name=self.class_name + "UpdateManyResponseItemModel",
                                        fields=response_fields)
 
-        self.code_gen.build_base_model_root(class_name=self.class_name + "UpdateManyResponseItemListModel",
+        self.code_gen.build_base_model_root(class_name=self.class_name + "UpdateManyItemListResponseModel",
                                             field=(
                                                 f'{self.class_name + "UpdateManyResponseItemModel"}',
                                                 None))
 
-        return None, self.class_name + "UpdateManyRequestQueryModel", self.class_name + "UpdateManyRequestBodyModel", f'{self.class_name}UpdateManyResponseItemListModel'
+        return None, self.class_name + "UpdateManyRequestQueryModel", self.class_name + "UpdateManyRequestBodyModel", f'{self.class_name}UpdateManyItemListResponseModel'
 
     def patch_many(self) -> Tuple:
         """
