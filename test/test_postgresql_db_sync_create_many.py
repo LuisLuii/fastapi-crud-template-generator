@@ -143,6 +143,7 @@ def db_session() -> Generator:
     try:
         db = session()
         yield db
+        db.commit()
     except Exception as e:
         db.rollback()
         raise e
@@ -767,7 +768,6 @@ def get_one_by_primary_key(response: Response,
     for column in SampleTableTwoFindOneResponseModel.__fields__:
         response_data[column] = getattr(result_value, column)
     response.headers["x-total-count"] = str(1)
-    session.commit()
     return response_data
 
 
@@ -822,7 +822,6 @@ def get_many(response: Response,
 
     response_data = parse_obj_as(SampleTableTwoFindManyItemListResponseModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
-    session.commit()
     return response_data
 
 @api.post("", status_code=201, response_model=SampleTableTwoCreateManyItemListResponseModel)
@@ -854,7 +853,6 @@ def insert_many(response: Response,
 
     result = parse_obj_as(SampleTableTwoCreateManyItemListResponseModel, new_inserted_data)
     response.headers["x-total-count"] = str(len(new_inserted_data))
-    session.commit()
     return result'''
         validate_route("test_build_myself_two", route_test_build_myself_two_expected)
         route_test_build_myself_expected = '''from http import HTTPStatus
@@ -901,7 +899,6 @@ def get_one_by_primary_key(response: Response,
     for column in SampleTableFindOneResponseModel.__fields__:
         response_data[column] = getattr(result_value, column)
     response.headers["x-total-count"] = str(1)
-    session.commit()
     return response_data
 
 
@@ -956,7 +953,6 @@ def get_many(response: Response,
 
     response_data = parse_obj_as(SampleTableFindManyItemListResponseModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
-    session.commit()
     return response_data
 
 @api.post("", status_code=201, response_model=SampleTableCreateManyItemListResponseModel)
@@ -988,6 +984,5 @@ def insert_many(response: Response,
 
     result = parse_obj_as(SampleTableCreateManyItemListResponseModel, new_inserted_data)
     response.headers["x-total-count"] = str(len(new_inserted_data))
-    session.commit()
     return result'''
         validate_route("test_build_myself", route_test_build_myself_expected)

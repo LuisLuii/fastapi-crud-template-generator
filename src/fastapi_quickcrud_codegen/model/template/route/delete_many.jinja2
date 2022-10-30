@@ -21,6 +21,5 @@
 
     result = parse_obj_as({{ model_name }}DeleteManyItemListResponseModel, data_instances)
     response.headers["x-total-count"] = str(1)
-    {{ 'await ' if is_async else '' }}session.commit()
     return result
 

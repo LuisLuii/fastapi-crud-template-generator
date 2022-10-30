@@ -142,7 +142,8 @@ session = sessionmaker(autocommit=False,
                        class_=AsyncSession)
 async def db_session():
     async with session() as _session:
-        yield _session'''
+        yield _session
+        await _session.commit()'''
         validate_common_sql_session(common_sql_session_expected)
 
         # model
@@ -1108,7 +1109,6 @@ async def get_one_by_primary_key(response: Response,
     for column in SampleTableTwoFindOneResponseModel.__fields__:
         response_data[column] = getattr(result_value, column)
     response.headers["x-total-count"] = str(1)
-    await session.commit()
     return response_data
 
 
@@ -1163,7 +1163,6 @@ async def get_many(response: Response,
 
     response_data = parse_obj_as(SampleTableTwoFindManyItemListResponseModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
-    await session.commit()
     return response_data
 
 @api.post("", status_code=201, response_model=SampleTableTwoCreateOneResponseModel)
@@ -1192,7 +1191,6 @@ async def insert_one(response: Response,
     inserted_data, = new_inserted_data
     result = parse_obj_as(SampleTableTwoCreateOneResponseModel, inserted_data)
     response.headers["x-total-count"] = str(1)
-    await session.commit()
     return result
 
 @api.put("/{primary_key}", status_code=200, response_model=SampleTableTwoUpdateOneResponseModel)
@@ -1224,7 +1222,6 @@ async def entire_update_by_primary_key(
 
         result = parse_obj_as(SampleTableTwoUpdateOneResponseModel, data_instance)
         response.headers["x-total-count"] = str(1)
-        await session.commit()
 
         return result
 
@@ -1264,7 +1261,6 @@ async def partial_update_one_by_primary_key(
 
         result = parse_obj_as(SampleTableTwoPatchOneResponseModel, data_instance)
         response.headers["x-total-count"] = str(1)
-        await session.commit()
 
         return result
 
@@ -1319,7 +1315,6 @@ async def get_one_by_primary_key(response: Response,
     for column in SampleTableFindOneResponseModel.__fields__:
         response_data[column] = getattr(result_value, column)
     response.headers["x-total-count"] = str(1)
-    await session.commit()
     return response_data
 
 
@@ -1374,7 +1369,6 @@ async def get_many(response: Response,
 
     response_data = parse_obj_as(SampleTableFindManyItemListResponseModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
-    await session.commit()
     return response_data
 
 @api.post("", status_code=201, response_model=SampleTableCreateOneResponseModel)
@@ -1403,7 +1397,6 @@ async def insert_one(response: Response,
     inserted_data, = new_inserted_data
     result = parse_obj_as(SampleTableCreateOneResponseModel, inserted_data)
     response.headers["x-total-count"] = str(1)
-    await session.commit()
     return result
 
 @api.put("/{primary_key}", status_code=200, response_model=SampleTableUpdateOneResponseModel)
@@ -1435,7 +1428,6 @@ async def entire_update_by_primary_key(
 
         result = parse_obj_as(SampleTableUpdateOneResponseModel, data_instance)
         response.headers["x-total-count"] = str(1)
-        await session.commit()
 
         return result
 
@@ -1475,7 +1467,6 @@ async def partial_update_one_by_primary_key(
 
         result = parse_obj_as(SampleTablePatchOneResponseModel, data_instance)
         response.headers["x-total-count"] = str(1)
-        await session.commit()
 
         return result
 

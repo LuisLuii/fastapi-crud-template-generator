@@ -23,6 +23,5 @@
     for column in {{ model_name }}FindOneResponseModel.__fields__:
         response_data[column] = getattr(result_value, column)
     response.headers["x-total-count"] = str(1)
-    {{ 'await ' if is_async else '' }}session.commit()
     return response_data
 

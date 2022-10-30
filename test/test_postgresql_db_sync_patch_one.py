@@ -143,6 +143,7 @@ def db_session() -> Generator:
     try:
         db = session()
         yield db
+        db.commit()
     except Exception as e:
         db.rollback()
         raise e
@@ -1030,7 +1031,6 @@ def get_one_by_primary_key(response: Response,
     for column in SampleTableTwoFindOneResponseModel.__fields__:
         response_data[column] = getattr(result_value, column)
     response.headers["x-total-count"] = str(1)
-    session.commit()
     return response_data
 
 
@@ -1085,7 +1085,6 @@ def get_many(response: Response,
 
     response_data = parse_obj_as(SampleTableTwoFindManyItemListResponseModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
-    session.commit()
     return response_data
 
 @api.put("/{primary_key}", status_code=200, response_model=SampleTableTwoUpdateOneResponseModel)
@@ -1117,7 +1116,6 @@ def entire_update_by_primary_key(
 
         result = parse_obj_as(SampleTableTwoUpdateOneResponseModel, data_instance)
         response.headers["x-total-count"] = str(1)
-        session.commit()
 
         return result
 
@@ -1157,7 +1155,6 @@ def partial_update_one_by_primary_key(
 
         result = parse_obj_as(SampleTableTwoPatchOneResponseModel, data_instance)
         response.headers["x-total-count"] = str(1)
-        session.commit()
 
         return result
 
@@ -1212,7 +1209,6 @@ def get_one_by_primary_key(response: Response,
     for column in SampleTableFindOneResponseModel.__fields__:
         response_data[column] = getattr(result_value, column)
     response.headers["x-total-count"] = str(1)
-    session.commit()
     return response_data
 
 
@@ -1267,7 +1263,6 @@ def get_many(response: Response,
 
     response_data = parse_obj_as(SampleTableFindManyItemListResponseModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
-    session.commit()
     return response_data
 
 @api.put("/{primary_key}", status_code=200, response_model=SampleTableUpdateOneResponseModel)
@@ -1299,7 +1294,6 @@ def entire_update_by_primary_key(
 
         result = parse_obj_as(SampleTableUpdateOneResponseModel, data_instance)
         response.headers["x-total-count"] = str(1)
-        session.commit()
 
         return result
 
@@ -1339,7 +1333,6 @@ def partial_update_one_by_primary_key(
 
         result = parse_obj_as(SampleTablePatchOneResponseModel, data_instance)
         response.headers["x-total-count"] = str(1)
-        session.commit()
 
         return result
 

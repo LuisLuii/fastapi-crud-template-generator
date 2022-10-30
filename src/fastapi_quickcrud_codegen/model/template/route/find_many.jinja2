@@ -49,5 +49,4 @@
 
     response_data = parse_obj_as({{ model_name }}FindManyItemListResponseModel, response_data_list)
     response.headers["x-total-count"] = str(len(response_data_list))
-    {{ 'await ' if is_async else '' }}session.commit()
     return response_data

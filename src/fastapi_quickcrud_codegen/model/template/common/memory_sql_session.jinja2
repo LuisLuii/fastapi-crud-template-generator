@@ -51,6 +51,8 @@ session = sessionmaker(bind=engine, autocommit=False)
 async def db_session():
     async with session() as _session:
         yield _session
+        await _session.commit()
+
 {%- else %}
 
 
@@ -58,6 +60,7 @@ def db_session() -> Generator:
     try:
         db = session()
         yield db
+        db.commit()
     except Exception as e:
         db.rollback()
         raise e

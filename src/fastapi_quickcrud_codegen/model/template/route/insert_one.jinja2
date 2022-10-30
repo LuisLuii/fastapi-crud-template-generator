@@ -24,5 +24,4 @@
     inserted_data, = new_inserted_data
     result = parse_obj_as({{ model_name }}CreateOneResponseModel, inserted_data)
     response.headers["x-total-count"] = str(1)
-    {{ 'await ' if is_async else '' }}session.commit()
     return result

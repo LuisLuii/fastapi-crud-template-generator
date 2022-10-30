@@ -27,5 +27,4 @@
 
     result = parse_obj_as({{ model_name }}CreateManyItemListResponseModel, new_inserted_data)
     response.headers["x-total-count"] = str(len(new_inserted_data))
-    {{ 'await ' if is_async else '' }}session.commit()
     return result
