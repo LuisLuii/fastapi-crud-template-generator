@@ -72,7 +72,7 @@ class Testing(unittest.TestCase):
                 }
             ],
             exclude_columns=['bytea_value', 'xml_value', 'box_valaue'],
-            crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE, CrudMethods.UPDATE_MANY],
+            crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE, CrudMethods.DELETE_MANY],
             is_async=is_async,
             database_url=database_url
         )
@@ -288,7 +288,7 @@ class SampleTableTwoCreateOneResponseModel(BaseModel):
 
 
 @dataclass
-class SampleTableTwoUpdateManyRequestQueryModel:
+class SampleTableTwoDeleteManyRequestQueryModel:
     primary_key____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
     primary_key____to_____comparison_operator: Optional[RangeToComparisonOperators] = Query(RangeToComparisonOperators.Less_than.Less_than_or_equal_to, description=None)
     primary_key____from: Optional[NewType(ExtraFieldTypePrefix.From, int)] = Query(None, description=None)
@@ -304,17 +304,7 @@ class SampleTableTwoUpdateManyRequestQueryModel:
         filter_none(self)
 
 
-@dataclass
-class SampleTableTwoUpdateManyRequestBodyModel:
-    bool_value: bool = Body(..., description=None)
-    def __post_init__(self):
-        """
-        auto gen by FastApi quick CRUD
-        """
-        filter_none(self)
-
-
-class SampleTableTwoUpdateManyResponseItemModel(BaseModel):
+class SampleTableTwoDeleteManyItemResponseModel(BaseModel):
     """
     auto gen by FastApi quick CRUD
     """
@@ -324,8 +314,8 @@ class SampleTableTwoUpdateManyResponseItemModel(BaseModel):
         orm_mode = True
 
 
-class SampleTableTwoUpdateManyItemListResponseModel(BaseModel):
-    __root__: List[SampleTableTwoUpdateManyResponseItemModel]
+class SampleTableTwoDeleteManyItemListResponseModel(BaseModel):
+    __root__: List[SampleTableTwoDeleteManyItemResponseModel]
     class Config:
         orm_mode = True'''
         validate_model("test_build_myself_memory_two", model_test_build_myself_memory_two_expected)
@@ -680,7 +670,7 @@ class SampleTableCreateOneResponseModel(BaseModel):
 
 
 @dataclass
-class SampleTableUpdateManyRequestQueryModel:
+class SampleTableDeleteManyRequestQueryModel:
     primary_key____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
     primary_key____to_____comparison_operator: Optional[RangeToComparisonOperators] = Query(RangeToComparisonOperators.Less_than.Less_than_or_equal_to, description=None)
     primary_key____from: Optional[NewType(ExtraFieldTypePrefix.From, int)] = Query(None, description=None)
@@ -768,30 +758,7 @@ class SampleTableUpdateManyRequestQueryModel:
         filter_none(self)
 
 
-@dataclass
-class SampleTableUpdateManyRequestBodyModel:
-    bool_value: bool = Body(..., description=None)
-    char_value: str = Body(..., description=None)
-    date_value: date = Body(..., description=None)
-    float4_value: float = Body(..., description=None)
-    float8_value: float = Body(..., description=None)
-    int2_value: int = Body(..., description=None)
-    int4_value: int = Body(..., description=None)
-    int8_value: int = Body(..., description=None)
-    text_value: str = Body(..., description=None)
-    time_value: time = Body(..., description=None)
-    timestamp_value: datetime = Body(..., description=None)
-    timestamptz_value: datetime = Body(..., description=None)
-    timetz_value: time = Body(..., description=None)
-    varchar_value: str = Body(..., description=None)
-    def __post_init__(self):
-        """
-        auto gen by FastApi quick CRUD
-        """
-        filter_none(self)
-
-
-class SampleTableUpdateManyResponseItemModel(BaseModel):
+class SampleTableDeleteManyItemResponseModel(BaseModel):
     """
     auto gen by FastApi quick CRUD
     """
@@ -814,8 +781,8 @@ class SampleTableUpdateManyResponseItemModel(BaseModel):
         orm_mode = True
 
 
-class SampleTableUpdateManyItemListResponseModel(BaseModel):
-    __root__: List[SampleTableUpdateManyResponseItemModel]
+class SampleTableDeleteManyItemListResponseModel(BaseModel):
+    __root__: List[SampleTableDeleteManyItemResponseModel]
     class Config:
         orm_mode = True'''
         validate_model("test_build_myself_memory", model_test_build_myself_memory_expected)
@@ -828,7 +795,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
 from fastapi_quick_crud_template.common.utils import clean_input_fields, find_query_builder
 from fastapi_quick_crud_template.common.sql_session import db_session
-from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo, SampleTableTwoCreateOneRequestBodyModel, SampleTableTwoCreateOneResponseModel, SampleTableTwoFindManyItemListResponseModel, SampleTableTwoFindManyRequestBodyModel, SampleTableTwoFindManyResponseModel, SampleTableTwoFindOneRequestBodyModel, SampleTableTwoFindOneResponseModel, SampleTableTwoPrimaryKeyModel, SampleTableTwoUpdateManyItemListResponseModel, SampleTableTwoUpdateManyRequestBodyModel, SampleTableTwoUpdateManyRequestQueryModel
+from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo, SampleTableTwoCreateOneRequestBodyModel, SampleTableTwoCreateOneResponseModel, SampleTableTwoDeleteManyItemListResponseModel, SampleTableTwoDeleteManyRequestQueryModel, SampleTableTwoFindManyItemListResponseModel, SampleTableTwoFindManyRequestBodyModel, SampleTableTwoFindManyResponseModel, SampleTableTwoFindOneRequestBodyModel, SampleTableTwoFindOneResponseModel, SampleTableTwoPrimaryKeyModel
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
 from fastapi_quick_crud_template.common.typing import Ordering
@@ -949,43 +916,31 @@ def insert_one(response: Response,
     response.headers["x-total-count"] = str(1)
     return result
 
-@api.put("", status_code=200, response_model=SampleTableTwoUpdateManyItemListResponseModel)
-def entire_update_many_by_query(
+@api.delete("", status_code=200, response_model=SampleTableTwoDeleteManyItemListResponseModel)
+def delete_many_by_query(
                                                 response: Response,
-                                                update_data: SampleTableTwoUpdateManyRequestBodyModel = Depends(),
-                                                extra_query: SampleTableTwoUpdateManyRequestQueryModel = Depends(),
+                                                query: SampleTableTwoDeleteManyRequestQueryModel = Depends(),
                                                 session=Depends(db_session)):
     model = SampleTableTwo
 
-    extra_args = extra_query.__dict__
-    update_args = update_data.__dict__
-    filter_list: List[BinaryExpression] = find_query_builder(param=extra_args,
-                                                             model=model)
+    filter_args = query.__dict__
+    filter_list: List[BinaryExpression] = find_query_builder(param=filter_args,
+                                                                 model=model)
     stmt = select(model).where(and_(*filter_list))
+
     sql_executed_result = session.execute(stmt)
-    data_instance_list = [i for i in sql_executed_result.scalars()]
+    data_instances = [i for i in sql_executed_result.scalars()]
 
+    if not data_instances:
+        return Response(status_code=HTTPStatus.NO_CONTENT, headers={"x-total-count": str(0)})
 
-    if not data_instance_list:
-        return Response(status_code=HTTPStatus.NOT_FOUND)
-    try:
-        response_data = []
-        for i in data_instance_list:
-            for update_arg_name, update_arg_value in update_args.items():
-                        setattr(i, update_arg_name, update_arg_value)
-            response_data.append(i)
+    for data_instance in data_instances:
+        session.delete(data_instance)
 
-        result = parse_obj_as(SampleTableTwoUpdateManyItemListResponseModel, response_data)
-        response.headers["x-total-count"] = str(len(response_data))
-
-        return result
-
-    except IntegrityError as e:
-        err_msg, = e.orig.args
-        if 'unique constraint' not in err_msg.lower():
-            raise e
-        result = Response(status_code=HTTPStatus.CONFLICT)
-        return result'''
+    result = parse_obj_as(SampleTableTwoDeleteManyItemListResponseModel, data_instances)
+    response.headers["x-total-count"] = str(len(data_instances))
+    return result
+'''
         validate_route("test_build_myself_memory_two", route_test_build_myself_memory_two_expected)
         model_test_build_myself_memory_expected = '''from http import HTTPStatus
 from typing import List, Union
@@ -994,7 +949,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
 from fastapi_quick_crud_template.common.utils import clean_input_fields, find_query_builder
 from fastapi_quick_crud_template.common.sql_session import db_session
-from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable, SampleTableCreateOneRequestBodyModel, SampleTableCreateOneResponseModel, SampleTableFindManyItemListResponseModel, SampleTableFindManyRequestBodyModel, SampleTableFindManyResponseModel, SampleTableFindOneRequestBodyModel, SampleTableFindOneResponseModel, SampleTablePrimaryKeyModel, SampleTableUpdateManyItemListResponseModel, SampleTableUpdateManyRequestBodyModel, SampleTableUpdateManyRequestQueryModel
+from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable, SampleTableCreateOneRequestBodyModel, SampleTableCreateOneResponseModel, SampleTableDeleteManyItemListResponseModel, SampleTableDeleteManyRequestQueryModel, SampleTableFindManyItemListResponseModel, SampleTableFindManyRequestBodyModel, SampleTableFindManyResponseModel, SampleTableFindOneRequestBodyModel, SampleTableFindOneResponseModel, SampleTablePrimaryKeyModel
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
 from fastapi_quick_crud_template.common.typing import Ordering
@@ -1115,41 +1070,29 @@ def insert_one(response: Response,
     response.headers["x-total-count"] = str(1)
     return result
 
-@api.put("", status_code=200, response_model=SampleTableUpdateManyItemListResponseModel)
-def entire_update_many_by_query(
+@api.delete("", status_code=200, response_model=SampleTableDeleteManyItemListResponseModel)
+def delete_many_by_query(
                                                 response: Response,
-                                                update_data: SampleTableUpdateManyRequestBodyModel = Depends(),
-                                                extra_query: SampleTableUpdateManyRequestQueryModel = Depends(),
+                                                query: SampleTableDeleteManyRequestQueryModel = Depends(),
                                                 session=Depends(db_session)):
     model = SampleTable
 
-    extra_args = extra_query.__dict__
-    update_args = update_data.__dict__
-    filter_list: List[BinaryExpression] = find_query_builder(param=extra_args,
-                                                             model=model)
+    filter_args = query.__dict__
+    filter_list: List[BinaryExpression] = find_query_builder(param=filter_args,
+                                                                 model=model)
     stmt = select(model).where(and_(*filter_list))
+
     sql_executed_result = session.execute(stmt)
-    data_instance_list = [i for i in sql_executed_result.scalars()]
+    data_instances = [i for i in sql_executed_result.scalars()]
 
+    if not data_instances:
+        return Response(status_code=HTTPStatus.NO_CONTENT, headers={"x-total-count": str(0)})
 
-    if not data_instance_list:
-        return Response(status_code=HTTPStatus.NOT_FOUND)
-    try:
-        response_data = []
-        for i in data_instance_list:
-            for update_arg_name, update_arg_value in update_args.items():
-                        setattr(i, update_arg_name, update_arg_value)
-            response_data.append(i)
+    for data_instance in data_instances:
+        session.delete(data_instance)
 
-        result = parse_obj_as(SampleTableUpdateManyItemListResponseModel, response_data)
-        response.headers["x-total-count"] = str(len(response_data))
-
-        return result
-
-    except IntegrityError as e:
-        err_msg, = e.orig.args
-        if 'unique constraint' not in err_msg.lower():
-            raise e
-        result = Response(status_code=HTTPStatus.CONFLICT)
-        return result'''
+    result = parse_obj_as(SampleTableDeleteManyItemListResponseModel, data_instances)
+    response.headers["x-total-count"] = str(len(data_instances))
+    return result
+'''
         validate_route("test_build_myself_memory", model_test_build_myself_memory_expected)

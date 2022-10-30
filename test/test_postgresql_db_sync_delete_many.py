@@ -907,7 +907,7 @@ def delete_many_by_query(
         session.delete(data_instance)
 
     result = parse_obj_as(SampleTableTwoDeleteManyItemListResponseModel, data_instances)
-    response.headers["x-total-count"] = str(1)
+    response.headers["x-total-count"] = str(len(data_instances))
     return result
 '''
         validate_route("test_build_myself_two", route_test_build_myself_two_expected)
@@ -1032,7 +1032,7 @@ def delete_many_by_query(
         session.delete(data_instance)
 
     result = parse_obj_as(SampleTableDeleteManyItemListResponseModel, data_instances)
-    response.headers["x-total-count"] = str(1)
+    response.headers["x-total-count"] = str(len(data_instances))
     return result
 '''
         validate_route("test_build_myself", route_test_build_myself_expected)

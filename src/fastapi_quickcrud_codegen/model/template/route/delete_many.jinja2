@@ -20,6 +20,6 @@
         {{ 'await ' if is_async else '' }}session.delete(data_instance)
 
     result = parse_obj_as({{ model_name }}DeleteManyItemListResponseModel, data_instances)
-    response.headers["x-total-count"] = str(1)
+    response.headers["x-total-count"] = str(len(data_instances))
     return result
 
