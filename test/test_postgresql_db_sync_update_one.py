@@ -925,7 +925,7 @@ def entire_update_by_primary_key(
     data_instance = sql_executed_result.scalar()
 
     if not data_instance:
-        return Response(status_code=HTTPStatus.NOT_FOUND)
+        return Response(status_code=HTTPStatus.NOT_FOUND, headers={"x-total-count": str(0)})
     try:
         for update_arg_name, update_arg_value in update_args.items():
             setattr(data_instance, update_arg_name, update_arg_value)
@@ -1064,7 +1064,7 @@ def entire_update_by_primary_key(
     data_instance = sql_executed_result.scalar()
 
     if not data_instance:
-        return Response(status_code=HTTPStatus.NOT_FOUND)
+        return Response(status_code=HTTPStatus.NOT_FOUND, headers={"x-total-count": str(0)})
     try:
         for update_arg_name, update_arg_value in update_args.items():
             setattr(data_instance, update_arg_name, update_arg_value)

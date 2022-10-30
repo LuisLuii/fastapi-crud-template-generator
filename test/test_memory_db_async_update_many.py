@@ -968,7 +968,7 @@ async def entire_update_many_by_query(
 
 
     if not data_instance_list:
-        return Response(status_code=HTTPStatus.NOT_FOUND)
+        return Response(status_code=HTTPStatus.NOT_FOUND, headers={"x-total-count": str(0)})
     try:
         response_data = []
         for i in data_instance_list:
@@ -1134,7 +1134,7 @@ async def entire_update_many_by_query(
 
 
     if not data_instance_list:
-        return Response(status_code=HTTPStatus.NOT_FOUND)
+        return Response(status_code=HTTPStatus.NOT_FOUND, headers={"x-total-count": str(0)})
     try:
         response_data = []
         for i in data_instance_list:
