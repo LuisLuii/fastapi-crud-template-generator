@@ -1,7 +1,6 @@
 import uuid
 import warnings
 from copy import deepcopy
-from dataclasses import (make_dataclass)
 from typing import (Optional,
                     Any)
 from typing import (Type,
@@ -13,7 +12,6 @@ from typing import (Type,
                     Union)
 
 import pydantic
-from fastapi import (Query)
 from pydantic import (BaseModel,
                       create_model,
                       BaseConfig)
@@ -147,7 +145,6 @@ class ApiParameterSchemaBuilder:
                                                 ("UNIQUE_LIST", self.unique_fields)])
         self.sql_type = sql_type
 
-
     def extra_foreign_table(self, db_model=None) -> Dict[ForeignKeyName, dict]:
         if db_model is None:
             db_model = self.__db_model
@@ -175,24 +172,21 @@ class ApiParameterSchemaBuilder:
                 warnings.warn(
                     f'The type of column {primary_key_column.key} ({column_type}) '
                     f'is not support data query (as a query parameters )')
-
         except NotImplementedError:
-            if column_type == "UUID":
-                python_type = uuid.UUID
-            else:
-                raise ColumnTypeNotSupportedException(
-                    f'The type of column {primary_key_column.key} ({column_type}) not supported yet')
+            raise ColumnTypeNotSupportedException(
+                f'The type of column {primary_key_column.key} ({column_type}) not supported yet')
         # handle if python type is UUID
         if python_type.__name__ in ['str',
                                     'int',
                                     'float',
                                     'Decimal',
-                                    'UUID',
                                     'bool',
                                     'date',
                                     'time',
                                     'datetime']:
             column_type = python_type.__name__
+        elif python_type.__name__ in ['UUID']:
+            column_type = "uuid.UUID"
         else:
             raise ColumnTypeNotSupportedException(
                 f'The type of column {primary_key_column.key} ({column_type}) not supported yet')
@@ -268,12 +262,9 @@ class ApiParameterSchemaBuilder:
                         f'The type of column {column_name} ({column_type}) '
                         f'is not support data query (as a query parameters )')
             except NotImplementedError:
-                if column_type == "UUID":
-                    python_type = uuid.UUID
-                else:
-                    raise ColumnTypeNotSupportedException(
-                        f'The type of column {column_name} ({column_type}) not supported yet')
-                    # string filter
+                raise ColumnTypeNotSupportedException(
+                    f'The type of column {column_name} ({column_type}) not supported yet')
+                # string filter
             python_type_str = deepcopy(python_type.__name__)
             if python_type_str in ['str']:
                 self.str_type_columns.append(column_name)
@@ -841,7 +832,6 @@ class ApiParameterSchemaBuilder:
             request_query_fields.append((i['column_name'],
                                          i['column_type'],
                                          f"Query({i['column_default']}, description={i['column_description']})"))
-
 
         self.code_gen.build_dataclass(class_name=self.class_name + "UpdateOneRequestQueryModel",
                                       fields=request_query_fields,
