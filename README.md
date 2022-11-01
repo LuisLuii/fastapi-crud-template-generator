@@ -2,7 +2,6 @@
 
 ## Quick Start
 
----
 ### Install
 ```python
 pip install fastapi-crud-code-generator
