@@ -3,7 +3,10 @@
 ## Quick Start
 
 ---
-
+### Install
+```python
+pip install fastapi-crud-code-generator
+```
 ### Prepare your Sqlalchemy schema
 
 ```
@@ -76,7 +79,7 @@ crud_router_builder(
 )
 ```
 
-# Supportting
+# Support
 
 ---
 
