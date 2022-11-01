@@ -1,0 +1,89 @@
+import asyncio
+from typing import Generator
+
+from sqlalchemy import create_engine
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import declarative_base, sessionmaker
+from sqlalchemy.pool import StaticPool
+
+
+{% for model in model_list -%}
+from fastapi_quick_crud_template.model.{{ model["model_name"] }} import {{ model["file_name"] }}
+{% endfor -%}
+
+{%- if is_memory_sql %}
+    # please manually update if don't want to use in-memory db
+{%- endif %}
+
+SQLALCHEMY_DATABASE_URL = f"{{ database_url }}"
+{%- if is_async %}
+
+
+
+engine = create_async_engine(SQLALCHEMY_DATABASE_URL,
+                                              future=True,
+                                              echo=True,
+                                              pool_pre_ping=True,
+                                              pool_recycle=7200,
+                                              {{ 'connect_args={"check_same_thread": False}, ' if is_in_memory_db else '' }}
+                                              poolclass=StaticPool)
+session = sessionmaker(autocommit=False,
+                       autoflush=False,
+                       bind=engine,
+                       class_=AsyncSession)
+{%- else %}
+
+
+
+engine = create_engine(SQLALCHEMY_DATABASE_URL,
+                                        future=True,
+                                        echo=True,
+                                        pool_pre_ping=True,
+                                        pool_recycle=7200,
+                                        {{ 'connect_args={"check_same_thread": False}, ' if is_in_memory_db else '' }}
+                                        poolclass=StaticPool)
+session = sessionmaker(bind=engine, autocommit=False)
+{%- endif %}
+
+
+
+{%- if is_async %}
+async def db_session():
+    async with session() as _session:
+        yield _session
+        await _session.commit()
+
+{%- else %}
+
+
+def db_session() -> Generator:
+    try:
+        db = session()
+        yield db
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()
+{%- endif %}
+
+{%- if is_in_memory_db %}
+{%- if is_async %}
+
+
+async def create_table(engine, model):
+    async with engine.begin() as conn:
+        await conn.run_sync(model._sa_registry.metadata.create_all)
+loop = asyncio.get_event_loop()
+{% for model in model_list -%}
+    loop.run_until_complete(create_table(engine, {{ model["file_name"] }}))
+{% endfor -%}
+{%- else %}
+{% for model in model_list -%}
+
+
+{{ model["file_name"] }}.__table__.create(engine, checkfirst=True)
+{% endfor -%}
+{%- endif %}
+{%- endif %}

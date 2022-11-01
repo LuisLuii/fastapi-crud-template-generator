@@ -1,0 +1,27 @@
+@api.get("{{ path }}", status_code=200, response_model={{ model_name }}FindOneResponseModel)
+{{ 'async ' if is_async else '' }}def get_one_by_primary_key(response: Response,
+                           url_param=Depends({{ model_name }}PrimaryKeyModel),
+                           query=Depends({{ model_name }}FindOneRequestBodyModel),
+                           session=Depends(db_session)):
+
+
+    filter_list: List[BinaryExpression] = find_query_builder(param=query.__dict__,
+                                                             model={{ model_name }})
+
+    extra_query_expression: List[BinaryExpression] = find_query_builder(param=url_param.__dict__,
+                                                                        model={{ model_name }})
+    model = {{ model_name }}
+    stmt = select(*[model]).where(and_(*filter_list + extra_query_expression))
+    sql_executed_result = {{ 'await ' if is_async else '' }}session.execute(stmt)
+
+    one_row_data = sql_executed_result.fetchall()
+    if not one_row_data or len(one_row_data) < 1:
+        return Response('specific data not found', status_code=HTTPStatus.NOT_FOUND, headers={"x-total-count": str(0)})
+    result_value, = one_row_data
+    result_value, = dict(result_value).values()
+    response_data = {}
+    for column in {{ model_name }}FindOneResponseModel.__fields__:
+        response_data[column] = getattr(result_value, column)
+    response.headers["x-total-count"] = str(1)
+    return response_data
+

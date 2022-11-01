@@ -1,0 +1,29 @@
+@api.delete("{{ path }}", status_code=200, response_model={{ model_name }}DeleteOneResponseModel)
+{{ 'async ' if is_async else '' }}def delete_one_by_primary_key(
+                                                response: Response,
+                                                primary_key: {{ model_name }}PrimaryKeyModel = Depends(),
+                                                extra_query: {{ model_name }}DeleteOneRequestQueryModel = Depends(),
+                                                session=Depends(db_session)):
+    model = {{ model_name }}
+
+    filter_args = primary_key.__dict__
+    extra_args = extra_query.__dict__
+    filter_list: List[BinaryExpression] = find_query_builder(param=filter_args,
+                                                                 model=model)
+    if extra_args:
+        filter_list += find_query_builder(param=extra_query.__dict__,
+            model=model)
+    stmt = select(model).where(and_(*filter_list))
+
+    sql_executed_result = {{ 'await ' if is_async else '' }}session.execute(stmt)
+    data_instance = sql_executed_result.scalar()
+
+    if not data_instance:
+        return Response('specific data not found', status_code=HTTPStatus.NOT_FOUND, headers={"x-total-count": str(0)})
+
+    {{ 'await ' if is_async else '' }}session.delete(data_instance)
+
+    result = parse_obj_as({{ model_name }}DeleteOneResponseModel, data_instance)
+    response.headers["x-total-count"] = str(1)
+    return result
+

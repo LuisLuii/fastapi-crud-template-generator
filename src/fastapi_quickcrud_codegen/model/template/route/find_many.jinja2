@@ -1,0 +1,52 @@
+@api.get("{{ path }}", status_code=200, response_model={{ model_name }}FindManyItemListResponseModel)
+{{ 'async ' if is_async else '' }}def get_many(response: Response,
+                           query=Depends({{ model_name }}FindManyRequestBodyModel),
+                           session=Depends(db_session)):
+
+    filter_args = query.__dict__
+    limit = filter_args.pop('limit', None)
+    offset = filter_args.pop('offset', None)
+    order_by_columns = filter_args.pop('order_by_columns', None)
+    filter_list: List[BinaryExpression] = find_query_builder(param=query.__dict__,
+                                                             model={{ model_name }})
+    model = {{ model_name }}
+    stmt = select(*[model]).filter(and_(*filter_list))
+    if order_by_columns:
+        order_by_query_list = []
+
+        for order_by_column in order_by_columns:
+            if not order_by_column:
+                continue
+            sort_column, order_by = (order_by_column.replace(' ', '').split(':') + [None])[:2]
+            if not hasattr(model, sort_column):
+                raise UnknownColumn(f'column {sort_column} is not exited')
+            if not order_by:
+                order_by_query_list.append(getattr(model, sort_column).asc())
+            elif order_by.upper() == Ordering.DESC.upper():
+                order_by_query_list.append(getattr(model, sort_column).desc())
+            elif order_by.upper() == Ordering.ASC.upper():
+                order_by_query_list.append(getattr(model, sort_column).asc())
+            else:
+                raise UnknownOrderType(f"Unknown order type {order_by}, only accept DESC or ASC")
+        if order_by_query_list:
+            stmt = stmt.order_by(*order_by_query_list)
+    stmt = stmt.limit(limit).offset(offset)
+
+    sql_executed_result = {{ 'await ' if is_async else '' }}session.execute(stmt)
+
+    result = sql_executed_result.fetchall()
+    if not result:
+        return Response(status_code=HTTPStatus.NO_CONTENT)
+    response_data_list = []
+    for i in result:
+        result_value, = dict(i).values()
+        temp = {}
+        for column in {{ model_name }}FindManyResponseModel.__fields__:
+            temp[column] = getattr(result_value, column)
+        response_data_list.append(temp)
+    if not response_data_list:
+        return Response(status_code=HTTPStatus.NO_CONTENT)
+
+    response_data = parse_obj_as({{ model_name }}FindManyItemListResponseModel, response_data_list)
+    response.headers["x-total-count"] = str(len(response_data_list))
+    return response_data

@@ -1,0 +1,30 @@
+@api.post("{{ path }}", status_code=201, response_model={{ model_name }}CreateManyItemListResponseModel)
+{{ 'async ' if is_async else '' }}def insert_many(response: Response,
+                           request_body=Depends({{ model_name }}CreateManyItemListRequestModel),
+                           session=Depends(db_session)):
+    insert_arg_list: list = request_body.__dict__.pop('insert', None)
+    insert_arg_dict = []
+    for i in insert_arg_list:
+        insert_arg_dict.append(i.__dict__)
+    if not isinstance(insert_arg_dict, list):
+        insert_arg_dict = [insert_arg_dict]
+    model = {{ model_name }}
+    insert_arg_dict: list[dict] = [clean_input_fields(model=model, param=insert_arg)
+                                   for insert_arg in insert_arg_dict]
+    new_inserted_data = []
+    if isinstance(insert_arg_dict, list):
+        for i in insert_arg_dict:
+            new_inserted_data.append(model(**i))
+    session.add_all(new_inserted_data)
+    try:
+        {{ 'await ' if is_async else '' }}session.flush()
+    except IntegrityError as e:
+        err_msg, = e.orig.args
+        if 'unique constraint' not in err_msg.lower():
+            raise e
+        result = Response(status_code=HTTPStatus.CONFLICT)
+        return result
+
+    result = parse_obj_as({{ model_name }}CreateManyItemListResponseModel, new_inserted_data)
+    response.headers["x-total-count"] = str(len(new_inserted_data))
+    return result

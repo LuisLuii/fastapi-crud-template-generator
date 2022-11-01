@@ -1,0 +1,25 @@
+@api.delete("{{ path }}", status_code=200, response_model={{ model_name }}DeleteManyItemListResponseModel)
+{{ 'async ' if is_async else '' }}def delete_many_by_query(
+                                                response: Response,
+                                                query: {{ model_name }}DeleteManyRequestQueryModel = Depends(),
+                                                session=Depends(db_session)):
+    model = {{ model_name }}
+
+    filter_args = query.__dict__
+    filter_list: List[BinaryExpression] = find_query_builder(param=filter_args,
+                                                                 model=model)
+    stmt = select(model).where(and_(*filter_list))
+
+    sql_executed_result = {{ 'await ' if is_async else '' }}session.execute(stmt)
+    data_instances = [i for i in sql_executed_result.scalars()]
+
+    if not data_instances:
+        return Response(status_code=HTTPStatus.NO_CONTENT, headers={"x-total-count": str(0)})
+
+    for data_instance in data_instances:
+        {{ 'await ' if is_async else '' }}session.delete(data_instance)
+
+    result = parse_obj_as({{ model_name }}DeleteManyItemListResponseModel, data_instances)
+    response.headers["x-total-count"] = str(len(data_instances))
+    return result
+
