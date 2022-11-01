@@ -16,17 +16,17 @@ print("""
 
 if __name__ == '__main__':
     setup(
-        name='fastapi-code-generator',
+        name='fastapi-crud-code-generator',
         version=VERSION,
-        install_requires=["fastapi<=0.68.2","pydantic<=1.8.2","SQLAlchemy<=1.4.30","StrEnum==0.4.7","starlette==0.14.2",
-                          "aiosqlite==0.17.0","uvicorn==0.17.0","greenlet==1.1.2","anyio==3.5.0"],
+        install_requires=["aiosqlite<=0.17.0","asyncpg<=0.26.0","fastapi<=0.85.1","greenlet<=1.1.3.post0","Jinja2<=3.1.2",
+                          "psycopg2<=2.9.4","pydantic<=1.10.2","SQLAlchemy<=1.4.42","StrEnum<=0.4.8", "uvicorn<=0.19.0"],
         python_requires=">=3.7",
         description="FastaAPI's CRUD project generator for SQLALchemy.",
         long_description=open("README.md",'r',encoding="utf-8").read(),
         long_description_content_type="text/markdown",
         author='Luis Lui',
         author_email='luis11235178@gmail.com',
-        url='https://github.com/LuisLuii/fastapi-crud-codegen',
+        url='https://github.com/LuisLuii/fastapi-crud-project-generator',
         license="MIT License",
         keywords=["fastapi", "crud", "restful", "routing","SQLAlchemy", "generator", "crudrouter","postgresql","builder"],
         packages=find_packages("src", include="*.jinja2"),
@@ -64,4 +64,3 @@ if __name__ == '__main__':
         ],
         include_package_data=True,
     )
-    print(find_packages("src"))
