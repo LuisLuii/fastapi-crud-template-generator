@@ -465,7 +465,7 @@ def entire_update_by_primary_key(
 
         result = parse_obj_as(SampleTableTwoUpdateOneResponseModel, data_instance)
         response.headers["x-total-count"] = str(1)
-
+        session.flush()
         return result
 
     except IntegrityError as e:
@@ -523,7 +523,7 @@ def entire_update_by_primary_key(
 
         result = parse_obj_as(SampleTableUpdateOneResponseModel, data_instance)
         response.headers["x-total-count"] = str(1)
-
+        session.flush()
         return result
 
     except IntegrityError as e:

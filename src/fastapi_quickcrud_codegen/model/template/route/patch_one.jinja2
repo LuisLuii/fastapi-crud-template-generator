@@ -27,7 +27,7 @@
 
         result = parse_obj_as({{ model_name }}PatchOneResponseModel, data_instance)
         response.headers["x-total-count"] = str(1)
-
+        {{ 'await ' if is_async else '' }}session.flush()
         return result
 
     except IntegrityError as e:

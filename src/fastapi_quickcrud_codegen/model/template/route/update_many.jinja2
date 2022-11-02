@@ -26,7 +26,7 @@
 
         result = parse_obj_as({{ model_name }}UpdateManyItemListResponseModel, response_data)
         response.headers["x-total-count"] = str(len(response_data))
-
+        {{ 'await ' if is_async else '' }}session.flush()
         return result
 
     except IntegrityError as e:

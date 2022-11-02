@@ -523,7 +523,7 @@ async def partial_update_many_by_query(
 
         result = parse_obj_as(SampleTableTwoPatchManyItemListResponseModel, response_data)
         response.headers["x-total-count"] = str(len(response_data))
-
+        await session.flush()
         return result
 
     except IntegrityError as e:
@@ -578,7 +578,7 @@ async def partial_update_many_by_query(
 
         result = parse_obj_as(SampleTablePatchManyItemListResponseModel, response_data)
         response.headers["x-total-count"] = str(len(response_data))
-
+        await session.flush()
         return result
 
     except IntegrityError as e:

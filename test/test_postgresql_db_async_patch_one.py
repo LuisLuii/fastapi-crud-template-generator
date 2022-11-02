@@ -500,7 +500,7 @@ async def partial_update_one_by_primary_key(
 
         result = parse_obj_as(SampleTableTwoPatchOneResponseModel, data_instance)
         response.headers["x-total-count"] = str(1)
-
+        await session.flush()
         return result
 
     except IntegrityError as e:
@@ -556,7 +556,7 @@ async def partial_update_one_by_primary_key(
 
         result = parse_obj_as(SampleTablePatchOneResponseModel, data_instance)
         response.headers["x-total-count"] = str(1)
-
+        await session.flush()
         return result
 
     except IntegrityError as e:
