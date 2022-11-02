@@ -73,7 +73,7 @@ crud_router_builder(
     crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE, CrudMethods.UPDATE_MANY, CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE],
     #is_async=True,
     #database_url="sqlite+aiosqlite://",
-	is_async=False,
+    is_async=False,
     database_url="sqlite://"
 )
 ```
