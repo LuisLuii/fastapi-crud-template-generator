@@ -56,6 +56,25 @@ class ModelCodeGen():
         self.table_list[class_name] = code
         self.code += "\n\n\n" + code
 
+
+    def build_base_model_paginate(self, *, class_name, field, description=None, base_model="BaseModel",
+                         value_of_list_to_str_columns=None, filter_none=None):
+
+        if class_name in self.table_list:
+            return self.table_list[class_name]
+        TEMPLATE_FILE_PATH: ClassVar[str] = 'pydantic/base_model_paginate.jinja2'
+        template_file_path = Path(TEMPLATE_FILE_PATH)
+
+        TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
+        templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
+        templateEnv = jinja2.Environment(loader=templateLoader)
+        TEMPLATE_FILE = "base_model_paginate.jinja2"
+        template = templateEnv.get_template(TEMPLATE_FILE)
+        code = template.render(
+            {"class_name": class_name, "field": field, "description": description, "base_model": base_model,"value_of_list_to_str_columns": value_of_list_to_str_columns, "filter_none": filter_none})
+        self.table_list[class_name] = code
+        self.code += "\n\n\n" + code
+
     def build_base_model_root(self, *, class_name, field, description=None, base_model="BaseModel",
                          value_of_list_to_str_columns=None, filter_none=None):
 

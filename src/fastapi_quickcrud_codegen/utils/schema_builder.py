@@ -677,7 +677,7 @@ class ApiParameterSchemaBuilder:
                                       value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
         self.code_gen.build_base_model(class_name=self.class_name + "FindManyResponseModel", fields=response_fields)
 
-        self.code_gen.build_base_model_root(class_name=self.class_name + "FindManyItemListResponseModel",
+        self.code_gen.build_base_model_paginate(class_name=self.class_name + "FindManyItemListResponseModel",
                                             field=(
                                                 f'{self.class_name + "FindManyResponseModel"}',
                                                 None),
