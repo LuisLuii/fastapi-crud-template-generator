@@ -26,35 +26,41 @@ def crud_router_builder(
         db_model_list: List[dict],
         is_async: Optional[bool],
         database_url: Optional[str],
-        crud_methods: Optional[List[CrudMethods]] = None,
-        # foreign_include: Optional[Base] = None
 ) :
     """
-     Args:
-        db_model_list - Required (str): model list of dict (db_model: Sqlalchemy model, prefix: str, tags: list[str], exclude_columns: list[str]) for code generate
-        is_async - Optional (bool): True for async; False for sync
-        sql_type - Optional (SqlType): used to match to correct import library
-        crud_methods - Optional (List[CrudMethods]): used to gen crud router
-    Raises:
-        ValueError: TODO
-    Examples:
-        >>> crud_router_builder(
-                db_model_list=[
-                    {
-                        "db_model": SampleTable,
-                        "prefix": "/my_first_api",
-                        "tags": ["sample api"]
-                    },
-                    {
-                        "db_model": SampleTableTwo,
-                        "prefix": "/my_second_api",
-                        "tags": ["sample api"]
-                    }
-                ],
-                crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY],
-                is_async=True,
-                sql_type=SqlType.postgresql
-            )
+        Generate project from sqlalchemy model
+
+        :param database_url: a database URL. The URL is passed directly to SQLAlchemy's create_engine() method so
+                                                please refer to SQLAlchemy's documentation for instructions on how to
+                                                construct a proper URL.
+        :param is_async: True for async; False for sync
+        :param db_model_list: model list of dict for code generate
+
+        Raises:
+            ValueError: TODO
+        Examples:
+            >>> crud_router_builder(db_model_list=[
+                        {
+                            "db_model": SampleTable,
+                            "prefix": "/my_first_api",
+                            "tags": ["sample api"],
+                            "exclude_columns": ['bytea_value'],
+                            "crud_methods": [CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE,
+                                             CrudMethods.UPDATE_MANY, CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE],
+                        },
+                        {
+                            "db_model": SampleTableTwo,
+                            "prefix": "/my_second_api",
+                            "tags": ["sample api"],
+                            "exclude_columns": ['bytea_value'],
+                            "crud_methods": [CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE,
+                                             CrudMethods.UPDATE_MANY, CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE],
+                        }
+                    ],
+                    is_async=False,
+                    database_url="sqlite://"
+                )
+
     """
     print("Start Fastapi's CRUD project generation")
     engine = sqlalchemy.create_engine(database_url)
@@ -78,6 +84,7 @@ def crud_router_builder(
         prefix = db_model_info["prefix"]
         tags = db_model_info["tags"]
         exclude_columns = db_model_info.get("exclude_columns", [])
+        crud_methods = db_model_info.get("crud_methods", CrudMethods.get_full_crud_method())
         print(f"\n\t\tGenerating db_model:{db_model} prefix:{prefix} tags:{tags}")
         this_modeL_is_table = is_table(db_model)
         if this_modeL_is_table:
@@ -96,9 +103,7 @@ def crud_router_builder(
 
         constraints = db_model.__table__.constraints
 
-        if not crud_methods:
-            crud_methods = CrudMethods.get_declarative_model_full_crud_method()
-        print(f"\t\tfollowing api method will be generated: crud_methods:{crud_methods} ")
+        print(f"\t\tfollowing api method will be generated:{crud_methods} ")
 
         # model generation
         print(f"\t\tGenerating model for API")

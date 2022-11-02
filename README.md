@@ -57,17 +57,20 @@ crud_router_builder(
             "db_model": SampleTable,
             "prefix": "/my_first_api",
             "tags": ["sample api"],
-            "exclude_columns": ['bytea_value']
+            "exclude_columns": ['bytea_value'],
+            "crud_methods":[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE, CrudMethods.UPDATE_MANY, CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE],
+
         },
 
         {
             "db_model": SampleTableTwo,
             "prefix": "/my_second_api",
             "tags": ["sample api"],
-            "exclude_columns": ['bytea_value']
+            "exclude_columns": ['bytea_value'],
+            "crud_methods":[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE, CrudMethods.UPDATE_MANY, CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE],
+
         }
     ],
-    crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE, CrudMethods.UPDATE_MANY, CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE],
     #is_async=True,
     #database_url="sqlite+aiosqlite://",
     is_async=False,
