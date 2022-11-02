@@ -80,7 +80,6 @@ crud_router_builder(
             "db_model": TestUuidPrimarySync,
             "prefix": "/uuid_pk_api",
             "tags": ["sample api"],
-            "exclude_columns": ['bytea_value']
         }
     ],
     crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_MANY, CrudMethods.UPDATE_ONE, CrudMethods.PATCH_ONE, CrudMethods.DELETE_ONE, CrudMethods.DELETE_MANY],
