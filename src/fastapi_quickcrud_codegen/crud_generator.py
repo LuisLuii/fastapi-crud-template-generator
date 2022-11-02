@@ -27,16 +27,14 @@ def crud_router_builder(
         is_async: Optional[bool],
         database_url: Optional[str],
         crud_methods: Optional[List[CrudMethods]] = None,
-        exclude_columns: Optional[List[str]] = None,
         # foreign_include: Optional[Base] = None
 ) :
     """
      Args:
-        db_model_list - Required (str): model list of dict (db_model: Sqlalchemy model, prefix: str, tags: list[str]) for code generate
+        db_model_list - Required (str): model list of dict (db_model: Sqlalchemy model, prefix: str, tags: list[str], exclude_columns: list[str]) for code generate
         is_async - Optional (bool): True for async; False for sync
         sql_type - Optional (SqlType): used to match to correct import library
         crud_methods - Optional (List[CrudMethods]): used to gen crud router
-        exclude_columns - Optional (List[str]): string of list to exclude some column
     Raises:
         ValueError: TODO
     Examples:
@@ -53,7 +51,6 @@ def crud_router_builder(
                         "tags": ["sample api"]
                     }
                 ],
-                exclude_columns=['bytea_value', 'xml_value', 'box_valaue'],
                 crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY],
                 is_async=True,
                 sql_type=SqlType.postgresql
@@ -80,6 +77,7 @@ def crud_router_builder(
         db_model = db_model_info["db_model"]
         prefix = db_model_info["prefix"]
         tags = db_model_info["tags"]
+        exclude_columns = db_model_info.get("exclude_columns", [])
         print(f"\n\t\tGenerating db_model:{db_model} prefix:{prefix} tags:{tags}")
         this_modeL_is_table = is_table(db_model)
         if this_modeL_is_table:
