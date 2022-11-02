@@ -31,10 +31,6 @@ class SampleTable(Base):
     int4_value = Column(Integer, nullable=False)
     int8_value = Column(BigInteger, default=99)
     text_value = Column(Text)
-    time_value = Column(Time)
-    timestamp_value = Column(DateTime)
-    timestamptz_value = Column(DateTime(True))
-    timetz_value = Column(Time(True))
     varchar_value = Column(String)
 
 class SampleTableTwo(Base):
@@ -60,16 +56,17 @@ crud_router_builder(
         {
             "db_model": SampleTable,
             "prefix": "/my_first_api",
-            "tags": ["sample api"]
+            "tags": ["sample api"],
+            "exclude_columns": ['bytea_value']
         },
 
         {
             "db_model": SampleTableTwo,
             "prefix": "/my_second_api",
-            "tags": ["sample api"]
+            "tags": ["sample api"],
+            "exclude_columns": ['bytea_value']
         }
     ],
-    exclude_columns=['bytea_value', 'xml_value', 'box_valaue'],
     crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE, CrudMethods.UPDATE_MANY, CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE],
     #is_async=True,
     #database_url="sqlite+aiosqlite://",
