@@ -37,17 +37,17 @@ class CrudMethods(Enum):
     # FIND_MANY_WITH_FOREIGN_TREE = "FIND_MANY_WITH_FOREIGN_TREE"
 
     @staticmethod
-    def get_table_full_crud_method():
-        return [CrudMethods.FIND_MANY, CrudMethods.CREATE_MANY, CrudMethods.UPDATE_MANY, CrudMethods.PATCH_MANY,
-                CrudMethods.DELETE_MANY]
-
-    @staticmethod
-    def get_declarative_model_full_crud_method():
-        return [CrudMethods.FIND_MANY, CrudMethods.FIND_ONE,
-                CrudMethods.UPDATE_MANY, CrudMethods.UPDATE_ONE,
-                CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE, CrudMethods.CREATE_MANY,
-                 CrudMethods.DELETE_MANY, CrudMethods.DELETE_ONE, CrudMethods.FIND_ONE_WITH_FOREIGN_TREE,
-                 CrudMethods.FIND_MANY_WITH_FOREIGN_TREE]
+    def get_full_crud_method():
+        return [CrudMethods.FIND_MANY,
+                  CrudMethods.FIND_ONE,
+                  CrudMethods.CREATE_MANY,
+                  CrudMethods.PATCH_ONE,
+                  CrudMethods.PATCH_MANY,
+                  CrudMethods.PATCH_ONE,
+                  CrudMethods.UPDATE_MANY,
+                  CrudMethods.UPDATE_ONE,
+                  CrudMethods.DELETE_MANY,
+                  CrudMethods.DELETE_ONE]
 
 
 class RequestMethods(Enum):
@@ -160,3 +160,4 @@ class SessionObject(StrEnum):
     databases = auto()
 
 FOREIGN_PATH_PARAM_KEYWORD = "__pk__"
+

@@ -55,10 +55,10 @@ crud_router_builder(
             "db_model": SampleTableTwo,
             "prefix": "/my_second_api",
             "tags": ["sample api"],
-            "exclude_columns": ['bytea_value']
+            "exclude_columns": ['bytea_value'],
+            "crud_methods": []
         }
     ],
-    crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE, CrudMethods.UPDATE_MANY, CrudMethods.PATCH_MANY],
     is_async=True,
     database_url="sqlite+aiosqlite://"
 )
