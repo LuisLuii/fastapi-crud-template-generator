@@ -52,7 +52,7 @@ class SampleTableTwo(Base):
 class Testing(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        is_async = True
+        is_async = False
         if is_async:
             database_url = "sqlite+aiosqlite://"
         else:
@@ -65,7 +65,7 @@ class Testing(unittest.TestCase):
                     "prefix": "/my_first_api",
                     "tags": ["sample api"],
                     "exclude_columns": ['bytea_value'],
-                    "crud_methods": [CrudMethods.DELETE_ONE],
+                    "crud_methods": [CrudMethods.FIND_MANY],
 
                 },
                 {
@@ -73,7 +73,7 @@ class Testing(unittest.TestCase):
                     "prefix": "/my_second_api",
                     "tags": ["sample api"],
                     "exclude_columns": ['bytea_value'],
-                    "crud_methods": [CrudMethods.DELETE_ONE],
+                    "crud_methods": [CrudMethods.FIND_MANY],
 
                 }
             ],
@@ -121,33 +121,32 @@ from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTab
 from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo
 
 
-SQLALCHEMY_DATABASE_URL = f"sqlite+aiosqlite://"
+SQLALCHEMY_DATABASE_URL = f"sqlite://"
 
 
 
-engine = create_async_engine(SQLALCHEMY_DATABASE_URL,
-                                              future=True,
-                                              echo=True,
-                                              pool_pre_ping=True,
-                                              pool_recycle=7200,
-                                              connect_args={"check_same_thread": False}, 
-                                              poolclass=StaticPool)
-session = sessionmaker(autocommit=False,
-                       autoflush=False,
-                       bind=engine,
-                       class_=AsyncSession)
-async def db_session():
-    async with session() as _session:
-        yield _session
-        await _session.commit()
+engine = create_engine(SQLALCHEMY_DATABASE_URL,
+                                        future=True,
+                                        echo=True,
+                                        pool_pre_ping=True,
+                                        pool_recycle=7200,
+                                        connect_args={"check_same_thread": False}, 
+                                        poolclass=StaticPool)
+session = sessionmaker(bind=engine, autocommit=False)
 
 
-async def create_table(engine, model):
-    async with engine.begin() as conn:
-        await conn.run_sync(model._sa_registry.metadata.create_all)
-loop = asyncio.get_event_loop()
-loop.run_until_complete(create_table(engine, SampleTable))
-loop.run_until_complete(create_table(engine, SampleTableTwo))
+def db_session() -> Generator:
+    try:
+        db = session()
+        yield db
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise e
+    finally:
+        db.close()
+SampleTable.__table__.create(engine, checkfirst=True)
+SampleTableTwo.__table__.create(engine, checkfirst=True)
 '''
         validate_common_sql_session(common_sql_session_expected)
 
@@ -199,9 +198,28 @@ UNIQUE_LIST = "primary_key"
 
 
 @dataclass
-class SampleTableTwoDeleteOneRequestQueryModel:
+class SampleTableTwoFindManyRequestBodyModel:
+    primary_key____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
+    primary_key____to_____comparison_operator: Optional[RangeToComparisonOperators] = Query(RangeToComparisonOperators.Less_than.Less_than_or_equal_to, description=None)
+    primary_key____from: Optional[NewType(ExtraFieldTypePrefix.From, int)] = Query(None, description=None)
+    primary_key____to: Optional[NewType(ExtraFieldTypePrefix.To, int)] = Query(None, description=None)
+    primary_key____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
+    primary_key____list: Optional[List[int]] = Query(None, description=None)
     bool_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     bool_value____list: Optional[List[bool]] = Query(None, description=None)
+    limit: Optional[int] = Query(None)
+    offset: Optional[int] = Query(None)
+    order_by_columns: Optional[List[pydantic.constr(regex="(?=(primary_key|bool_value)?\s?:?\s*?(?=(DESC|ASC))?)")]] = Query(
+                None,
+                description="""<br> support column: 
+            <br> ['primary_key', 'bool_value'] <hr><br> support ordering:  
+            <br> ['DESC', 'ASC'] 
+            <hr> 
+            <br/>example: 
+            <br/>&emsp;&emsp;any name of column:ASC
+            <br/>&emsp;&emsp;any name of column: DESC 
+            <br/>&emsp;&emsp;any name of column    :    DESC
+            <br/>&emsp;&emsp;any name of column (default sort by ASC)""")
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -209,12 +227,20 @@ class SampleTableTwoDeleteOneRequestQueryModel:
         filter_none(self)
 
 
-class SampleTableTwoDeleteOneResponseModel(BaseModel):
+class SampleTableTwoFindManyResponseModel(BaseModel):
     """
     auto gen by FastApi quick CRUD
     """
-    primary_key: int = Body(None)
-    bool_value: bool = Body(False)
+    primary_key: int = None
+    bool_value: bool = None
+    class Config:
+        orm_mode = True
+
+
+class SampleTableTwoFindManyItemListResponseModel(ExcludeUnsetBaseModel):
+    total: int
+    result: List[SampleTableTwoFindManyResponseModel]
+
     class Config:
         orm_mode = True'''
         validate_model("test_build_myself_memory_two", model_test_build_myself_memory_two_expected)
@@ -279,7 +305,13 @@ UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
 
 
 @dataclass
-class SampleTableDeleteOneRequestQueryModel:
+class SampleTableFindManyRequestBodyModel:
+    primary_key____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
+    primary_key____to_____comparison_operator: Optional[RangeToComparisonOperators] = Query(RangeToComparisonOperators.Less_than.Less_than_or_equal_to, description=None)
+    primary_key____from: Optional[NewType(ExtraFieldTypePrefix.From, int)] = Query(None, description=None)
+    primary_key____to: Optional[NewType(ExtraFieldTypePrefix.To, int)] = Query(None, description=None)
+    primary_key____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
+    primary_key____list: Optional[List[int]] = Query(None, description=None)
     bool_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     bool_value____list: Optional[List[bool]] = Query(None, description=None)
     char_value____str_____matching_pattern: Optional[List[MatchingPatternInStringBase]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
@@ -354,6 +386,19 @@ class SampleTableDeleteOneRequestQueryModel:
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
+    limit: Optional[int] = Query(None)
+    offset: Optional[int] = Query(None)
+    order_by_columns: Optional[List[pydantic.constr(regex="(?=(primary_key|bool_value|char_value|date_value|float4_value|float8_value|int2_value|int4_value|int8_value|text_value|time_value|timestamp_value|timestamptz_value|timetz_value|varchar_value)?\s?:?\s*?(?=(DESC|ASC))?)")]] = Query(
+                None,
+                description="""<br> support column: 
+            <br> ['primary_key', 'bool_value', 'char_value', 'date_value', 'float4_value', 'float8_value', 'int2_value', 'int4_value', 'int8_value', 'text_value', 'time_value', 'timestamp_value', 'timestamptz_value', 'timetz_value', 'varchar_value'] <hr><br> support ordering:  
+            <br> ['DESC', 'ASC'] 
+            <hr> 
+            <br/>example: 
+            <br/>&emsp;&emsp;any name of column:ASC
+            <br/>&emsp;&emsp;any name of column: DESC 
+            <br/>&emsp;&emsp;any name of column    :    DESC
+            <br/>&emsp;&emsp;any name of column (default sort by ASC)""")
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -361,25 +406,33 @@ class SampleTableDeleteOneRequestQueryModel:
         filter_none(self)
 
 
-class SampleTableDeleteOneResponseModel(BaseModel):
+class SampleTableFindManyResponseModel(BaseModel):
     """
     auto gen by FastApi quick CRUD
     """
-    primary_key: int = Body(None)
-    bool_value: bool = Body(False)
-    char_value: str = Body(None)
-    date_value: date = Body(None)
-    float4_value: float = Body(...)
-    float8_value: float = Body(10.1)
-    int2_value: int = Body(...)
-    int4_value: int = Body(...)
-    int8_value: int = Body(99)
-    text_value: str = Body(None)
-    time_value: time = Body(None)
-    timestamp_value: datetime = Body(None)
-    timestamptz_value: datetime = Body(None)
-    timetz_value: time = Body(None)
-    varchar_value: str = Body(None)
+    primary_key: int = None
+    bool_value: bool = None
+    char_value: str = None
+    date_value: date = None
+    float4_value: float = None
+    float8_value: float = None
+    int2_value: int = None
+    int4_value: int = None
+    int8_value: int = None
+    text_value: str = None
+    time_value: time = None
+    timestamp_value: datetime = None
+    timestamptz_value: datetime = None
+    timetz_value: time = None
+    varchar_value: str = None
+    class Config:
+        orm_mode = True
+
+
+class SampleTableFindManyItemListResponseModel(ExcludeUnsetBaseModel):
+    total: int
+    result: List[SampleTableFindManyResponseModel]
+
     class Config:
         orm_mode = True'''
         validate_model("test_build_myself_memory", model_test_build_myself_memory_expected)
@@ -392,8 +445,10 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
 from fastapi_quick_crud_template.common.utils import find_query_builder
 from fastapi_quick_crud_template.common.sql_session import db_session
+from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo, SampleTableTwoFindManyItemListResponseModel, SampleTableTwoFindManyRequestBodyModel, SampleTableTwoFindManyResponseModel
 from pydantic import parse_obj_as
-from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo, SampleTableTwoDeleteOneRequestQueryModel, SampleTableTwoDeleteOneResponseModel, SampleTableTwoPrimaryKeyModel
+from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
+from fastapi_quick_crud_template.common.typing import Ordering
 
 
 
@@ -401,35 +456,65 @@ api = APIRouter(tags=['sample api'],prefix="/my_second_api")
 
 
 
-@api.delete("/{primary_key}", status_code=200, response_model=SampleTableTwoDeleteOneResponseModel)
-async def delete_one_by_primary_key(
-                                                response: Response,
-                                                primary_key: SampleTableTwoPrimaryKeyModel = Depends(),
-                                                extra_query: SampleTableTwoDeleteOneRequestQueryModel = Depends(),
-                                                session=Depends(db_session)):
+@api.get("", status_code=200, response_model=SampleTableTwoFindManyItemListResponseModel)
+def get_many(response: Response,
+                query=Depends(SampleTableTwoFindManyRequestBodyModel),
+                session=Depends(db_session)):
+
+    filter_args = query.__dict__
+    limit = filter_args.pop('limit', None)
+    offset = filter_args.pop('offset', None)
+    order_by_columns = filter_args.pop('order_by_columns', None)
+    filter_list: List[BinaryExpression] = find_query_builder(param=query.__dict__,
+                                                             model=SampleTableTwo)
     model = SampleTableTwo
+    stmt = select(*[model]).filter(and_(*filter_list))
+    if order_by_columns:
+        order_by_query_list = []
 
-    filter_args = primary_key.__dict__
-    extra_args = extra_query.__dict__
-    filter_list: List[BinaryExpression] = find_query_builder(param=filter_args,
-                                                                 model=model)
-    if extra_args:
-        filter_list += find_query_builder(param=extra_query.__dict__,
-            model=model)
-    stmt = select(model).where(and_(*filter_list))
+        for order_by_column in order_by_columns:
+            if not order_by_column:
+                continue
+            sort_column, order_by = (order_by_column.replace(' ', '').split(':') + [None])[:2]
+            if not hasattr(model, sort_column):
+                raise UnknownColumn(f'Column {sort_column} is not existed')
+            if not order_by:
+                order_by_query_list.append(getattr(model, sort_column).asc())
+            elif order_by.upper() == Ordering.DESC.upper():
+                order_by_query_list.append(getattr(model, sort_column).desc())
+            elif order_by.upper() == Ordering.ASC.upper():
+                order_by_query_list.append(getattr(model, sort_column).asc())
+            else:
+                raise UnknownOrderType(f"Unknown order type {order_by}, only accept DESC or ASC")
+        if order_by_query_list:
+            stmt = stmt.order_by(*order_by_query_list)
 
-    sql_executed_result = await session.execute(stmt)
-    data_instance = sql_executed_result.scalar()
+    sql_executed_result_without_paginate = await session.execute(stmt)
+    total = len(sql_executed_result_without_paginate.fetchall())
 
-    if not data_instance:
-        return Response('specific data not found', status_code=HTTPStatus.NOT_FOUND, headers={"x-total-count": str(0)})
+    if total < 1:
+        return Response(status_code=HTTPStatus.NO_CONTENT, headers={"x-total-count": str(0)})
 
-    await session.delete(data_instance)
+    stmt = stmt.limit(limit).offset(offset)
 
-    result = parse_obj_as(SampleTableTwoDeleteOneResponseModel, data_instance)
-    response.headers["x-total-count"] = str(1)
-    return result
-'''
+    sql_executed_result = session.execute(stmt)
+
+    result = sql_executed_result.fetchall()
+    response_data_list = []
+    for i in result:
+        result_value, = dict(i).values()
+        temp = {}
+        for column in SampleTableTwoFindManyResponseModel.__fields__:
+            temp[column] = getattr(result_value, column)
+        response_data_list.append(temp)
+
+    response_format = {
+        "total": total,
+        "result": response_data_list
+    }
+    response_data = parse_obj_as(SampleTableFindManyItemListResponseModel, response_format)
+    response.headers["x-total-count"] = str(len(response_data_list))
+    return response_data'''
         validate_route("test_build_myself_memory_two", route_test_build_myself_memory_two_expected)
         model_test_build_myself_memory_expected = '''from http import HTTPStatus
 from typing import List, Union
@@ -438,8 +523,10 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
 from fastapi_quick_crud_template.common.utils import find_query_builder
 from fastapi_quick_crud_template.common.sql_session import db_session
+from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable, SampleTableFindManyItemListResponseModel, SampleTableFindManyRequestBodyModel, SampleTableFindManyResponseModel
 from pydantic import parse_obj_as
-from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable, SampleTableDeleteOneRequestQueryModel, SampleTableDeleteOneResponseModel, SampleTablePrimaryKeyModel
+from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
+from fastapi_quick_crud_template.common.typing import Ordering
 
 
 
@@ -447,33 +534,63 @@ api = APIRouter(tags=['sample api'],prefix="/my_first_api")
 
 
 
-@api.delete("/{primary_key}", status_code=200, response_model=SampleTableDeleteOneResponseModel)
-async def delete_one_by_primary_key(
-                                                response: Response,
-                                                primary_key: SampleTablePrimaryKeyModel = Depends(),
-                                                extra_query: SampleTableDeleteOneRequestQueryModel = Depends(),
-                                                session=Depends(db_session)):
+@api.get("", status_code=200, response_model=SampleTableFindManyItemListResponseModel)
+def get_many(response: Response,
+                query=Depends(SampleTableFindManyRequestBodyModel),
+                session=Depends(db_session)):
+
+    filter_args = query.__dict__
+    limit = filter_args.pop('limit', None)
+    offset = filter_args.pop('offset', None)
+    order_by_columns = filter_args.pop('order_by_columns', None)
+    filter_list: List[BinaryExpression] = find_query_builder(param=query.__dict__,
+                                                             model=SampleTable)
     model = SampleTable
+    stmt = select(*[model]).filter(and_(*filter_list))
+    if order_by_columns:
+        order_by_query_list = []
 
-    filter_args = primary_key.__dict__
-    extra_args = extra_query.__dict__
-    filter_list: List[BinaryExpression] = find_query_builder(param=filter_args,
-                                                                 model=model)
-    if extra_args:
-        filter_list += find_query_builder(param=extra_query.__dict__,
-            model=model)
-    stmt = select(model).where(and_(*filter_list))
+        for order_by_column in order_by_columns:
+            if not order_by_column:
+                continue
+            sort_column, order_by = (order_by_column.replace(' ', '').split(':') + [None])[:2]
+            if not hasattr(model, sort_column):
+                raise UnknownColumn(f'Column {sort_column} is not existed')
+            if not order_by:
+                order_by_query_list.append(getattr(model, sort_column).asc())
+            elif order_by.upper() == Ordering.DESC.upper():
+                order_by_query_list.append(getattr(model, sort_column).desc())
+            elif order_by.upper() == Ordering.ASC.upper():
+                order_by_query_list.append(getattr(model, sort_column).asc())
+            else:
+                raise UnknownOrderType(f"Unknown order type {order_by}, only accept DESC or ASC")
+        if order_by_query_list:
+            stmt = stmt.order_by(*order_by_query_list)
 
-    sql_executed_result = await session.execute(stmt)
-    data_instance = sql_executed_result.scalar()
+    sql_executed_result_without_paginate = await session.execute(stmt)
+    total = len(sql_executed_result_without_paginate.fetchall())
 
-    if not data_instance:
-        return Response('specific data not found', status_code=HTTPStatus.NOT_FOUND, headers={"x-total-count": str(0)})
+    if total < 1:
+        return Response(status_code=HTTPStatus.NO_CONTENT, headers={"x-total-count": str(0)})
 
-    await session.delete(data_instance)
+    stmt = stmt.limit(limit).offset(offset)
 
-    result = parse_obj_as(SampleTableDeleteOneResponseModel, data_instance)
-    response.headers["x-total-count"] = str(1)
-    return result
-'''
+    sql_executed_result = session.execute(stmt)
+
+    result = sql_executed_result.fetchall()
+    response_data_list = []
+    for i in result:
+        result_value, = dict(i).values()
+        temp = {}
+        for column in SampleTableFindManyResponseModel.__fields__:
+            temp[column] = getattr(result_value, column)
+        response_data_list.append(temp)
+
+    response_format = {
+        "total": total,
+        "result": response_data_list
+    }
+    response_data = parse_obj_as(SampleTableFindManyItemListResponseModel, response_format)
+    response.headers["x-total-count"] = str(len(response_data_list))
+    return response_data'''
         validate_route("test_build_myself_memory", model_test_build_myself_memory_expected)
