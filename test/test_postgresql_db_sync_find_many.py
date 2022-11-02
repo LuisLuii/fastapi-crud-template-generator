@@ -523,7 +523,7 @@ def get_many(response: Response,
         if order_by_query_list:
             stmt = stmt.order_by(*order_by_query_list)
 
-    sql_executed_result_without_paginate = await session.execute(stmt)
+    sql_executed_result_without_paginate = session.execute(stmt)
     total = len(sql_executed_result_without_paginate.fetchall())
 
     if total < 1:
@@ -601,7 +601,7 @@ def get_many(response: Response,
         if order_by_query_list:
             stmt = stmt.order_by(*order_by_query_list)
 
-    sql_executed_result_without_paginate = await session.execute(stmt)
+    sql_executed_result_without_paginate = session.execute(stmt)
     total = len(sql_executed_result_without_paginate.fetchall())
 
     if total < 1:
