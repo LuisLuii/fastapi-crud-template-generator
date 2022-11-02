@@ -80,7 +80,6 @@ crud_router_builder(
 
 # Support
 
----
 
 This project will generate CRUD code from you Sqlalchemy model. Which supports following api:
 
