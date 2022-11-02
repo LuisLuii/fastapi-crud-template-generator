@@ -78,15 +78,20 @@ crud_router_builder(
             "db_model": TestBuildMyself,
             "prefix": "/my_first_api",
             "tags": ["sample api"],
+            "crud_methods": [CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_MANY,
+                             CrudMethods.UPDATE_ONE, CrudMethods.PATCH_ONE],
+
         },
 
         {
             "db_model": TestUuidPrimarySync,
             "prefix": "/my_second_api",
             "tags": ["sample api"],
+            "crud_methods": [CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_MANY,
+                             CrudMethods.UPDATE_ONE, CrudMethods.PATCH_ONE],
+
         }
     ],
-    crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_MANY, CrudMethods.UPDATE_ONE, CrudMethods.PATCH_ONE],
     is_async=False,
     database_url="postgresql://postgres:1234@127.0.0.1:5432/postgres"
     # database_url="postgresql+asyncpg://postgres:1234@127.0.0.1:5432/postgres"

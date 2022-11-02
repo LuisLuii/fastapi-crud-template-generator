@@ -64,16 +64,19 @@ class Testing(unittest.TestCase):
                     "db_model": SampleTable,
                     "prefix": "/my_first_api",
                     "tags": ["sample api"],
-                    "exclude_columns": ['bytea_value']
+                    "exclude_columns": ['bytea_value'],
+                    "crud_methods": [CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_MANY],
+
                 },
                 {
                     "db_model": SampleTableTwo,
                     "prefix": "/my_second_api",
                     "tags": ["sample api"],
-                    "exclude_columns": ['bytea_value']
+                    "exclude_columns": ['bytea_value'],
+                    "crud_methods": [CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_MANY],
+
                 }
             ],
-            crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_MANY],
             is_async=is_async,
             database_url=database_url
         )
