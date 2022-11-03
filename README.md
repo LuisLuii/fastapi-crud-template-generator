@@ -119,9 +119,9 @@ crud_router_builder(
     >  A database URL. The URL is passed directly to SQLAlchemy's create_engine() method so please refer to SQLAlchemy's documentation for instructions on how to construct a proper URL.
     
 # Known limitations
-* ❌ If there are multiple unique constraints, please use composite unique constraints instead
+* ❌ Please use composite unique constraints instead instead multiple unique constraints
 * ❌ Composite primary key is not supported
-* ❌ Sqlalchemy table tpye model schema is not supported
+* ❌ Sqlalchemy table type model schema is not supported
 
 # Design:
 The model generation part and api router part refer to my another [project](https://github.com/LuisLuii/FastAPIQuickCRUD); The code generation part is using Jinja
