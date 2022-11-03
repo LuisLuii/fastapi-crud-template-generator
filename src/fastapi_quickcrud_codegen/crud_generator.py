@@ -116,10 +116,7 @@ def crud_router_builder(
         print(f"\t\tGenerating model success")
         methods_dependencies = crud_models.get_available_request_method()
         primary_name = crud_models.PRIMARY_KEY_NAME
-        if primary_name:
-            path = '/{' + primary_name + '}'
-        else:
-            path = ""
+        path = '/{' + primary_name + '}'
 
         # router generation
         def find_one_api():

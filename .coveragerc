@@ -1,6 +1,0 @@
-[report]
-show_missing = True
-
-# Regexes for lines to exclude from consideration
-exclude_lines =
-    self.import_list += "\n" + f"""
