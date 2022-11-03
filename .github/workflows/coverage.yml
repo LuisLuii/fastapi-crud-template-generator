@@ -18,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       
-      - name: Set girhub token
+      - name: Set github token
         run: echo "GITHUB_TOKEN=${{ secrets.GIT_TOKEN }}" >> $GITHUB_ENV
       - name: Set coveralls token
         run: echo "COVERALLS_REPO_TOKEN=${{ secrets.COVERALLS_REPO_TOKEN }}" >> $GITHUB_ENV      

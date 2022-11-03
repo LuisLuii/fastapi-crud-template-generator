@@ -2,8 +2,7 @@
 [report]
 show_missing = True
 omit =
-    /*
+    /usr/*
     test/*
     src/fastapi_quickcrud_codegen/model/template/*
 exclude_lines =
-    
