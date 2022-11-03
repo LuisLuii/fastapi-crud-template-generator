@@ -5,7 +5,7 @@ Base = declarative_base()
 metadata = Base.metadata
 
 
-class SampleTable(Base):
+class TestingTable(Base):
     __tablename__ = 'test_build_myself_memory'
     primary_key = Column(Integer, primary_key=True, autoincrement=True, comment="hello")
     bool_value = Column(Boolean, nullable=False, default=False)
@@ -25,7 +25,7 @@ class SampleTable(Base):
     varchar_value = Column(String)
 
 
-class SampleTableTwo(Base):
+class TestingTableTwo(Base):
     primary_key_of_table = "primary_key"
     unique_fields = ['primary_key']
     __tablename__ = 'test_build_myself_memory_two'
@@ -42,7 +42,7 @@ from fastapi_quickcrud_codegen import crud_router_builder, CrudMethods
 crud_router_builder(
     db_model_list=[
         {
-            "db_model": SampleTable,
+            "db_model": TestingTable,
             "prefix": "/my_first_api",
             "tags": ["sample api"],
             "exclude_columns": ['bytea_value'],
@@ -51,7 +51,7 @@ crud_router_builder(
         },
 
         {
-            "db_model": SampleTableTwo,
+            "db_model": TestingTableTwo,
             "prefix": "/my_second_api",
             "tags": ["sample api"],
             "exclude_columns": ['bytea_value'],

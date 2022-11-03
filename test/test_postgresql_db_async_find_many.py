@@ -521,8 +521,14 @@ async def get_many(response: Response,
     sql_executed_result_without_paginate = await session.execute(stmt)
     total = len(sql_executed_result_without_paginate.fetchall())
 
+    response_format = {
+            "total": 0,
+            "result": []
+        }
     if total < 1:
-        return Response(status_code=HTTPStatus.NO_CONTENT, headers={"x-total-count": str(0)})
+        response_data = parse_obj_as(SampleTableTwoFindManyItemListResponseModel, response_format)
+        response.headers["x-total-count"] = str(0)
+        return response_data
 
     stmt = stmt.limit(limit).offset(offset)
 
@@ -537,11 +543,9 @@ async def get_many(response: Response,
             temp[column] = getattr(result_value, column)
         response_data_list.append(temp)
 
-    response_format = {
-        "total": total,
-        "result": response_data_list
-    }
-    response_data = parse_obj_as(SampleTableFindManyItemListResponseModel, response_format)
+    response_format["total"] = total
+    response_format["result"] = response_data_list
+    response_data = parse_obj_as(SampleTableTwoFindManyItemListResponseModel, response_format)
     response.headers["x-total-count"] = str(len(response_data_list))
     return response_data'''
         validate_route("test_build_myself_two", route_test_build_myself_two_expected)
@@ -599,8 +603,14 @@ async def get_many(response: Response,
     sql_executed_result_without_paginate = await session.execute(stmt)
     total = len(sql_executed_result_without_paginate.fetchall())
 
+    response_format = {
+            "total": 0,
+            "result": []
+        }
     if total < 1:
-        return Response(status_code=HTTPStatus.NO_CONTENT, headers={"x-total-count": str(0)})
+        response_data = parse_obj_as(SampleTableFindManyItemListResponseModel, response_format)
+        response.headers["x-total-count"] = str(0)
+        return response_data
 
     stmt = stmt.limit(limit).offset(offset)
 
@@ -615,10 +625,8 @@ async def get_many(response: Response,
             temp[column] = getattr(result_value, column)
         response_data_list.append(temp)
 
-    response_format = {
-        "total": total,
-        "result": response_data_list
-    }
+    response_format["total"] = total
+    response_format["result"] = response_data_list
     response_data = parse_obj_as(SampleTableFindManyItemListResponseModel, response_format)
     response.headers["x-total-count"] = str(len(response_data_list))
     return response_data'''
