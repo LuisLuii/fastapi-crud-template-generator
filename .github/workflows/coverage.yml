@@ -17,11 +17,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set token
+        uses: actions/checkout@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
       - name: pip install, make coverage
-        uses: actions/checkout@v3
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
