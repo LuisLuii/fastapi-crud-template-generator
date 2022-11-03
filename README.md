@@ -94,18 +94,18 @@ This project will generate CRUD code from you Sqlalchemy model. Which supports f
 
 
 **crud_router_builder args**
-- db_model_list [Required] 
+- db_model_list `[Required] `
     >  Model list of dict for code generate
-  - List[]
-    - Dict[]
-      - db_model [Required[SQLALchemy Declarative Base Class]]
-      - prefix [Required[str]]
+  - `List[]`
+    - `Dict[]`
+      - db_model `[Required[SQLALchemy Declarative Base Class]]`
+      - prefix `[Required[str]]`
          > prefix for Fastapi's end point 
-      - tags [Required[List[str]]]
+      - tags `[Required[List[str]]]`
          > list of tag for Fastapi's end point 
-      - exclude_columns [Optional[str]]
+      - exclude_columns `[Optional[str]]`
          > set the columns that not to be operated but the columns should nullable or set the default value)
-      - crud_methods [Opional[str]]
+      - crud_methods `[Opional[str]]`
         > - Create the following apis for that model, but default: [CrudMethods.FIND_MANY, CrudMethods.FIND_ONE, CrudMethods.CREATE_MANY, CrudMethods.PATCH_ONE, CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE, CrudMethods.UPDATE_MANY, CrudMethods.UPDATE_ONE, CrudMethods.DELETE_MANY, CrudMethods.DELETE_ONE] 
         ```
         - CrudMethods.FIND_ONE
@@ -120,7 +120,7 @@ This project will generate CRUD code from you Sqlalchemy model. Which supports f
         - CrudMethods.DELETE_MANY
         ```
       
-- is_async [Required]
+- is_async `[Required]`
     
     >  True for async; False for sync
     
