@@ -15,8 +15,6 @@ def sqlalchemy_to_pydantic(
         constraints=None,
         # foreign_include: Optional[any] = None,
         ) -> CRUDModel:
-    if exclude_columns is None:
-        exclude_columns = []
     # if foreign_include is None:
     #     foreign_include = {}
     request_response_mode_set = {}
@@ -26,29 +24,8 @@ def sqlalchemy_to_pydantic(
                                               sql_type=sql_type,
                                               # foreign_include=foreign_include,
                                               )
-    REQUIRE_PRIMARY_KEY_CRUD_METHOD = [CrudMethods.DELETE_ONE.value,
-                                       CrudMethods.FIND_ONE.value,
-                                       CrudMethods.PATCH_ONE.value,
-                                       # CrudMethods.POST_REDIRECT_GET.value,
-                                       CrudMethods.UPDATE_ONE.value]
     for crud_method in crud_methods:
-        if crud_method.value in REQUIRE_PRIMARY_KEY_CRUD_METHOD and not model_builder.primary_key_str:
-            raise PrimaryMissing(f"The generation of this API [{crud_method.value}] requires a primary key")
-
-        # if crud_method.value == CrudMethods.UPSERT_ONE.value:
-        #     model_builder.upsert_one()
-        #     request_method = CRUDRequestMapping.get_request_method_by_crud_method(crud_method.value).value
-        #     if request_method not in request_response_mode_set:
-        #         request_response_mode_set[request_method] = {}
-        #     request_response_mode_set[request_method][crud_method.value] = True
-        # elif crud_method.value == CrudMethods.UPSERT_MANY.value:
-        #     model_builder.upsert_many()
-        #     request_method = CRUDRequestMapping.get_request_method_by_crud_method(crud_method.value).value
-        #     if request_method not in request_response_mode_set:
-        #         request_response_mode_set[request_method] = {}
-        #     request_response_mode_set[request_method][crud_method.value] = True
-
-        elif crud_method.value == CrudMethods.CREATE_ONE.value:
+        if crud_method.value == CrudMethods.CREATE_ONE.value:
             model_builder.create_one()
             request_method = CRUDRequestMapping.get_request_method_by_crud_method(crud_method.value).value
             if request_method not in request_response_mode_set:
@@ -85,12 +62,6 @@ def sqlalchemy_to_pydantic(
             if request_method not in request_response_mode_set:
                 request_response_mode_set[request_method] = {}
             request_response_mode_set[request_method][crud_method.value] = True
-        # elif crud_method.value == CrudMethods.POST_REDIRECT_GET.value:
-        #     model_builder.post_redirect_get()
-        #     request_method = CRUDRequestMapping.get_request_method_by_crud_method(crud_method.value).value
-        #     if request_method not in request_response_mode_set:
-        #         request_response_mode_set[request_method] = {}
-        #     request_response_mode_set[request_method][crud_method.value] = True
         elif crud_method.value == CrudMethods.PATCH_ONE.value:
             model_builder.patch_one()
             request_method = CRUDRequestMapping.get_request_method_by_crud_method(crud_method.value).value
@@ -111,18 +82,6 @@ def sqlalchemy_to_pydantic(
             request_response_mode_set[request_method][crud_method.value] = True
         elif crud_method.value == CrudMethods.PATCH_MANY.value:
             model_builder.patch_many()
-            request_method = CRUDRequestMapping.get_request_method_by_crud_method(crud_method.value).value
-            if request_method not in request_response_mode_set:
-                request_response_mode_set[request_method] = {}
-            request_response_mode_set[request_method][crud_method.value] = True
-        elif crud_method.value == CrudMethods.FIND_ONE_WITH_FOREIGN_TREE.value:
-            model_builder.foreign_tree_get_one()
-            request_method = CRUDRequestMapping.get_request_method_by_crud_method(crud_method.value).value
-            if request_method not in request_response_mode_set:
-                request_response_mode_set[request_method] = {}
-            request_response_mode_set[request_method][crud_method.value] = True
-        elif crud_method.value == CrudMethods.FIND_MANY_WITH_FOREIGN_TREE.value:
-            model_builder.foreign_tree_get_many()
             request_method = CRUDRequestMapping.get_request_method_by_crud_method(crud_method.value).value
             if request_method not in request_response_mode_set:
                 request_response_mode_set[request_method] = {}

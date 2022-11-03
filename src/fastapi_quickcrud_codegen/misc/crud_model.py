@@ -35,11 +35,4 @@ class CRUDModel(BaseModel):
 
     def get_model_by_request_method(self, request_method):
         available_methods = self.dict()
-        if request_method not in available_methods.keys():
-            raise InvalidRequestMethod(f'{request_method} is not an available request method')
-        if not available_methods[request_method]:
-            raise RequestMissing(
-                f'{request_method} is not available, '
-                f'make sure the CRUDModel contains this request method')
-        _ = available_methods[request_method]
-        return _
+        return available_methods[request_method]
