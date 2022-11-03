@@ -1,4 +1,7 @@
 # Fastapi CRUD Project Generator
+[![Coverage Status](https://coveralls.io/repos/github/LuisLuii/fastapi-crud-project-generator/badge.svg?branch=main)](https://coveralls.io/github/LuisLuii/fastapi-crud-project-generator?branch=main)
+
+
 A code generator that help you to establish a fastapi project with CRUD router from your Sqlalchemy model. Which supports following api:
 >- Get one
 >- Get many
@@ -142,7 +145,6 @@ It will be super excited if you have any idea with api router/ model template. t
 # Road map
 #### Current State: Pre-release 
 #### Will be changed to stable version when:
->- Unit test coverage 100%
 >- Refactor the output file format
 >- Apply code style checking
 >- Typing
