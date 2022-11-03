@@ -3,8 +3,9 @@
 name: Publish Python 🐍 distributions 📦 to PyPI and TestPyPI
 
 on:
-  tags:
-    - '**'
+  push:
+    tags:
+      - '**'
 
 jobs:
   build-n-publish:
