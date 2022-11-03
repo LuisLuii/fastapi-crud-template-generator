@@ -140,9 +140,10 @@ It will be super excited if you have any idea with api router/ model template. t
    5. Update the api_register from `src/fastapi_quickcrud_codegen/crud_generator.py`
 * use Sqlalchemy's sql.expression instead custom statement when building sql statement for your api
 # Road map
-#### Current State: Beta
-#### Will be changed t0 stable version when:
+#### Current State: Pre-release 
+#### Will be changed to stable version when:
 >- Unit test coverage 100%
+>- Refactor the output file format
 >- Apply code style checking
 >- Typing
 #### After stable version:
