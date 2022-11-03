@@ -148,6 +148,7 @@ The model generation part and api router part refer to my another [project](http
 #### Will be changed t0 stable version when:
 >- Unit test coverage 100%
 >- Apply code style checking
+>- Typing
 #### After stable version:
 >- Support foreign tree in find api
 >- Support foreign tree in insert api
