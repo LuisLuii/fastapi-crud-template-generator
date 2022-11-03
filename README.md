@@ -91,3 +91,54 @@ This project will generate CRUD code from you Sqlalchemy model. Which supports f
 - Patch many
 - Delete one
 - Delete many
+
+
+**crud_router_builder args**
+- db_model_list [Required] 
+    >  Model list of dict for code generate
+  - List[]
+    - Dict[]
+      - db_model [Required[SQLALchemy Declarative Base Class]]
+      - prefix [Required[str]]
+         > prefix for Fastapi's end point 
+      - tags [Required[List[str]]]
+         > list of tag for Fastapi's end point 
+      - exclude_columns [Optional[str]]
+         > set the columns that not to be operated but the columns should nullable or set the default value)
+      - crud_methods [Opional[str]]
+        > - Create the following apis for that model, but default: [CrudMethods.FIND_MANY, CrudMethods.FIND_ONE, CrudMethods.CREATE_MANY, CrudMethods.PATCH_ONE, CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE, CrudMethods.UPDATE_MANY, CrudMethods.UPDATE_ONE, CrudMethods.DELETE_MANY, CrudMethods.DELETE_ONE] 
+        ```
+        - CrudMethods.FIND_ONE
+        - CrudMethods.FIND_MANY
+        - CrudMethods.UPDATE_ONE
+        - CrudMethods.UPDATE_MANY
+        - CrudMethods.PATCH_ONE
+        - CrudMethods.PATCH_MANY
+        - CrudMethods.CREATE_ONE
+        - CrudMethods.CREATE_MANY
+        - CrudMethods.DELETE_ONE
+        - CrudMethods.DELETE_MANY
+        ```
+      
+- is_async [Required]
+    
+    >  True for async; False for sync
+    
+- database_url  `[Optional (str)]`
+    >  A database URL. The URL is passed directly to SQLAlchemy's create_engine() method so please refer to SQLAlchemy's documentation for instructions on how to construct a proper URL.
+    
+
+# Design:
+The model generation part and api router part refer to my another [project](https://github.com/LuisLuii/FastAPIQuickCRUD); The code generation part is using Jinja
+
+## How to contribute more api?
+1. Model generation
+   1. Prepare Jinja template to `fastapi-crud-project-generator/src/fastapi_quickcrud_codegen/model/template`
+   2. Prepare model code generation method from `fastapi_quickcrud_codegen.utils.schema_builder.ApiParameterSchemaBuilder`
+   3. Generate the code from `fastapi_quickcrud_codegen/model/model_builder.py` 
+2. CRUD Method Generation
+   1. After the model generation, you can try to build your own api by your own model
+   2. Modify `fastapi_quickcrud_codegen.utils.sqlalchemy_to_pydantic.sqlalchemy_to_pydantic`, `fastapi_quickcrud_codegen.misc.type.CrudMethods` and `fastapi_quickcrud_codegen.misc.crud_model.CRUDModel` to let project supports your api
+   3. Prepare your api router Jinja template from `src/fastapi_quickcrud_codegen/model/template/route`
+   4. Generate the code from `fastapi_quickcrud_codegen/model/crud_builder.py` 
+   5. Update the api_register from `src/fastapi_quickcrud_codegen/crud_generator.py`
