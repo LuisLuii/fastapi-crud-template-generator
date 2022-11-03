@@ -506,7 +506,7 @@ async def get_many(response: Response,
                 continue
             sort_column, order_by = (order_by_column.replace(' ', '').split(':') + [None])[:2]
             if not hasattr(model, sort_column):
-                raise UnknownColumn(f'Column {sort_column} is not existed')
+                raise UnknownColumn(400,f'Column {sort_column} is not existed')
             if not order_by:
                 order_by_query_list.append(getattr(model, sort_column).asc())
             elif order_by.upper() == Ordering.DESC.upper():
@@ -514,7 +514,7 @@ async def get_many(response: Response,
             elif order_by.upper() == Ordering.ASC.upper():
                 order_by_query_list.append(getattr(model, sort_column).asc())
             else:
-                raise UnknownOrderType(f"Unknown order type {order_by}, only accept DESC or ASC")
+                raise UnknownOrderType(400,f"Unknown order type {order_by}, only accept DESC or ASC")
         if order_by_query_list:
             stmt = stmt.order_by(*order_by_query_list)
 
@@ -588,7 +588,7 @@ async def get_many(response: Response,
                 continue
             sort_column, order_by = (order_by_column.replace(' ', '').split(':') + [None])[:2]
             if not hasattr(model, sort_column):
-                raise UnknownColumn(f'Column {sort_column} is not existed')
+                raise UnknownColumn(400,f'Column {sort_column} is not existed')
             if not order_by:
                 order_by_query_list.append(getattr(model, sort_column).asc())
             elif order_by.upper() == Ordering.DESC.upper():
@@ -596,7 +596,7 @@ async def get_many(response: Response,
             elif order_by.upper() == Ordering.ASC.upper():
                 order_by_query_list.append(getattr(model, sort_column).asc())
             else:
-                raise UnknownOrderType(f"Unknown order type {order_by}, only accept DESC or ASC")
+                raise UnknownOrderType(400,f"Unknown order type {order_by}, only accept DESC or ASC")
         if order_by_query_list:
             stmt = stmt.order_by(*order_by_query_list)
 
