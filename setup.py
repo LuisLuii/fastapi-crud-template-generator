@@ -1,6 +1,10 @@
+import os
+
 from setuptools import setup, find_packages
 
-VERSION = '0.0.1b10'
+VERSION = os.getenv("RELEASE_VERSION", default=None) or os.getenv("env.RELEASE_VERSION", default=None)
+if not VERSION:
+    raise RuntimeError("Missing release version env var")
 
 print("""
 
