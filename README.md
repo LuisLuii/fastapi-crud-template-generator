@@ -142,3 +142,16 @@ The model generation part and api router part refer to my another [project](http
    3. Prepare your api router Jinja template from `src/fastapi_quickcrud_codegen/model/template/route`
    4. Generate the code from `fastapi_quickcrud_codegen/model/crud_builder.py` 
    5. Update the api_register from `src/fastapi_quickcrud_codegen/crud_generator.py`
+* use Sqlalchemy's sql.expression instead custom statement when building sql statement for your api
+# Road map
+#### Current State: Beta
+#### Will be changed t0 stable version when:
+>- Unit test coverage 100%
+>- Apply code style checking
+#### After stable version:
+>- Support foreign tree in find api
+>- Support foreign tree in insert api
+>- Support foreign tree in update api
+>- Support foreign tree in delete api
+#### Good to have:
+>- Support Sqlalchemy Table type model
