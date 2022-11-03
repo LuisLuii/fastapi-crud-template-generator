@@ -31,6 +31,5 @@ class ModelTemplateGenerator:
         with open(path, 'a') as model_file:
             model_file.write(code)
 
-model_template_gen = ModelTemplateGenerator()
 
 
