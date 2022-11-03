@@ -7,6 +7,7 @@ from sqlalchemy.orm import declarative_base
 
 from src.fastapi_quickcrud_codegen import crud_router_builder, CrudMethods
 from test.misc.common import *
+
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, INTERVAL, JSON, UUID
 
 Base = declarative_base()
@@ -16,7 +17,6 @@ metadata = Base.metadata
 class TestUuidPrimary(Base):
     __tablename__ = 'test_uuid_primary'
     __table_args__ = (
-        UniqueConstraint('primary_key', 'int4_value', 'float4_value'),
     )
 
     primary_key = Column(UUID(as_uuid=True), primary_key=True)
@@ -49,7 +49,7 @@ class Testing(unittest.TestCase):
         if is_async:
             database_url = "postgresql+asyncpg://postgres:1234@127.0.0.1:5432/postgres"
         else:
-            database_url="postgresql://postgres:1234@127.0.0.1:5432/postgres"
+            database_url = "postgresql://postgres:1234@127.0.0.1:5432/postgres"
 
         crud_router_builder(
             db_model_list=[
@@ -143,7 +143,6 @@ from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, Item
 class TestUuidPrimary(Base):
     __tablename__ = 'test_uuid_primary'
     __table_args__ = (
-        UniqueConstraint('primary_key', 'int4_value', 'float4_value'),
     )
 
     primary_key = Column(UUID(as_uuid=True), primary_key=True)
@@ -187,7 +186,7 @@ class TestUuidPrimaryPrimaryKeyModel:
 PRIMARY_KEY_NAME = "primary_key"
     
     
-UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
+UNIQUE_LIST = ""
     
 
 

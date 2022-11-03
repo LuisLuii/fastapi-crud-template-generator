@@ -71,80 +71,27 @@ metadata = Base.metadata"""
     common_http_exception_expected = '''from fastapi import HTTPException
 
 
-class FindOneApiNotRegister(HTTPException):
+class CRUDProjectHTTPException(HTTPException):
     pass
 
 
-class CRUDBuilderException(BaseException):
+class UnknownOrderType(CRUDProjectHTTPException):
     pass
 
 
-class RequestMissing(CRUDBuilderException):
+class UnknownColumn(CRUDProjectHTTPException):
     pass
 
 
-class PrimaryMissing(CRUDBuilderException):
-    pass
-
-
-class UnknownOrderType(CRUDBuilderException):
-    pass
-
-
-class UpdateColumnEmptyException(CRUDBuilderException):
-    pass
-
-
-class UnknownColumn(CRUDBuilderException):
-    pass
-
-
-class QueryOperatorNotFound(CRUDBuilderException):
-    pass
-
-
-class UnknownError(CRUDBuilderException):
-    pass
-
-
-class ConflictColumnsCannotHit(CRUDBuilderException):
-    pass
-
-
-class MultipleSingleUniqueNotSupportedException(CRUDBuilderException):
-    pass
-
-
-class SchemaException(CRUDBuilderException):
-    pass
-
-
-class CompositePrimaryKeyConstraintNotSupportedException(CRUDBuilderException):
-    pass
-
-
-class MultiplePrimaryKeyNotSupportedException(CRUDBuilderException):
-    pass
-
-
-class ColumnTypeNotSupportedException(CRUDBuilderException):
-    pass
-
-
-class InvalidRequestMethod(CRUDBuilderException):
-    pass
-
-class FDDRestHTTPException(HTTPException):
-    """Baseclass for all HTTP exceptions in FDD Rest API.  This exception can be called as WSGI
-        application to render a default error page or you can catch the subclasses
-        of it independently and render nicer error messages.
-        """'''
+class QueryOperatorNotFound(CRUDProjectHTTPException):
+    pass'''
     validate_common_http_exception(common_http_exception_expected)
     #   typing
     common_typing_expected = """from enum import Enum, auto
 from itertools import chain
 from sqlalchemy import or_
 from strenum import StrEnum
+
 
 class CrudMethods(Enum):
     FIND_ONE = "FIND_ONE"
@@ -153,28 +100,23 @@ class CrudMethods(Enum):
     UPDATE_MANY = "UPDATE_MANY"
     PATCH_ONE = "PATCH_ONE"
     PATCH_MANY = "PATCH_MANY"
-    UPSERT_ONE = "UPSERT_ONE"
-    UPSERT_MANY = "UPSERT_MANY"
     CREATE_ONE = "CREATE_ONE"
     CREATE_MANY = "CREATE_MANY"
     DELETE_ONE = "DELETE_ONE"
     DELETE_MANY = "DELETE_MANY"
-    POST_REDIRECT_GET = "POST_REDIRECT_GET"
-    FIND_ONE_WITH_FOREIGN_TREE = "FIND_ONE_WITH_FOREIGN_TREE"
-    FIND_MANY_WITH_FOREIGN_TREE = "FIND_MANY_WITH_FOREIGN_TREE"
 
     @staticmethod
-    def get_table_full_crud_method():
-        return [CrudMethods.FIND_MANY, CrudMethods.CREATE_MANY, CrudMethods.UPDATE_MANY, CrudMethods.PATCH_MANY,
-                CrudMethods.DELETE_MANY]
-
-    @staticmethod
-    def get_declarative_model_full_crud_method():
-        return [CrudMethods.FIND_MANY, CrudMethods.FIND_ONE,
-                CrudMethods.UPDATE_MANY, CrudMethods.UPDATE_ONE,
-                CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE, CrudMethods.CREATE_MANY,
-                 CrudMethods.DELETE_MANY, CrudMethods.DELETE_ONE, CrudMethods.FIND_ONE_WITH_FOREIGN_TREE,
-                 CrudMethods.FIND_MANY_WITH_FOREIGN_TREE]
+    def get_full_crud_method():
+        return [CrudMethods.FIND_MANY,
+                CrudMethods.FIND_ONE,
+                CrudMethods.CREATE_MANY,
+                CrudMethods.PATCH_ONE,
+                CrudMethods.PATCH_MANY,
+                CrudMethods.PATCH_ONE,
+                CrudMethods.UPDATE_MANY,
+                CrudMethods.UPDATE_ONE,
+                CrudMethods.DELETE_MANY,
+                CrudMethods.DELETE_ONE]
 
 
 
@@ -339,7 +281,7 @@ def find_query_builder(param: dict, model: Base) -> List[Union[BinaryExpression]
         operator_column_name = column_name + process_type_map[type_]
         operators = param.get(operator_column_name, None)
         if not operators:
-            raise QueryOperatorNotFound(f'The query operator of {column_name} not found!')
+            raise QueryOperatorNotFound(400, f'The query operator of {column_name} not found!')
         if not isinstance(operators, list):
             operators = [operators]
         for operator in operators:
@@ -425,7 +367,7 @@ def clean_input_fields(param: Union[dict, list], model: Base):
         stmt = []
         for column_name in param:
             if not hasattr(model, column_name):
-                raise UnknownColumn(f'column {column_name} is not exited')
+                raise UnknownColumn(400,f'Column {column_name} is not existed')
             column = getattr(model, column_name)
             actual_column_name = column.expression.key
             stmt.append(actual_column_name)

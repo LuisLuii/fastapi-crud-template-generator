@@ -91,28 +91,3 @@ class ExtraFieldTypePrefix(StrEnum):
     From = '____from'
     To = '____to'
     Str = '____str'
-
-#
-# class MatchingPatternInStringBase(StrEnum):
-#     case_insensitive = auto()
-#     case_sensitive = auto()
-#     not_case_insensitive = auto()
-#     not_case_sensitive = auto()
-#     contains = auto()
-#
-#
-# class PGSQLMatchingPattern(StrEnum):
-#     match_regex_with_case_sensitive = auto()
-#     match_regex_with_case_insensitive = auto()
-#     does_not_match_regex_with_case_sensitive = auto()
-#     does_not_match_regex_with_case_insensitive = auto()
-#     similar_to = auto()
-#     not_similar_to = auto()
-#
-#
-# PGSQLMatchingPatternInString = StrEnum('PGSQLMatchingPatternInString',
-#                                        {Pattern: auto() for Pattern in
-#                                         chain(MatchingPatternInStringBase, PGSQLMatchingPattern)})
-#
-#
-#
