@@ -98,23 +98,6 @@ jobs:
       - name: Test with unittest
         run: |
           python -m unittest discover -s ./test
-          
-  ciCoverage:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install coverage
-          pip install coveralls
-      - name: upload report
-        run: |
-          python -m coverage run -m unittest
-          python -m coverage report
-          python -m coverage html
-          
+
+
+        
