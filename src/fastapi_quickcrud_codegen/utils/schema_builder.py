@@ -12,10 +12,7 @@ from typing import (Type,
                     Union)
 
 import pydantic
-from pydantic import (BaseModel,
-                      create_model,
-                      BaseConfig)
-from pydantic.dataclasses import dataclass as pydantic_dataclass
+from pydantic import (BaseModel)
 from sqlalchemy import UniqueConstraint, Table, Column
 from sqlalchemy.orm import declarative_base
 
@@ -36,7 +33,6 @@ TableNameT = NewType('TableNameT', str)
 ResponseModelT = NewType('ResponseModelT', BaseModel)
 ForeignKeyName = NewType('ForeignKeyName', str)
 TableInstance = NewType('TableInstance', Table)
-
 
 
 class ApiParameterSchemaBuilder:
@@ -90,9 +86,6 @@ class ApiParameterSchemaBuilder:
         column_type = str(primary_key_column.type)
         try:
             python_type = primary_key_column.type.python_type
-            if column_type in self.unsupported_data_types:
-                raise ColumnTypeNotSupportedException(
-                    f'The type of column {primary_key_column.key} ({column_type}) not supported yet')
             if column_type in self.partial_supported_data_types:
                 warnings.warn(
                     f'The type of column {primary_key_column.key} ({column_type}) '
@@ -108,17 +101,18 @@ class ApiParameterSchemaBuilder:
                                     'bool',
                                     'date',
                                     'time',
-                                    'datetime']:
+                                    'datetime',
+                                    'timedelta']:
             column_type = python_type.__name__
         elif python_type.__name__ in ['UUID']:
             column_type = "uuid.UUID"
         else:
             raise ColumnTypeNotSupportedException(
-                f'The type of column {primary_key_column.key} ({column_type}) not supported yet')
+                f'The type of column {primary_key_column.key} ({column_type}) is not supported as pk yet')
 
         default = self._extra_default_value(primary_key_column)
         description = self._get_field_description(primary_key_column)
-        if default is ...:
+        if default == "...":
             warnings.warn(
                 f'The column of {primary_key_column.key} has not default value '
                 f'and it is not nullable and in exclude_list'
@@ -136,8 +130,6 @@ class ApiParameterSchemaBuilder:
 
     def _extract_unique(self) -> List[str]:
         unique_constraint = None
-        if not self.constraints:
-            return []
         for constraint in self.constraints:
             if isinstance(constraint, UniqueConstraint):
                 if unique_constraint:
@@ -487,12 +479,9 @@ class ApiParameterSchemaBuilder:
         request_fields = []
         for i in query_param:
             assert isinstance(i, dict) or isinstance(i, tuple)
-            if isinstance(i, Tuple):
-                request_fields.append(i)
-            else:
-                request_fields.append((i['column_name'],
-                                       i['column_type'],
-                                       f'Query({i["column_default"]})'))
+            request_fields.append((i['column_name'],
+                                   i['column_type'],
+                                   f'Query({i["column_default"]})'))
         self.code_gen.build_dataclass(class_name=self.class_name + "FindOneRequestBodyModel", fields=request_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
 

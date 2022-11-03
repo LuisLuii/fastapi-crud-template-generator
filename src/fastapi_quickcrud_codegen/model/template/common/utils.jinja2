@@ -33,7 +33,7 @@ def find_query_builder(param: dict, model: Base) -> List[Union[BinaryExpression]
         operator_column_name = column_name + process_type_map[type_]
         operators = param.get(operator_column_name, None)
         if not operators:
-            raise QueryOperatorNotFound(f'The query operator of {column_name} not found!')
+            raise QueryOperatorNotFound(400, f'The query operator of {column_name} not found!')
         if not isinstance(operators, list):
             operators = [operators]
         for operator in operators:
@@ -119,7 +119,7 @@ def clean_input_fields(param: Union[dict, list], model: Base):
         stmt = []
         for column_name in param:
             if not hasattr(model, column_name):
-                raise UnknownColumn(f'column {column_name} is not exited')
+                raise UnknownColumn(400,f'Column {column_name} is not existed')
             column = getattr(model, column_name)
             actual_column_name = column.expression.key
             stmt.append(actual_column_name)

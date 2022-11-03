@@ -7,6 +7,7 @@ from sqlalchemy.orm import declarative_base
 
 from src.fastapi_quickcrud_codegen import crud_router_builder, CrudMethods
 from test.misc.common import *
+
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, INTERVAL, JSON, UUID
 
 Base = declarative_base()
@@ -49,7 +50,7 @@ class Testing(unittest.TestCase):
         if is_async:
             database_url = "postgresql+asyncpg://postgres:1234@127.0.0.1:5432/postgres"
         else:
-            database_url="postgresql://postgres:1234@127.0.0.1:5432/postgres"
+            database_url = "postgresql://postgres:1234@127.0.0.1:5432/postgres"
 
         crud_router_builder(
             db_model_list=[

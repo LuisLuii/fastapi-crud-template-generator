@@ -21,27 +21,7 @@ class UnknownOrderType(CRUDBuilderException):
     pass
 
 
-class UpdateColumnEmptyException(CRUDBuilderException):
-    pass
-
-
 class UnknownColumn(CRUDBuilderException):
-    pass
-
-
-class QueryOperatorNotFound(CRUDBuilderException):
-    pass
-
-
-class UnknownError(CRUDBuilderException):
-    pass
-
-
-class ConflictColumnsCannotHit(CRUDBuilderException):
-    pass
-
-
-class MultipleSingleUniqueNotSupportedException(CRUDBuilderException):
     pass
 
 
@@ -49,19 +29,7 @@ class SchemaException(CRUDBuilderException):
     pass
 
 
-class CompositePrimaryKeyConstraintNotSupportedException(CRUDBuilderException):
-    pass
-
-
-class MultiplePrimaryKeyNotSupportedException(CRUDBuilderException):
-    pass
-
-
 class ColumnTypeNotSupportedException(CRUDBuilderException):
-    pass
-
-
-class InvalidRequestMethod(CRUDBuilderException):
     pass
 
 
