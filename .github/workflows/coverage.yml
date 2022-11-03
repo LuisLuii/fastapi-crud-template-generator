@@ -16,10 +16,13 @@ jobs:
   Coverage:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@master
+      
+      - name: Set girhub token
+        run: echo "GITHUB_TOKEN=${secrets.GIT_TOKEN}" >> $GITHUB_ENV
+      - name: Set coveralls token
+        run: echo "COVERALLS_REPO_TOKEN=${secrets.COVERALLS_REPO_TOKEN}" >> $GITHUB_ENV      
       - name: pip install, make coverage
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_TOKEN }}
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
