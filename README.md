@@ -1,4 +1,15 @@
 # Fastapi CRUD Project Generator
+A code generator that help you to establish a fastapi project with CRUD router from your Sqlalchemy model. Which supports following api:
+>- Get one
+>- Get many
+>- Insert one
+>- Insert many
+>- Update one
+>- Update many
+>- Patch one
+>- Patch many
+>- Delete one
+>- Delete many
 
 ## Quick Start
 
@@ -75,22 +86,6 @@ crud_router_builder(
     database_url="sqlite://"
 )
 ```
-
-# Support
-
-
-This project will generate CRUD code from you Sqlalchemy model. Which supports following api:
-
-- Get one
-- Get many
-- Insert one
-- Insert many
-- Update one
-- Update many
-- Patch one
-- Patch many
-- Delete one
-- Delete many
 
 
 **crud_router_builder args**
