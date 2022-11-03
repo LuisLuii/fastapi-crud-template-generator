@@ -126,7 +126,7 @@ crud_router_builder(
 # Design:
 The model generation part and api router part refer to my another [project](https://github.com/LuisLuii/FastAPIQuickCRUD); The code generation part is using Jinja
 
-## How to contribute more api?
+## How to contribute more apis?
 It will be super excited if you have any idea with api router/ model template. then you can follow the step as below to try to contribute.
 1. Model generation
    1. Prepare Jinja template to `fastapi-crud-project-generator/src/fastapi_quickcrud_codegen/model/template`
