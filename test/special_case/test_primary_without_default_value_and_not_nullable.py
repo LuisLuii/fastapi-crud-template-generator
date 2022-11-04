@@ -98,25 +98,23 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-
 from fastapi_quick_crud_template.model.test_uuid_primary import TestUuidPrimary
-
 
 SQLALCHEMY_DATABASE_URL = f"postgresql+asyncpg://postgres:1234@127.0.0.1:5432/postgres"
 
-
-
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL,
-                                              future=True,
-                                              echo=True,
-                                              pool_pre_ping=True,
-                                              pool_recycle=7200,
-                                              
-                                              poolclass=StaticPool)
+                             future=True,
+                             echo=True,
+                             pool_pre_ping=True,
+                             pool_recycle=7200,
+                             
+                             poolclass=StaticPool)
 session = sessionmaker(autocommit=False,
                        autoflush=False,
                        bind=engine,
                        class_=AsyncSession)
+
+
 async def db_session():
     async with session() as _session:
         yield _session
@@ -137,9 +135,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
+    
 
 class TestUuidPrimary(Base):
     __tablename__ = 'test_uuid_primary'
@@ -170,26 +168,15 @@ class TestUuidPrimary(Base):
     array_str__value = Column(ARRAY(String()))
 
 
-
-
-
 @dataclass
 class TestUuidPrimaryPrimaryKeyModel:
     primary_key: uuid.UUID = Query(..., description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
         """
         value_of_list_to_str(self, ['primary_key'])
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
-    
 
 
 @dataclass
@@ -289,6 +276,7 @@ class TestUuidPrimaryFindManyRequestBodyModel:
             <br/>&emsp;&emsp;any name of column: DESC 
             <br/>&emsp;&emsp;any name of column    :    DESC
             <br/>&emsp;&emsp;any name of column (default sort by ASC)""")
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -322,6 +310,7 @@ class TestUuidPrimaryFindManyResponseModel(BaseModel):
     varchar_value: str = None
     array_value: List[int] = None
     array_str__value: List[str] = None
+
     class Config:
         orm_mode = True
 
@@ -416,6 +405,7 @@ class TestUuidPrimaryFindOneRequestBodyModel:
     varchar_value____str: Optional[List[str]] = Query(None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In)
     varchar_value____list: Optional[List[str]] = Query(None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -449,12 +439,14 @@ class TestUuidPrimaryFindOneResponseModel(BaseModel):
     varchar_value: str = Body(None)
     array_value: List[int] = Body(None)
     array_str__value: List[str] = Body(None)
+
     class Config:
         orm_mode = True
 
 
 class TestUuidPrimaryFindOneItemListResponseModel(ExcludeUnsetBaseModel):
     __root__: List[TestUuidPrimaryFindOneResponseModel]
+
     class Config:
         orm_mode = True
 
@@ -487,6 +479,7 @@ class TestUuidPrimaryCreateManyItemRequestModel:
 @dataclass
 class TestUuidPrimaryCreateManyItemListRequestModel:
     insert: List[TestUuidPrimaryCreateManyItemRequestModel] = Body(...)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -520,12 +513,14 @@ class TestUuidPrimaryCreateManyItemResponseModel(BaseModel):
     varchar_value: str = Body(None, description=None)
     array_value: List[int] = Body(None, description=None)
     array_str__value: List[str] = Body(None, description=None)
+
     class Config:
         orm_mode = True
 
 
 class TestUuidPrimaryCreateManyItemListResponseModel(BaseModel):
     __root__: List[TestUuidPrimaryCreateManyItemResponseModel]
+
     class Config:
         orm_mode = True
 
@@ -612,6 +607,7 @@ class TestUuidPrimaryPatchOneRequestQueryModel:
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -642,6 +638,7 @@ class TestUuidPrimaryPatchOneRequestBodyModel:
     varchar_value: str = Body(None, description=None)
     array_value: List[int] = Body(None, description=None)
     array_str__value: List[str] = Body(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -675,6 +672,7 @@ class TestUuidPrimaryPatchOneResponseModel(BaseModel):
     varchar_value: str = Body(None)
     array_value: List[int] = Body(None)
     array_str__value: List[str] = Body(None)
+
     class Config:
         orm_mode = True
 
@@ -763,6 +761,7 @@ class TestUuidPrimaryPatchManyRequestQueryModel:
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -793,6 +792,7 @@ class TestUuidPrimaryPatchManyRequestBodyModel:
     varchar_value: str = Body(None, description=None)
     array_value: List[int] = Body(None, description=None)
     array_str__value: List[str] = Body(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -826,12 +826,14 @@ class TestUuidPrimaryPatchManyItemResponseModel(BaseModel):
     varchar_value: str = Body(None)
     array_value: List[int] = Body(None)
     array_str__value: List[str] = Body(None)
+
     class Config:
         orm_mode = True
 
 
 class TestUuidPrimaryPatchManyItemListResponseModel(BaseModel):
     __root__: List[TestUuidPrimaryPatchManyItemResponseModel]
+
     class Config:
         orm_mode = True
 
@@ -918,6 +920,7 @@ class TestUuidPrimaryPatchOneRequestQueryModel:
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -948,6 +951,7 @@ class TestUuidPrimaryPatchOneRequestBodyModel:
     varchar_value: str = Body(None, description=None)
     array_value: List[int] = Body(None, description=None)
     array_str__value: List[str] = Body(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -981,6 +985,7 @@ class TestUuidPrimaryPatchOneResponseModel(BaseModel):
     varchar_value: str = Body(None)
     array_value: List[int] = Body(None)
     array_str__value: List[str] = Body(None)
+
     class Config:
         orm_mode = True
 
@@ -1069,6 +1074,7 @@ class TestUuidPrimaryUpdateManyRequestQueryModel:
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -1099,6 +1105,7 @@ class TestUuidPrimaryUpdateManyRequestBodyModel:
     varchar_value: str = Body(..., description=None)
     array_value: List[int] = Body(..., description=None)
     array_str__value: List[str] = Body(..., description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -1132,12 +1139,14 @@ class TestUuidPrimaryUpdateManyResponseItemModel(BaseModel):
     varchar_value: str = Body(None)
     array_value: List[int] = Body(None)
     array_str__value: List[str] = Body(None)
+
     class Config:
         orm_mode = True
 
 
 class TestUuidPrimaryUpdateManyItemListResponseModel(BaseModel):
     __root__: List[TestUuidPrimaryUpdateManyResponseItemModel]
+
     class Config:
         orm_mode = True
 
@@ -1224,6 +1233,7 @@ class TestUuidPrimaryUpdateOneRequestQueryModel:
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -1254,6 +1264,7 @@ class TestUuidPrimaryUpdateOneRequestBodyModel:
     varchar_value: str = Body(..., description=None)
     array_value: List[int] = Body(..., description=None)
     array_str__value: List[str] = Body(..., description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -1287,6 +1298,7 @@ class TestUuidPrimaryUpdateOneResponseModel(BaseModel):
     varchar_value: str = Body(None)
     array_value: List[int] = Body(None)
     array_str__value: List[str] = Body(None)
+
     class Config:
         orm_mode = True
 
@@ -1375,6 +1387,7 @@ class TestUuidPrimaryDeleteManyRequestQueryModel:
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -1408,12 +1421,14 @@ class TestUuidPrimaryDeleteManyItemResponseModel(BaseModel):
     varchar_value: str = Body(None)
     array_value: List[int] = Body(None)
     array_str__value: List[str] = Body(None)
+
     class Config:
         orm_mode = True
 
 
 class TestUuidPrimaryDeleteManyItemListResponseModel(BaseModel):
     __root__: List[TestUuidPrimaryDeleteManyItemResponseModel]
+
     class Config:
         orm_mode = True
 
@@ -1500,6 +1515,7 @@ class TestUuidPrimaryDeleteOneRequestQueryModel:
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -1533,8 +1549,12 @@ class TestUuidPrimaryDeleteOneResponseModel(BaseModel):
     varchar_value: str = Body(None)
     array_value: List[int] = Body(None)
     array_str__value: List[str] = Body(None)
+
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_uuid_primary", model_test_uuid_primary)
 
         # route
@@ -1551,17 +1571,14 @@ from fastapi_quick_crud_template.common.http_exception import UnknownColumn, Unk
 from fastapi_quick_crud_template.common.typing import Ordering
 from sqlalchemy.exc import IntegrityError
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/uuid_pk_api")
 
 
-
 @api.get("", status_code=200, response_model=TestUuidPrimaryFindManyItemListResponseModel)
-async def get_many(response: Response,
-                query=Depends(TestUuidPrimaryFindManyRequestBodyModel),
-                session=Depends(db_session)):
-
+async def get_many(
+            response: Response,
+            query=Depends(TestUuidPrimaryFindManyRequestBodyModel),
+            session=Depends(db_session)):
     filter_args = query.__dict__
     limit = filter_args.pop('limit', None)
     offset = filter_args.pop('offset', None)
@@ -1622,12 +1639,11 @@ async def get_many(response: Response,
     return response_data
 
 @api.get("/{primary_key}", status_code=200, response_model=TestUuidPrimaryFindOneResponseModel)
-async def get_one_by_primary_key(response: Response,
-                           url_param=Depends(TestUuidPrimaryPrimaryKeyModel),
-                           query=Depends(TestUuidPrimaryFindOneRequestBodyModel),
-                           session=Depends(db_session)):
-
-
+async def get_one_by_primary_key(
+                            response: Response,
+                            url_param=Depends(TestUuidPrimaryPrimaryKeyModel),
+                            query=Depends(TestUuidPrimaryFindOneRequestBodyModel),
+                            session=Depends(db_session)):
     filter_list: List[BinaryExpression] = find_query_builder(param=query.__dict__,
                                                              model=TestUuidPrimary)
 
@@ -1650,9 +1666,10 @@ async def get_one_by_primary_key(response: Response,
 
 
 @api.post("", status_code=201, response_model=TestUuidPrimaryCreateManyItemListResponseModel)
-async def insert_many(response: Response,
-                           request_body=Depends(TestUuidPrimaryCreateManyItemListRequestModel),
-                           session=Depends(db_session)):
+async def insert_many(
+                response: Response,
+                request_body=Depends(TestUuidPrimaryCreateManyItemListRequestModel),
+                session=Depends(db_session)):
     insert_arg_list: list = request_body.__dict__.pop('insert', None)
     insert_arg_dict = []
     for i in insert_arg_list:
@@ -1720,11 +1737,11 @@ async def entire_update_many_by_query(
 
 @api.put("/{primary_key}", status_code=200, response_model=TestUuidPrimaryUpdateOneResponseModel)
 async def entire_update_by_primary_key(
-                                                response: Response,
-                                                primary_key: TestUuidPrimaryPrimaryKeyModel = Depends(),
-                                                update_data: TestUuidPrimaryUpdateOneRequestBodyModel = Depends(),
-                                                extra_query: TestUuidPrimaryUpdateOneRequestQueryModel = Depends(),
-                                                session=Depends(db_session)):
+                                response: Response,
+                                primary_key: TestUuidPrimaryPrimaryKeyModel = Depends(),
+                                update_data: TestUuidPrimaryUpdateOneRequestBodyModel = Depends(),
+                                extra_query: TestUuidPrimaryUpdateOneRequestQueryModel = Depends(),
+                                session=Depends(db_session)):
     model = TestUuidPrimary
 
     filter_args = primary_key.__dict__
@@ -1759,11 +1776,11 @@ async def entire_update_by_primary_key(
 
 @api.patch("/{primary_key}", status_code=200, response_model=Union[TestUuidPrimaryPatchOneResponseModel])
 async def partial_update_one_by_primary_key(
-                                                response: Response,
-                                                primary_key: TestUuidPrimaryPrimaryKeyModel = Depends(),
-                                                patch_data: TestUuidPrimaryPatchOneRequestBodyModel = Depends(),
-                                                extra_query: TestUuidPrimaryPatchOneRequestQueryModel = Depends(),
-                                                session=Depends(db_session)):
+                                    response: Response,
+                                    primary_key: TestUuidPrimaryPrimaryKeyModel = Depends(),
+                                    patch_data: TestUuidPrimaryPatchOneRequestBodyModel = Depends(),
+                                    extra_query: TestUuidPrimaryPatchOneRequestQueryModel = Depends(),
+                                    session=Depends(db_session)):
     model = TestUuidPrimary
 
     filter_args = primary_key.__dict__
@@ -1836,9 +1853,9 @@ async def partial_update_many_by_query(
 
 @api.delete("", status_code=200, response_model=TestUuidPrimaryDeleteManyItemListResponseModel)
 async def delete_many_by_query(
-                                                response: Response,
-                                                query: TestUuidPrimaryDeleteManyRequestQueryModel = Depends(),
-                                                session=Depends(db_session)):
+                        response: Response,
+                        query: TestUuidPrimaryDeleteManyRequestQueryModel = Depends(),
+                        session=Depends(db_session)):
     model = TestUuidPrimary
 
     filter_args = query.__dict__
@@ -1862,10 +1879,10 @@ async def delete_many_by_query(
 
 @api.delete("/{primary_key}", status_code=200, response_model=TestUuidPrimaryDeleteOneResponseModel)
 async def delete_one_by_primary_key(
-                                                response: Response,
-                                                primary_key: TestUuidPrimaryPrimaryKeyModel = Depends(),
-                                                extra_query: TestUuidPrimaryDeleteOneRequestQueryModel = Depends(),
-                                                session=Depends(db_session)):
+                            response: Response,
+                            primary_key: TestUuidPrimaryPrimaryKeyModel = Depends(),
+                            extra_query: TestUuidPrimaryDeleteOneRequestQueryModel = Depends(),
+                            session=Depends(db_session)):
     model = TestUuidPrimary
 
     filter_args = primary_key.__dict__
@@ -1888,5 +1905,7 @@ async def delete_one_by_primary_key(
     result = parse_obj_as(TestUuidPrimaryDeleteOneResponseModel, data_instance)
     response.headers["x-total-count"] = str(1)
     return result
+
+
 '''
         validate_route("test_uuid_primary", route_test_uuid_primary)

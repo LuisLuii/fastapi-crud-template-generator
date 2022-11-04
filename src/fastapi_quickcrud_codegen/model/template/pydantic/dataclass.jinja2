@@ -25,6 +25,7 @@ class {{ class_name }}:
 
 
 {%- if value_of_list_to_str_columns or filter_none %}
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD

@@ -33,6 +33,7 @@ class {{ class_name }}(BaseModel):
 {%- endif %}
 
 {%- if orm_mode %}
+
     class Config:
         orm_mode = True
 {%- endif %}

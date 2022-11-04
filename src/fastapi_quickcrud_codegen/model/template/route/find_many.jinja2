@@ -1,8 +1,8 @@
 @api.get("{{ path }}", status_code=200, response_model={{ model_name }}FindManyItemListResponseModel)
-{{ 'async ' if is_async else '' }}def get_many(response: Response,
-                query=Depends({{ model_name }}FindManyRequestBodyModel),
-                session=Depends(db_session)):
-
+{{ 'async ' if is_async else '' }}def get_many(
+            response: Response,
+            query=Depends({{ model_name }}FindManyRequestBodyModel),
+            session=Depends(db_session)):
     filter_args = query.__dict__
     limit = filter_args.pop('limit', None)
     offset = filter_args.pop('offset', None)

@@ -1,7 +1,8 @@
 @api.post("{{ path }}", status_code=201, response_model={{ model_name }}CreateOneResponseModel)
-{{ 'async ' if is_async else '' }}def insert_one(response: Response,
-                           request_body=Depends({{ model_name }}CreateOneRequestBodyModel),
-                           session=Depends(db_session)):
+{{ 'async ' if is_async else '' }}def insert_one(
+                            response: Response,
+                            request_body=Depends({{ model_name }}CreateOneRequestBodyModel),
+                            session=Depends(db_session)):
     insert_arg_dict: Union[list, dict] = request_body.__dict__
     if not isinstance(insert_arg_dict, list):
         insert_arg_dict = [insert_arg_dict]

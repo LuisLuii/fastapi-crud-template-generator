@@ -124,26 +124,24 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-
 from fastapi_quick_crud_template.model.test_build_myself import SampleTable
 from fastapi_quick_crud_template.model.test_build_myself_two import SampleTableTwo
 
-
 SQLALCHEMY_DATABASE_URL = f"postgresql+asyncpg://postgres:1234@127.0.0.1:5432/postgres"
 
-
-
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL,
-                                              future=True,
-                                              echo=True,
-                                              pool_pre_ping=True,
-                                              pool_recycle=7200,
-                                              
-                                              poolclass=StaticPool)
+                             future=True,
+                             echo=True,
+                             pool_pre_ping=True,
+                             pool_recycle=7200,
+                             
+                             poolclass=StaticPool)
 session = sessionmaker(autocommit=False,
                        autoflush=False,
                        bind=engine,
                        class_=AsyncSession)
+
+
 async def db_session():
     async with session() as _session:
         yield _session
@@ -164,9 +162,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key"
+    
 
 class SampleTableTwo(Base):
     primary_key_of_table = "primary_key"
@@ -180,21 +178,9 @@ class SampleTableTwo(Base):
     bytea_value = Column(LargeBinary)
 
 
-
-
-
 @dataclass
 class SampleTableTwoPrimaryKeyModel:
     primary_key: int = Query(None, description=None)
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key"
-    
 
 
 @dataclass
@@ -220,6 +206,7 @@ class SampleTableTwoFindManyRequestBodyModel:
             <br/>&emsp;&emsp;any name of column: DESC 
             <br/>&emsp;&emsp;any name of column    :    DESC
             <br/>&emsp;&emsp;any name of column (default sort by ASC)""")
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -233,6 +220,7 @@ class SampleTableTwoFindManyResponseModel(BaseModel):
     """
     primary_key: int = None
     bool_value: bool = None
+
     class Config:
         orm_mode = True
 
@@ -242,7 +230,10 @@ class SampleTableTwoFindManyItemListResponseModel(ExcludeUnsetBaseModel):
     result: List[SampleTableTwoFindManyResponseModel]
 
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_build_myself_two", model_test_build_myself_two_expected)
 
         model_test_build_myself_expected = '''from dataclasses import dataclass, field
@@ -258,9 +249,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
+    
 
 class SampleTable(Base):
     primary_key_of_table = "primary_key"
@@ -295,26 +286,15 @@ class SampleTable(Base):
     array_str__value = Column(ARRAY(String()))
 
 
-
-
-
 @dataclass
 class SampleTablePrimaryKeyModel:
     primary_key: int = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
         """
         value_of_list_to_str(self, ['uuid_value'])
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
-    
 
 
 @dataclass
@@ -420,6 +400,7 @@ class SampleTableFindManyRequestBodyModel:
             <br/>&emsp;&emsp;any name of column: DESC 
             <br/>&emsp;&emsp;any name of column    :    DESC
             <br/>&emsp;&emsp;any name of column (default sort by ASC)""")
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -454,6 +435,7 @@ class SampleTableFindManyResponseModel(BaseModel):
     varchar_value: str = None
     array_value: List[int] = None
     array_str__value: List[str] = None
+
     class Config:
         orm_mode = True
 
@@ -463,7 +445,10 @@ class SampleTableFindManyItemListResponseModel(ExcludeUnsetBaseModel):
     result: List[SampleTableFindManyResponseModel]
 
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_build_myself", model_test_build_myself_expected)
 
         # route
@@ -479,17 +464,14 @@ from pydantic import parse_obj_as
 from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
 from fastapi_quick_crud_template.common.typing import Ordering
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/my_second_api")
 
 
-
 @api.get("", status_code=200, response_model=SampleTableTwoFindManyItemListResponseModel)
-async def get_many(response: Response,
-                query=Depends(SampleTableTwoFindManyRequestBodyModel),
-                session=Depends(db_session)):
-
+async def get_many(
+            response: Response,
+            query=Depends(SampleTableTwoFindManyRequestBodyModel),
+            session=Depends(db_session)):
     filter_args = query.__dict__
     limit = filter_args.pop('limit', None)
     offset = filter_args.pop('offset', None)
@@ -547,7 +529,9 @@ async def get_many(response: Response,
     response_format["result"] = response_data_list
     response_data = parse_obj_as(SampleTableTwoFindManyItemListResponseModel, response_format)
     response.headers["x-total-count"] = str(len(response_data_list))
-    return response_data'''
+    return response_data
+
+'''
         validate_route("test_build_myself_two", route_test_build_myself_two_expected)
         route_test_build_myself_expected = '''from http import HTTPStatus
 from typing import List, Union
@@ -561,17 +545,14 @@ from pydantic import parse_obj_as
 from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
 from fastapi_quick_crud_template.common.typing import Ordering
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/my_first_api")
 
 
-
 @api.get("", status_code=200, response_model=SampleTableFindManyItemListResponseModel)
-async def get_many(response: Response,
-                query=Depends(SampleTableFindManyRequestBodyModel),
-                session=Depends(db_session)):
-
+async def get_many(
+            response: Response,
+            query=Depends(SampleTableFindManyRequestBodyModel),
+            session=Depends(db_session)):
     filter_args = query.__dict__
     limit = filter_args.pop('limit', None)
     offset = filter_args.pop('offset', None)
@@ -629,5 +610,7 @@ async def get_many(response: Response,
     response_format["result"] = response_data_list
     response_data = parse_obj_as(SampleTableFindManyItemListResponseModel, response_format)
     response.headers["x-total-count"] = str(len(response_data_list))
-    return response_data'''
+    return response_data
+
+'''
         validate_route("test_build_myself", route_test_build_myself_expected)

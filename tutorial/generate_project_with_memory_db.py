@@ -30,7 +30,7 @@ class TestingTableTwo(Base):
     unique_fields = ['primary_key']
     __tablename__ = 'test_build_myself_memory_two'
     __table_args__ = (
-        UniqueConstraint('primary_key'),
+        UniqueConstraint('primary_key', 'bool_value' ),
     )
     primary_key = Column(Integer, primary_key=True, autoincrement=True)
     bool_value = Column(Boolean, nullable=False, default=False)
@@ -45,9 +45,7 @@ crud_router_builder(
             "db_model": TestingTable,
             "prefix": "/my_first_api",
             "tags": ["sample api"],
-            "exclude_columns": ['bytea_value'],
-            "crud_methods": [CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE,
-                                 CrudMethods.UPDATE_MANY, CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE]
+            "exclude_columns": ['bytea_value']
         },
 
         {

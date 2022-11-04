@@ -124,22 +124,18 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-
 from fastapi_quick_crud_template.model.test_build_myself import SampleTable
 from fastapi_quick_crud_template.model.test_build_myself_two import SampleTableTwo
 
-
 SQLALCHEMY_DATABASE_URL = f"postgresql://postgres:1234@127.0.0.1:5432/postgres"
 
-
-
 engine = create_engine(SQLALCHEMY_DATABASE_URL,
-                                        future=True,
-                                        echo=True,
-                                        pool_pre_ping=True,
-                                        pool_recycle=7200,
-                                        
-                                        poolclass=StaticPool)
+                       future=True,
+                       echo=True,
+                       pool_pre_ping=True,
+                       pool_recycle=7200,
+                       
+                       poolclass=StaticPool)
 session = sessionmaker(bind=engine, autocommit=False)
 
 
@@ -169,9 +165,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key"
+    
 
 class SampleTableTwo(Base):
     primary_key_of_table = "primary_key"
@@ -185,27 +181,16 @@ class SampleTableTwo(Base):
     bytea_value = Column(LargeBinary)
 
 
-
-
-
 @dataclass
 class SampleTableTwoPrimaryKeyModel:
     primary_key: int = Query(None, description=None)
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key"
-    
 
 
 @dataclass
 class SampleTableTwoCreateOneRequestBodyModel:
     primary_key: int = Body(None, description=None)
     bool_value: bool = Body(False, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -219,8 +204,12 @@ class SampleTableTwoCreateOneResponseModel(BaseModel):
     """
     primary_key: int = Body(None, description=None)
     bool_value: bool = Body(False, description=None)
+
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_build_myself_two", model_test_build_myself_two_expected)
 
         model_test_build_myself_expected = '''from dataclasses import dataclass, field
@@ -236,9 +225,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
+    
 
 class SampleTable(Base):
     primary_key_of_table = "primary_key"
@@ -273,26 +262,15 @@ class SampleTable(Base):
     array_str__value = Column(ARRAY(String()))
 
 
-
-
-
 @dataclass
 class SampleTablePrimaryKeyModel:
     primary_key: int = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
         """
         value_of_list_to_str(self, ['uuid_value'])
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
-    
 
 
 @dataclass
@@ -319,6 +297,7 @@ class SampleTableCreateOneRequestBodyModel:
     varchar_value: str = Body(None, description=None)
     array_value: List[int] = Body(None, description=None)
     array_str__value: List[str] = Body(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -353,8 +332,12 @@ class SampleTableCreateOneResponseModel(BaseModel):
     varchar_value: str = Body(None, description=None)
     array_value: List[int] = Body(None, description=None)
     array_str__value: List[str] = Body(None, description=None)
+
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_build_myself", model_test_build_myself_expected)
 
         # route
@@ -371,16 +354,14 @@ from fastapi_quick_crud_template.common.http_exception import UnknownColumn, Unk
 from fastapi_quick_crud_template.common.typing import Ordering
 from fastapi_quick_crud_template.model.test_build_myself_two import SampleTableTwo, SampleTableTwoCreateOneRequestBodyModel, SampleTableTwoCreateOneResponseModel
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/my_second_api")
 
 
-
 @api.post("", status_code=201, response_model=SampleTableTwoCreateOneResponseModel)
-def insert_one(response: Response,
-                           request_body=Depends(SampleTableTwoCreateOneRequestBodyModel),
-                           session=Depends(db_session)):
+def insert_one(
+                            response: Response,
+                            request_body=Depends(SampleTableTwoCreateOneRequestBodyModel),
+                            session=Depends(db_session)):
     insert_arg_dict: Union[list, dict] = request_body.__dict__
     if not isinstance(insert_arg_dict, list):
         insert_arg_dict = [insert_arg_dict]
@@ -403,7 +384,9 @@ def insert_one(response: Response,
     inserted_data, = new_inserted_data
     result = parse_obj_as(SampleTableTwoCreateOneResponseModel, inserted_data)
     response.headers["x-total-count"] = str(1)
-    return result'''
+    return result
+
+'''
         validate_route("test_build_myself_two", route_test_build_myself_two_expected)
         route_test_build_myself_expected = '''from http import HTTPStatus
 from typing import List, Union
@@ -418,16 +401,14 @@ from fastapi_quick_crud_template.common.http_exception import UnknownColumn, Unk
 from fastapi_quick_crud_template.common.typing import Ordering
 from fastapi_quick_crud_template.model.test_build_myself import SampleTable, SampleTableCreateOneRequestBodyModel, SampleTableCreateOneResponseModel
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/my_first_api")
 
 
-
 @api.post("", status_code=201, response_model=SampleTableCreateOneResponseModel)
-def insert_one(response: Response,
-                           request_body=Depends(SampleTableCreateOneRequestBodyModel),
-                           session=Depends(db_session)):
+def insert_one(
+                            response: Response,
+                            request_body=Depends(SampleTableCreateOneRequestBodyModel),
+                            session=Depends(db_session)):
     insert_arg_dict: Union[list, dict] = request_body.__dict__
     if not isinstance(insert_arg_dict, list):
         insert_arg_dict = [insert_arg_dict]
@@ -450,5 +431,7 @@ def insert_one(response: Response,
     inserted_data, = new_inserted_data
     result = parse_obj_as(SampleTableCreateOneResponseModel, inserted_data)
     response.headers["x-total-count"] = str(1)
-    return result'''
+    return result
+
+'''
         validate_route("test_build_myself", route_test_build_myself_expected)

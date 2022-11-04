@@ -1,7 +1,8 @@
 @api.post("{{ path }}", status_code=201, response_model={{ model_name }}CreateManyItemListResponseModel)
-{{ 'async ' if is_async else '' }}def insert_many(response: Response,
-                           request_body=Depends({{ model_name }}CreateManyItemListRequestModel),
-                           session=Depends(db_session)):
+{{ 'async ' if is_async else '' }}def insert_many(
+                response: Response,
+                request_body=Depends({{ model_name }}CreateManyItemListRequestModel),
+                session=Depends(db_session)):
     insert_arg_list: list = request_body.__dict__.pop('insert', None)
     insert_arg_dict = []
     for i in insert_arg_list:

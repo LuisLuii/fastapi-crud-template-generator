@@ -116,26 +116,24 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-
 from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable
 from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo
 
-
 SQLALCHEMY_DATABASE_URL = f"sqlite+aiosqlite://"
 
-
-
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL,
-                                              future=True,
-                                              echo=True,
-                                              pool_pre_ping=True,
-                                              pool_recycle=7200,
-                                              connect_args={"check_same_thread": False}, 
-                                              poolclass=StaticPool)
+                             future=True,
+                             echo=True,
+                             pool_pre_ping=True,
+                             pool_recycle=7200,
+                             connect_args={"check_same_thread": False}, 
+                             poolclass=StaticPool)
 session = sessionmaker(autocommit=False,
                        autoflush=False,
                        bind=engine,
                        class_=AsyncSession)
+
+
 async def db_session():
     async with session() as _session:
         yield _session
@@ -145,6 +143,8 @@ async def db_session():
 async def create_table(engine, model):
     async with engine.begin() as conn:
         await conn.run_sync(model._sa_registry.metadata.create_all)
+
+
 loop = asyncio.get_event_loop()
 loop.run_until_complete(create_table(engine, SampleTable))
 loop.run_until_complete(create_table(engine, SampleTableTwo))
@@ -165,9 +165,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key"
+    
 
 class SampleTableTwo(Base):
     primary_key_of_table = "primary_key"
@@ -181,27 +181,16 @@ class SampleTableTwo(Base):
     bytea_value = Column(LargeBinary)
 
 
-
-
-
 @dataclass
 class SampleTableTwoPrimaryKeyModel:
     primary_key: int = Query(None, description=None)
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key"
-    
 
 
 @dataclass
 class SampleTableTwoDeleteOneRequestQueryModel:
     bool_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     bool_value____list: Optional[List[bool]] = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -215,8 +204,12 @@ class SampleTableTwoDeleteOneResponseModel(BaseModel):
     """
     primary_key: int = Body(None)
     bool_value: bool = Body(False)
+
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_build_myself_memory_two", model_test_build_myself_memory_two_expected)
 
         model_test_build_myself_memory_expected = '''from dataclasses import dataclass, field
@@ -232,9 +225,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
+    
 
 class SampleTable(Base):
     primary_key_of_table = "primary_key"
@@ -261,21 +254,9 @@ class SampleTable(Base):
     varchar_value = Column(String)
 
 
-
-
-
 @dataclass
 class SampleTablePrimaryKeyModel:
     primary_key: int = Query(None, description=None)
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
-    
 
 
 @dataclass
@@ -354,6 +335,7 @@ class SampleTableDeleteOneRequestQueryModel:
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -380,8 +362,12 @@ class SampleTableDeleteOneResponseModel(BaseModel):
     timestamptz_value: datetime = Body(None)
     timetz_value: time = Body(None)
     varchar_value: str = Body(None)
+
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_build_myself_memory", model_test_build_myself_memory_expected)
 
         # route
@@ -395,18 +381,15 @@ from fastapi_quick_crud_template.common.sql_session import db_session
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo, SampleTableTwoDeleteOneRequestQueryModel, SampleTableTwoDeleteOneResponseModel, SampleTableTwoPrimaryKeyModel
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/my_second_api")
-
 
 
 @api.delete("/{primary_key}", status_code=200, response_model=SampleTableTwoDeleteOneResponseModel)
 async def delete_one_by_primary_key(
-                                                response: Response,
-                                                primary_key: SampleTableTwoPrimaryKeyModel = Depends(),
-                                                extra_query: SampleTableTwoDeleteOneRequestQueryModel = Depends(),
-                                                session=Depends(db_session)):
+                            response: Response,
+                            primary_key: SampleTableTwoPrimaryKeyModel = Depends(),
+                            extra_query: SampleTableTwoDeleteOneRequestQueryModel = Depends(),
+                            session=Depends(db_session)):
     model = SampleTableTwo
 
     filter_args = primary_key.__dict__
@@ -429,6 +412,8 @@ async def delete_one_by_primary_key(
     result = parse_obj_as(SampleTableTwoDeleteOneResponseModel, data_instance)
     response.headers["x-total-count"] = str(1)
     return result
+
+
 '''
         validate_route("test_build_myself_memory_two", route_test_build_myself_memory_two_expected)
         model_test_build_myself_memory_expected = '''from http import HTTPStatus
@@ -441,18 +426,15 @@ from fastapi_quick_crud_template.common.sql_session import db_session
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable, SampleTableDeleteOneRequestQueryModel, SampleTableDeleteOneResponseModel, SampleTablePrimaryKeyModel
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/my_first_api")
-
 
 
 @api.delete("/{primary_key}", status_code=200, response_model=SampleTableDeleteOneResponseModel)
 async def delete_one_by_primary_key(
-                                                response: Response,
-                                                primary_key: SampleTablePrimaryKeyModel = Depends(),
-                                                extra_query: SampleTableDeleteOneRequestQueryModel = Depends(),
-                                                session=Depends(db_session)):
+                            response: Response,
+                            primary_key: SampleTablePrimaryKeyModel = Depends(),
+                            extra_query: SampleTableDeleteOneRequestQueryModel = Depends(),
+                            session=Depends(db_session)):
     model = SampleTable
 
     filter_args = primary_key.__dict__
@@ -475,5 +457,7 @@ async def delete_one_by_primary_key(
     result = parse_obj_as(SampleTableDeleteOneResponseModel, data_instance)
     response.headers["x-total-count"] = str(1)
     return result
+
+
 '''
         validate_route("test_build_myself_memory", model_test_build_myself_memory_expected)
