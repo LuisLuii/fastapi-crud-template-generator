@@ -116,22 +116,18 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-
 from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable
 from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo
 
-
 SQLALCHEMY_DATABASE_URL = f"sqlite://"
 
-
-
 engine = create_engine(SQLALCHEMY_DATABASE_URL,
-                                        future=True,
-                                        echo=True,
-                                        pool_pre_ping=True,
-                                        pool_recycle=7200,
-                                        connect_args={"check_same_thread": False}, 
-                                        poolclass=StaticPool)
+                       future=True,
+                       echo=True,
+                       pool_pre_ping=True,
+                       pool_recycle=7200,
+                       connect_args={"check_same_thread": False}, 
+                       poolclass=StaticPool)
 session = sessionmaker(bind=engine, autocommit=False)
 
 
@@ -145,6 +141,8 @@ def db_session() -> Generator:
         raise e
     finally:
         db.close()
+
+    
 SampleTable.__table__.create(engine, checkfirst=True)
 SampleTableTwo.__table__.create(engine, checkfirst=True)
 '''
@@ -164,9 +162,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key"
+    
 
 class SampleTableTwo(Base):
     primary_key_of_table = "primary_key"
@@ -180,27 +178,16 @@ class SampleTableTwo(Base):
     bytea_value = Column(LargeBinary)
 
 
-
-
-
 @dataclass
 class SampleTableTwoPrimaryKeyModel:
     primary_key: int = Query(None, description=None)
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key"
-    
 
 
 @dataclass
 class SampleTableTwoPatchOneRequestQueryModel:
     bool_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     bool_value____list: Optional[List[bool]] = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -211,6 +198,7 @@ class SampleTableTwoPatchOneRequestQueryModel:
 @dataclass
 class SampleTableTwoPatchOneRequestBodyModel:
     bool_value: bool = Body(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -224,8 +212,12 @@ class SampleTableTwoPatchOneResponseModel(BaseModel):
     """
     primary_key: int = Body(None)
     bool_value: bool = Body(False)
+
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_build_myself_memory_two", model_test_build_myself_memory_two_expected)
 
         model_test_build_myself_memory_expected = '''from dataclasses import dataclass, field
@@ -241,9 +233,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
+    
 
 class SampleTable(Base):
     primary_key_of_table = "primary_key"
@@ -270,21 +262,9 @@ class SampleTable(Base):
     varchar_value = Column(String)
 
 
-
-
-
 @dataclass
 class SampleTablePrimaryKeyModel:
     primary_key: int = Query(None, description=None)
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
-    
 
 
 @dataclass
@@ -363,6 +343,7 @@ class SampleTablePatchOneRequestQueryModel:
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -386,6 +367,7 @@ class SampleTablePatchOneRequestBodyModel:
     timestamptz_value: datetime = Body(None, description=None)
     timetz_value: time = Body(None, description=None)
     varchar_value: str = Body(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -412,8 +394,12 @@ class SampleTablePatchOneResponseModel(BaseModel):
     timestamptz_value: datetime = Body(None)
     timetz_value: time = Body(None)
     varchar_value: str = Body(None)
+
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_build_myself_memory", model_test_build_myself_memory_expected)
 
         # route
@@ -428,19 +414,16 @@ from sqlalchemy.exc import IntegrityError
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo, SampleTableTwoPatchOneRequestBodyModel, SampleTableTwoPatchOneRequestQueryModel, SampleTableTwoPatchOneResponseModel, SampleTableTwoPrimaryKeyModel
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/my_second_api")
-
 
 
 @api.patch("/{primary_key}", status_code=200, response_model=Union[SampleTableTwoPatchOneResponseModel])
 def partial_update_one_by_primary_key(
-                                                response: Response,
-                                                primary_key: SampleTableTwoPrimaryKeyModel = Depends(),
-                                                patch_data: SampleTableTwoPatchOneRequestBodyModel = Depends(),
-                                                extra_query: SampleTableTwoPatchOneRequestQueryModel = Depends(),
-                                                session=Depends(db_session)):
+                                    response: Response,
+                                    primary_key: SampleTableTwoPrimaryKeyModel = Depends(),
+                                    patch_data: SampleTableTwoPatchOneRequestBodyModel = Depends(),
+                                    extra_query: SampleTableTwoPatchOneRequestQueryModel = Depends(),
+                                    session=Depends(db_session)):
     model = SampleTableTwo
 
     filter_args = primary_key.__dict__
@@ -471,7 +454,9 @@ def partial_update_one_by_primary_key(
         if 'unique constraint' not in err_msg.lower():
             raise e
         result = Response(status_code=HTTPStatus.CONFLICT, headers={"x-total-count": str(0)})
-        return result'''
+        return result
+
+'''
         validate_route("test_build_myself_memory_two", route_test_build_myself_memory_two_expected)
         model_test_build_myself_memory_expected = '''from http import HTTPStatus
 from typing import List, Union
@@ -484,19 +469,16 @@ from sqlalchemy.exc import IntegrityError
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable, SampleTablePatchOneRequestBodyModel, SampleTablePatchOneRequestQueryModel, SampleTablePatchOneResponseModel, SampleTablePrimaryKeyModel
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/my_first_api")
-
 
 
 @api.patch("/{primary_key}", status_code=200, response_model=Union[SampleTablePatchOneResponseModel])
 def partial_update_one_by_primary_key(
-                                                response: Response,
-                                                primary_key: SampleTablePrimaryKeyModel = Depends(),
-                                                patch_data: SampleTablePatchOneRequestBodyModel = Depends(),
-                                                extra_query: SampleTablePatchOneRequestQueryModel = Depends(),
-                                                session=Depends(db_session)):
+                                    response: Response,
+                                    primary_key: SampleTablePrimaryKeyModel = Depends(),
+                                    patch_data: SampleTablePatchOneRequestBodyModel = Depends(),
+                                    extra_query: SampleTablePatchOneRequestQueryModel = Depends(),
+                                    session=Depends(db_session)):
     model = SampleTable
 
     filter_args = primary_key.__dict__
@@ -527,5 +509,7 @@ def partial_update_one_by_primary_key(
         if 'unique constraint' not in err_msg.lower():
             raise e
         result = Response(status_code=HTTPStatus.CONFLICT, headers={"x-total-count": str(0)})
-        return result'''
+        return result
+
+'''
         validate_route("test_build_myself_memory", model_test_build_myself_memory_expected)

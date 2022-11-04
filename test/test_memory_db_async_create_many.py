@@ -115,26 +115,24 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-
 from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable
 from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo
 
-
 SQLALCHEMY_DATABASE_URL = f"sqlite+aiosqlite://"
 
-
-
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL,
-                                              future=True,
-                                              echo=True,
-                                              pool_pre_ping=True,
-                                              pool_recycle=7200,
-                                              connect_args={"check_same_thread": False}, 
-                                              poolclass=StaticPool)
+                             future=True,
+                             echo=True,
+                             pool_pre_ping=True,
+                             pool_recycle=7200,
+                             connect_args={"check_same_thread": False}, 
+                             poolclass=StaticPool)
 session = sessionmaker(autocommit=False,
                        autoflush=False,
                        bind=engine,
                        class_=AsyncSession)
+
+
 async def db_session():
     async with session() as _session:
         yield _session
@@ -144,6 +142,8 @@ async def db_session():
 async def create_table(engine, model):
     async with engine.begin() as conn:
         await conn.run_sync(model._sa_registry.metadata.create_all)
+
+
 loop = asyncio.get_event_loop()
 loop.run_until_complete(create_table(engine, SampleTable))
 loop.run_until_complete(create_table(engine, SampleTableTwo))
@@ -164,9 +164,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key"
+    
 
 class SampleTableTwo(Base):
     primary_key_of_table = "primary_key"
@@ -180,21 +180,9 @@ class SampleTableTwo(Base):
     bytea_value = Column(LargeBinary)
 
 
-
-
-
 @dataclass
 class SampleTableTwoPrimaryKeyModel:
     primary_key: int = Query(None, description=None)
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key"
-    
 
 
 @dataclass
@@ -206,6 +194,7 @@ class SampleTableTwoCreateManyItemRequestModel:
 @dataclass
 class SampleTableTwoCreateManyItemListRequestModel:
     insert: List[SampleTableTwoCreateManyItemRequestModel] = Body(...)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -219,14 +208,19 @@ class SampleTableTwoCreateManyItemResponseModel(BaseModel):
     """
     primary_key: int = Body(None, description=None)
     bool_value: bool = Body(False, description=None)
+
     class Config:
         orm_mode = True
 
 
 class SampleTableTwoCreateManyItemListResponseModel(BaseModel):
     __root__: List[SampleTableTwoCreateManyItemResponseModel]
+
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_build_myself_memory_two", model_test_build_myself_memory_two_expected)
 
         model_test_build_myself_memory_expected = '''from dataclasses import dataclass, field
@@ -242,9 +236,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
+    
 
 class SampleTable(Base):
     primary_key_of_table = "primary_key"
@@ -271,21 +265,9 @@ class SampleTable(Base):
     varchar_value = Column(String)
 
 
-
-
-
 @dataclass
 class SampleTablePrimaryKeyModel:
     primary_key: int = Query(None, description=None)
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
-    
 
 
 @dataclass
@@ -310,6 +292,7 @@ class SampleTableCreateManyItemRequestModel:
 @dataclass
 class SampleTableCreateManyItemListRequestModel:
     insert: List[SampleTableCreateManyItemRequestModel] = Body(...)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -336,14 +319,19 @@ class SampleTableCreateManyItemResponseModel(BaseModel):
     timestamptz_value: datetime = Body(None, description=None)
     timetz_value: time = Body(None, description=None)
     varchar_value: str = Body(None, description=None)
+
     class Config:
         orm_mode = True
 
 
 class SampleTableCreateManyItemListResponseModel(BaseModel):
     __root__: List[SampleTableCreateManyItemResponseModel]
+
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_build_myself_memory", model_test_build_myself_memory_expected)
 
         # route
@@ -360,16 +348,14 @@ from fastapi_quick_crud_template.common.http_exception import UnknownColumn, Unk
 from fastapi_quick_crud_template.common.typing import Ordering
 from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo, SampleTableTwoCreateManyItemListRequestModel, SampleTableTwoCreateManyItemListResponseModel
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/my_second_api")
 
 
-
 @api.post("", status_code=201, response_model=SampleTableTwoCreateManyItemListResponseModel)
-async def insert_many(response: Response,
-                           request_body=Depends(SampleTableTwoCreateManyItemListRequestModel),
-                           session=Depends(db_session)):
+async def insert_many(
+                response: Response,
+                request_body=Depends(SampleTableTwoCreateManyItemListRequestModel),
+                session=Depends(db_session)):
     insert_arg_list: list = request_body.__dict__.pop('insert', None)
     insert_arg_dict = []
     for i in insert_arg_list:
@@ -395,7 +381,9 @@ async def insert_many(response: Response,
 
     result = parse_obj_as(SampleTableTwoCreateManyItemListResponseModel, new_inserted_data)
     response.headers["x-total-count"] = str(len(new_inserted_data))
-    return result'''
+    return result
+
+'''
         validate_route("test_build_myself_memory_two", route_test_build_myself_memory_two_expected)
         model_test_build_myself_memory_expected = '''from http import HTTPStatus
 from typing import List, Union
@@ -410,16 +398,14 @@ from fastapi_quick_crud_template.common.http_exception import UnknownColumn, Unk
 from fastapi_quick_crud_template.common.typing import Ordering
 from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable, SampleTableCreateManyItemListRequestModel, SampleTableCreateManyItemListResponseModel
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/my_first_api")
 
 
-
 @api.post("", status_code=201, response_model=SampleTableCreateManyItemListResponseModel)
-async def insert_many(response: Response,
-                           request_body=Depends(SampleTableCreateManyItemListRequestModel),
-                           session=Depends(db_session)):
+async def insert_many(
+                response: Response,
+                request_body=Depends(SampleTableCreateManyItemListRequestModel),
+                session=Depends(db_session)):
     insert_arg_list: list = request_body.__dict__.pop('insert', None)
     insert_arg_dict = []
     for i in insert_arg_list:
@@ -445,5 +431,7 @@ async def insert_many(response: Response,
 
     result = parse_obj_as(SampleTableCreateManyItemListResponseModel, new_inserted_data)
     response.headers["x-total-count"] = str(len(new_inserted_data))
-    return result'''
+    return result
+
+'''
         validate_route("test_build_myself_memory", model_test_build_myself_memory_expected)

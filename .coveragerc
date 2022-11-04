@@ -6,3 +6,5 @@ omit =
     test/*
     src/fastapi_quickcrud_codegen/model/template/*
 exclude_lines =
+    except NotImplementedError:
+    raise ColumnTypeNotSupportedException(

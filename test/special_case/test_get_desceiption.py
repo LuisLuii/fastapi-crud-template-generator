@@ -98,25 +98,23 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-
 from fastapi_quick_crud_template.model.test_uuid_primary import TestUuidPrimary
-
 
 SQLALCHEMY_DATABASE_URL = f"postgresql+asyncpg://postgres:1234@127.0.0.1:5432/postgres"
 
-
-
 engine = create_async_engine(SQLALCHEMY_DATABASE_URL,
-                                              future=True,
-                                              echo=True,
-                                              pool_pre_ping=True,
-                                              pool_recycle=7200,
-                                              
-                                              poolclass=StaticPool)
+                             future=True,
+                             echo=True,
+                             pool_pre_ping=True,
+                             pool_recycle=7200,
+                             
+                             poolclass=StaticPool)
 session = sessionmaker(autocommit=False,
                        autoflush=False,
                        bind=engine,
                        class_=AsyncSession)
+
+
 async def db_session():
     async with session() as _session:
         yield _session
@@ -137,9 +135,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
+    
 
 class TestUuidPrimary(Base):
     __tablename__ = 'test_uuid_primary'
@@ -170,26 +168,15 @@ class TestUuidPrimary(Base):
     array_str__value = Column(ARRAY(String()))
 
 
-
-
-
 @dataclass
 class TestUuidPrimaryPrimaryKeyModel:
     primary_key: uuid.UUID = Query(..., description="hello")
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
         """
         value_of_list_to_str(self, ['primary_key'])
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
-    
 
 
 @dataclass
@@ -289,6 +276,7 @@ class TestUuidPrimaryFindManyRequestBodyModel:
             <br/>&emsp;&emsp;any name of column: DESC 
             <br/>&emsp;&emsp;any name of column    :    DESC
             <br/>&emsp;&emsp;any name of column (default sort by ASC)""")
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -322,6 +310,7 @@ class TestUuidPrimaryFindManyResponseModel(BaseModel):
     varchar_value: str = None
     array_value: List[int] = None
     array_str__value: List[str] = None
+
     class Config:
         orm_mode = True
 
@@ -331,7 +320,10 @@ class TestUuidPrimaryFindManyItemListResponseModel(ExcludeUnsetBaseModel):
     result: List[TestUuidPrimaryFindManyResponseModel]
 
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_uuid_primary", model_test_uuid_primary)
 
         # route
@@ -347,17 +339,14 @@ from pydantic import parse_obj_as
 from fastapi_quick_crud_template.common.http_exception import UnknownColumn, UnknownOrderType
 from fastapi_quick_crud_template.common.typing import Ordering
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/uuid_pk_api")
 
 
-
 @api.get("", status_code=200, response_model=TestUuidPrimaryFindManyItemListResponseModel)
-async def get_many(response: Response,
-                query=Depends(TestUuidPrimaryFindManyRequestBodyModel),
-                session=Depends(db_session)):
-
+async def get_many(
+            response: Response,
+            query=Depends(TestUuidPrimaryFindManyRequestBodyModel),
+            session=Depends(db_session)):
     filter_args = query.__dict__
     limit = filter_args.pop('limit', None)
     offset = filter_args.pop('offset', None)
@@ -415,5 +404,7 @@ async def get_many(response: Response,
     response_format["result"] = response_data_list
     response_data = parse_obj_as(TestUuidPrimaryFindManyItemListResponseModel, response_format)
     response.headers["x-total-count"] = str(len(response_data_list))
-    return response_data'''
+    return response_data
+
+'''
         validate_route("test_uuid_primary", route_test_uuid_primary)

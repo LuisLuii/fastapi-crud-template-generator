@@ -124,22 +124,18 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-
 from fastapi_quick_crud_template.model.test_build_myself import SampleTable
 from fastapi_quick_crud_template.model.test_build_myself_two import SampleTableTwo
 
-
 SQLALCHEMY_DATABASE_URL = f"postgresql://postgres:1234@127.0.0.1:5432/postgres"
 
-
-
 engine = create_engine(SQLALCHEMY_DATABASE_URL,
-                                        future=True,
-                                        echo=True,
-                                        pool_pre_ping=True,
-                                        pool_recycle=7200,
-                                        
-                                        poolclass=StaticPool)
+                       future=True,
+                       echo=True,
+                       pool_pre_ping=True,
+                       pool_recycle=7200,
+                       
+                       poolclass=StaticPool)
 session = sessionmaker(bind=engine, autocommit=False)
 
 
@@ -169,9 +165,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key"
+    
 
 class SampleTableTwo(Base):
     primary_key_of_table = "primary_key"
@@ -185,21 +181,9 @@ class SampleTableTwo(Base):
     bytea_value = Column(LargeBinary)
 
 
-
-
-
 @dataclass
 class SampleTableTwoPrimaryKeyModel:
     primary_key: int = Query(None, description=None)
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key"
-    
 
 
 @dataclass
@@ -212,6 +196,7 @@ class SampleTableTwoDeleteManyRequestQueryModel:
     primary_key____list: Optional[List[int]] = Query(None, description=None)
     bool_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     bool_value____list: Optional[List[bool]] = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -225,14 +210,19 @@ class SampleTableTwoDeleteManyItemResponseModel(BaseModel):
     """
     primary_key: int = Body(None)
     bool_value: bool = Body(False)
+
     class Config:
         orm_mode = True
 
 
 class SampleTableTwoDeleteManyItemListResponseModel(BaseModel):
     __root__: List[SampleTableTwoDeleteManyItemResponseModel]
+
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_build_myself_two", model_test_build_myself_two_expected)
 
         model_test_build_myself_expected = '''from dataclasses import dataclass, field
@@ -248,9 +238,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
+    
 
 class SampleTable(Base):
     primary_key_of_table = "primary_key"
@@ -285,26 +275,15 @@ class SampleTable(Base):
     array_str__value = Column(ARRAY(String()))
 
 
-
-
-
 @dataclass
 class SampleTablePrimaryKeyModel:
     primary_key: int = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
         """
         value_of_list_to_str(self, ['uuid_value'])
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
-    
 
 
 @dataclass
@@ -397,6 +376,7 @@ class SampleTableDeleteManyRequestQueryModel:
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -431,14 +411,19 @@ class SampleTableDeleteManyItemResponseModel(BaseModel):
     varchar_value: str = Body(None)
     array_value: List[int] = Body(None)
     array_str__value: List[str] = Body(None)
+
     class Config:
         orm_mode = True
 
 
 class SampleTableDeleteManyItemListResponseModel(BaseModel):
     __root__: List[SampleTableDeleteManyItemResponseModel]
+
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_build_myself", model_test_build_myself_expected)
 
         # route
@@ -452,17 +437,14 @@ from fastapi_quick_crud_template.common.sql_session import db_session
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.model.test_build_myself_two import SampleTableTwo, SampleTableTwoDeleteManyItemListResponseModel, SampleTableTwoDeleteManyRequestQueryModel
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/my_second_api")
-
 
 
 @api.delete("", status_code=200, response_model=SampleTableTwoDeleteManyItemListResponseModel)
 def delete_many_by_query(
-                                                response: Response,
-                                                query: SampleTableTwoDeleteManyRequestQueryModel = Depends(),
-                                                session=Depends(db_session)):
+                        response: Response,
+                        query: SampleTableTwoDeleteManyRequestQueryModel = Depends(),
+                        session=Depends(db_session)):
     model = SampleTableTwo
 
     filter_args = query.__dict__
@@ -482,6 +464,8 @@ def delete_many_by_query(
     result = parse_obj_as(SampleTableTwoDeleteManyItemListResponseModel, data_instances)
     response.headers["x-total-count"] = str(len(data_instances))
     return result
+
+
 '''
         validate_route("test_build_myself_two", route_test_build_myself_two_expected)
         route_test_build_myself_expected = '''from http import HTTPStatus
@@ -494,17 +478,14 @@ from fastapi_quick_crud_template.common.sql_session import db_session
 from pydantic import parse_obj_as
 from fastapi_quick_crud_template.model.test_build_myself import SampleTable, SampleTableDeleteManyItemListResponseModel, SampleTableDeleteManyRequestQueryModel
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/my_first_api")
-
 
 
 @api.delete("", status_code=200, response_model=SampleTableDeleteManyItemListResponseModel)
 def delete_many_by_query(
-                                                response: Response,
-                                                query: SampleTableDeleteManyRequestQueryModel = Depends(),
-                                                session=Depends(db_session)):
+                        response: Response,
+                        query: SampleTableDeleteManyRequestQueryModel = Depends(),
+                        session=Depends(db_session)):
     model = SampleTable
 
     filter_args = query.__dict__
@@ -524,5 +505,7 @@ def delete_many_by_query(
     result = parse_obj_as(SampleTableDeleteManyItemListResponseModel, data_instances)
     response.headers["x-total-count"] = str(len(data_instances))
     return result
+
+
 '''
         validate_route("test_build_myself", route_test_build_myself_expected)

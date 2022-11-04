@@ -116,22 +116,18 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-
 from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable
 from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo
 
-
 SQLALCHEMY_DATABASE_URL = f"sqlite://"
 
-
-
 engine = create_engine(SQLALCHEMY_DATABASE_URL,
-                                        future=True,
-                                        echo=True,
-                                        pool_pre_ping=True,
-                                        pool_recycle=7200,
-                                        connect_args={"check_same_thread": False}, 
-                                        poolclass=StaticPool)
+                       future=True,
+                       echo=True,
+                       pool_pre_ping=True,
+                       pool_recycle=7200,
+                       connect_args={"check_same_thread": False}, 
+                       poolclass=StaticPool)
 session = sessionmaker(bind=engine, autocommit=False)
 
 
@@ -145,6 +141,8 @@ def db_session() -> Generator:
         raise e
     finally:
         db.close()
+
+    
 SampleTable.__table__.create(engine, checkfirst=True)
 SampleTableTwo.__table__.create(engine, checkfirst=True)
 '''
@@ -164,9 +162,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key"
+    
 
 class SampleTableTwo(Base):
     primary_key_of_table = "primary_key"
@@ -180,21 +178,9 @@ class SampleTableTwo(Base):
     bytea_value = Column(LargeBinary)
 
 
-
-
-
 @dataclass
 class SampleTableTwoPrimaryKeyModel:
     primary_key: int = Query(None, description=None)
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key"
-    
 
 
 @dataclass
@@ -207,6 +193,7 @@ class SampleTableTwoUpdateManyRequestQueryModel:
     primary_key____list: Optional[List[int]] = Query(None, description=None)
     bool_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     bool_value____list: Optional[List[bool]] = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -217,6 +204,7 @@ class SampleTableTwoUpdateManyRequestQueryModel:
 @dataclass
 class SampleTableTwoUpdateManyRequestBodyModel:
     bool_value: bool = Body(..., description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -230,14 +218,19 @@ class SampleTableTwoUpdateManyResponseItemModel(BaseModel):
     """
     primary_key: int = Body(None)
     bool_value: bool = Body(False)
+
     class Config:
         orm_mode = True
 
 
 class SampleTableTwoUpdateManyItemListResponseModel(BaseModel):
     __root__: List[SampleTableTwoUpdateManyResponseItemModel]
+
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_build_myself_memory_two", model_test_build_myself_memory_two_expected)
 
         model_test_build_myself_memory_expected = '''from dataclasses import dataclass, field
@@ -253,9 +246,9 @@ from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filt
 from fastapi_quick_crud_template.common.db import Base
 from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
-
-
-
+PRIMARY_KEY_NAME = "primary_key"
+UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
+    
 
 class SampleTable(Base):
     primary_key_of_table = "primary_key"
@@ -282,21 +275,9 @@ class SampleTable(Base):
     varchar_value = Column(String)
 
 
-
-
-
 @dataclass
 class SampleTablePrimaryKeyModel:
     primary_key: int = Query(None, description=None)
-
-
-
-    
-PRIMARY_KEY_NAME = "primary_key"
-    
-    
-UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
-    
 
 
 @dataclass
@@ -381,6 +362,7 @@ class SampleTableUpdateManyRequestQueryModel:
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -404,6 +386,7 @@ class SampleTableUpdateManyRequestBodyModel:
     timestamptz_value: datetime = Body(..., description=None)
     timetz_value: time = Body(..., description=None)
     varchar_value: str = Body(..., description=None)
+
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
@@ -430,14 +413,19 @@ class SampleTableUpdateManyResponseItemModel(BaseModel):
     timestamptz_value: datetime = Body(None)
     timetz_value: time = Body(None)
     varchar_value: str = Body(None)
+
     class Config:
         orm_mode = True
 
 
 class SampleTableUpdateManyItemListResponseModel(BaseModel):
     __root__: List[SampleTableUpdateManyResponseItemModel]
+
     class Config:
-        orm_mode = True'''
+        orm_mode = True
+
+
+'''
         validate_model("test_build_myself_memory", model_test_build_myself_memory_expected)
 
         # route
@@ -454,10 +442,7 @@ from fastapi_quick_crud_template.common.http_exception import UnknownColumn, Unk
 from fastapi_quick_crud_template.common.typing import Ordering
 from fastapi_quick_crud_template.model.test_build_myself_memory_two import SampleTableTwo, SampleTableTwoUpdateManyItemListResponseModel, SampleTableTwoUpdateManyRequestBodyModel, SampleTableTwoUpdateManyRequestQueryModel
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/my_second_api")
-
 
 
 @api.put("", status_code=200, response_model=SampleTableTwoUpdateManyItemListResponseModel)
@@ -496,7 +481,9 @@ def entire_update_many_by_query(
         if 'unique constraint' not in err_msg.lower():
             raise e
         result = Response(status_code=HTTPStatus.CONFLICT, headers={"x-total-count": str(0)})
-        return result'''
+        return result
+
+'''
         validate_route("test_build_myself_memory_two", route_test_build_myself_memory_two_expected)
         model_test_build_myself_memory_expected = '''from http import HTTPStatus
 from typing import List, Union
@@ -511,10 +498,7 @@ from fastapi_quick_crud_template.common.http_exception import UnknownColumn, Unk
 from fastapi_quick_crud_template.common.typing import Ordering
 from fastapi_quick_crud_template.model.test_build_myself_memory import SampleTable, SampleTableUpdateManyItemListResponseModel, SampleTableUpdateManyRequestBodyModel, SampleTableUpdateManyRequestQueryModel
 
-
-
 api = APIRouter(tags=['sample api'],prefix="/my_first_api")
-
 
 
 @api.put("", status_code=200, response_model=SampleTableUpdateManyItemListResponseModel)
@@ -553,5 +537,7 @@ def entire_update_many_by_query(
         if 'unique constraint' not in err_msg.lower():
             raise e
         result = Response(status_code=HTTPStatus.CONFLICT, headers={"x-total-count": str(0)})
-        return result'''
+        return result
+
+'''
         validate_route("test_build_myself_memory", model_test_build_myself_memory_expected)
