@@ -137,7 +137,6 @@ It will be super excited if you have any idea with api router/ model template. t
 # Road map
 #### Current State: Pre-release 
 #### Will be changed to stable version when:
->- Apply code style checking
 >- Typing
 #### After stable version:
 >- Support foreign tree in find api
