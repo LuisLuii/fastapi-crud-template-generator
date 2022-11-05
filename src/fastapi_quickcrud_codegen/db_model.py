@@ -21,7 +21,7 @@ class DbModel:
         self.db_model = db_model
         self.prefix = prefix
         self.tags = tags
-        
+
         if exclude_columns is None:
             exclude_columns = []
         self.exclude_columns = exclude_columns
