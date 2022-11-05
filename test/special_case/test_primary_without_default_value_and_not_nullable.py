@@ -6,7 +6,7 @@ from sqlalchemy.dialects.sqlite import *
 from sqlalchemy.orm import declarative_base
 
 from src.fastapi_quickcrud_codegen import crud_router_builder
-from fastapi_quickcrud_codegen.db_model import DbModel
+from src.fastapi_quickcrud_codegen.db_model import DbModel
 from fastapi_quickcrud_codegen.misc.type import CrudMethods
 from test.misc.common import *
 
