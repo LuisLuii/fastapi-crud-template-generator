@@ -20,10 +20,3 @@ class ModelTemplateGenerator(CodeGenerator):
         create_file_and_add_code_into_there(path, code)
         self.module_path_map[model_name] = {'model': path}
 
-    @staticmethod
-    def add_code_to_file(path, code):
-        with open(path, 'a') as model_file:
-            model_file.write(code)
-
-
-

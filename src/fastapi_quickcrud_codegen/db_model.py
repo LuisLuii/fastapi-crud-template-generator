@@ -15,12 +15,19 @@ class DbModel:
     def __init__(self, db_model: decl_api.DeclarativeMeta,
                  prefix: str,
                  tags: List[str],
-                 exclude_columns: List[str] = [],
-                 crud_methods: List[CrudMethods] = CrudMethods.get_full_crud_method()):
+                 exclude_columns: List[str] = None,
+                 crud_methods: List[CrudMethods] = None):
+
         self.db_model = db_model
         self.prefix = prefix
         self.tags = tags
+
+        if exclude_columns is None:
+            exclude_columns = []
         self.exclude_columns = exclude_columns
+
+        if crud_methods is None:
+            crud_methods = CrudMethods.get_full_crud_method()
         self.crud_methods = crud_methods
         self.model_list = []
 
