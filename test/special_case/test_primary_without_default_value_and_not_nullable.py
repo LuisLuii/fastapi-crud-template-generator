@@ -7,7 +7,7 @@ from sqlalchemy.orm import declarative_base
 
 from src.fastapi_quickcrud_codegen import crud_router_builder
 from src.fastapi_quickcrud_codegen.db_model import DbModel
-from fastapi_quickcrud_codegen.misc.type import CrudMethods
+from src.fastapi_quickcrud_codegen.misc.type import CrudMethods
 from test.misc.common import *
 
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, INTERVAL, JSON, UUID
