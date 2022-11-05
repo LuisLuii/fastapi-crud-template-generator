@@ -2,7 +2,6 @@ from typing import Type, List
 
 from ..misc.type import CrudMethods
 from ..misc.crud_model import CRUDModel
-from ..misc.exceptions import PrimaryMissing
 from ..misc.type import SqlType, CRUDRequestMapping
 from ..utils.schema_builder import ApiParameterSchemaBuilder
 
