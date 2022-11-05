@@ -1,22 +1,22 @@
-import sqlalchemy
-from fastapi import FastAPI
 from sqlalchemy import BigInteger, Boolean, CHAR, Column, Date, DateTime, Float, Integer, \
-    Numeric, SmallInteger, String, Text, Time, UniqueConstraint, LargeBinary, text, PrimaryKeyConstraint
+    Numeric, SmallInteger, String, Text, Time, UniqueConstraint, text, PrimaryKeyConstraint
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, INTERVAL, JSON, UUID
 from sqlalchemy.orm import declarative_base
 
-from fastapi_quickcrud_codegen import crud_router_builder, CrudMethods
-from fastapi_quickcrud_codegen.misc.type import SqlType
-
+from fastapi_quickcrud_codegen import crud_router_builder
+from fastapi_quickcrud_codegen.db_model import DbModel
+from fastapi_quickcrud_codegen.misc.type import CrudMethods
 
 Base = declarative_base()
 metadata = Base.metadata
+
 
 class TestBuildMyself(Base):
     __tablename__ = 'test_build_myself'
     __table_args__ = (
         PrimaryKeyConstraint('primary_key', name='test_build_myself_pkey'),
-        UniqueConstraint('primary_key', 'int4_value', 'float4_value', name='test_build_myself_primary_key_int4_value_float4_value_key')
+        UniqueConstraint('primary_key', 'int4_value', 'float4_value',
+                         name='test_build_myself_primary_key_int4_value_float4_value_key')
     )
 
     primary_key = Column(Integer)
@@ -47,7 +47,8 @@ class TestUuidPrimarySync(Base):
     __tablename__ = 'test_uuid_primary_sync'
     __table_args__ = (
         PrimaryKeyConstraint('primary_key', name='test_uuid_primary_sync_pkey'),
-        UniqueConstraint('primary_key', 'int4_value', 'float4_value', name='test_uuid_primary_sync_primary_key_int4_value_float4_value_key')
+        UniqueConstraint('primary_key', 'int4_value', 'float4_value',
+                         name='test_uuid_primary_sync_primary_key_int4_value_float4_value_key')
     )
 
     primary_key = Column(Integer)
@@ -72,26 +73,15 @@ class TestUuidPrimarySync(Base):
     array_value = Column(ARRAY(Integer()))
     array_str__value = Column(ARRAY(String()))
 
+
+model_list = [DbModel(db_model=TestBuildMyself, prefix="/my_first_api", tags=["sample api"],
+                      exclude_columns=['bytea_value']),
+              DbModel(db_model=TestUuidPrimarySync, prefix="/my_second_api", tags=["sample api"],
+                      exclude_columns=['bytea_value'], crud_methods=[CrudMethods.FIND_MANY, CrudMethods.CREATE_MANY,
+                                                                     CrudMethods.UPDATE_ONE, CrudMethods.PATCH_ONE])]
+
 crud_router_builder(
-    db_model_list=[
-        {
-            "db_model": TestBuildMyself,
-            "prefix": "/my_first_api",
-            "tags": ["sample api"],
-            "crud_methods": [CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_MANY,
-                             CrudMethods.UPDATE_ONE, CrudMethods.PATCH_ONE],
-
-        },
-
-        {
-            "db_model": TestUuidPrimarySync,
-            "prefix": "/my_second_api",
-            "tags": ["sample api"],
-            "crud_methods": [CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_MANY,
-                             CrudMethods.UPDATE_ONE, CrudMethods.PATCH_ONE],
-
-        }
-    ],
+    db_model_list=model_list,
     is_async=False,
     database_url="postgresql://postgres:1234@127.0.0.1:5432/postgres"
     # database_url="postgresql+asyncpg://postgres:1234@127.0.0.1:5432/postgres"

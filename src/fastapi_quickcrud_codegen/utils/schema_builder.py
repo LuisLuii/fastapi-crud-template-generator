@@ -11,10 +11,9 @@ from typing import (Type,
                     NewType,
                     Union)
 
-import pydantic
 from pydantic import (BaseModel)
 from sqlalchemy import UniqueConstraint, Table, Column
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import decl_api
 
 from ..misc.exceptions import (SchemaException,
                                ColumnTypeNotSupportedException)
@@ -28,7 +27,7 @@ from ..model.model_builder import ModelCodeGen
 FOREIGN_PATH_PARAM_KEYWORD = "__pk__"
 BaseModelT = TypeVar('BaseModelT', bound=BaseModel)
 DataClassT = TypeVar('DataClassT', bound=Any)
-DeclarativeClassT = NewType('DeclarativeClassT', declarative_base)
+DeclarativeClassT = NewType('DeclarativeClassT', decl_api.DeclarativeMeta)
 TableNameT = NewType('TableNameT', str)
 ResponseModelT = NewType('ResponseModelT', BaseModel)
 ForeignKeyName = NewType('ForeignKeyName', str)
@@ -39,9 +38,7 @@ class ApiParameterSchemaBuilder:
     unsupported_data_types = ["BLOB"]
     partial_supported_data_types = ["INTERVAL", "JSON", "JSONB"]
 
-    def __init__(self, db_model: Type, sql_type, exclude_column=[], constraints=None,
-                 # ,foreign_include=False
-                 ):
+    def __init__(self, db_model: decl_api.DeclarativeMeta, sql_type, exclude_column=[], constraints=None):
         self.class_name = db_model.__name__
         self.root_table_name = get_table_name(db_model)
         self.constraints = constraints
@@ -71,13 +68,12 @@ class ApiParameterSchemaBuilder:
                                                 ("UNIQUE_LIST", self.unique_fields)])
         self.sql_type = sql_type
 
-    def _extract_primary(self, db_model_table=None) -> Union[tuple, Tuple[Union[str, Any],
-                                                                          DataClassT,
-                                                                          Tuple[Union[str, Any],
-                                                                                Union[Type[uuid.UUID], Any],
-                                                                                Optional[Any]]]]:
-        if db_model_table == None:
-            db_model_table = self.__db_model_table
+    def _extract_primary(self) -> Union[tuple, Tuple[Union[str, Any],
+                                                     DataClassT,
+                                                     Tuple[Union[str, Any],
+                                                           Union[Type[uuid.UUID], Any],
+                                                           Optional[Any]]]]:
+        db_model_table = self.__db_model_table
         primary_list = db_model_table.primary_key.columns.values()
         if len(primary_list) > 1:
             raise SchemaException(
@@ -230,7 +226,7 @@ class ApiParameterSchemaBuilder:
         return fields
 
     @staticmethod
-    def _get_many_order_by_columns_description_builder(all_columns, regex_validation, primary_name):
+    def _get_many_order_by_columns_description_builder(all_columns, primary_name):
         return f'''<br> support column: 
             <br> {all_columns} <hr><br> support ordering:  
             <br> {list(map(str, Ordering))} 
@@ -248,7 +244,7 @@ class ApiParameterSchemaBuilder:
                 default = column.default.arg
             elif column.server_default is not None:
                 default = "None"
-            elif column.primary_key and column.autoincrement == True:
+            elif column.primary_key and column.autoincrement is True:
                 default = "None"
             else:
                 default = "..."
@@ -268,7 +264,7 @@ class ApiParameterSchemaBuilder:
         for i in [
             {'column_name': field_of_param['column_name'] + ExtraFieldTypePrefix.Str + ExtraFieldType.Matching_pattern,
              'column_type': f'Optional[{operator}]',
-             'column_default': f'[MatchingPatternInStringBase.case_sensitive]',
+             'column_default': '[MatchingPatternInStringBase.case_sensitive]',
              'column_description': "None"},
             {'column_name': field_of_param['column_name'] + ExtraFieldTypePrefix.Str,
              'column_type': f'Optional[List[{field_of_param["column_type"]}]]',
@@ -358,7 +354,6 @@ class ApiParameterSchemaBuilder:
 
         regex_validation = "(?=(" + '|'.join(all_column_) + r")?\s?:?\s*?(?=(" + '|'.join(
             list(map(str, Ordering))) + r"))?)"
-        columns_with_ordering = pydantic.constr(regex=regex_validation)
 
         for i in [
             ('limit', 'Optional[int]', "Query(None)"),
@@ -368,7 +363,6 @@ class ApiParameterSchemaBuilder:
                 None,
                 description="""{self._get_many_order_by_columns_description_builder(
                  all_columns=all_column_,
-                 regex_validation=regex_validation,
                  primary_name='any name of column')}""")''')
         ]:
             result_.append(i)
@@ -396,7 +390,9 @@ class ApiParameterSchemaBuilder:
         self.code_gen.build_base_model(class_name=self.class_name + "CreateOneResponseModel",
                                        fields=response_fields)
 
-        return None, self.class_name + "CreateOneRequestBodyModel", self.class_name + "CreateOneResponseModel"
+        return None, \
+               self.class_name + "CreateOneRequestBodyModel", \
+               self.class_name + "CreateOneResponseModel"
 
     def create_many(self) -> Tuple:
         insert_fields = []
@@ -431,7 +427,9 @@ class ApiParameterSchemaBuilder:
                                                 f'{f"{self.class_name}CreateManyItemResponseModel"}',
                                                 None))
 
-        return None, self.class_name + "CreateManyItemListRequestModel", self.class_name + "CreateManyItemListResponseModel"
+        return None, \
+               self.class_name + "CreateManyItemListRequestModel", \
+               self.class_name + "CreateManyItemListResponseModel"
 
     def find_many(self) -> Tuple:
 
@@ -464,7 +462,9 @@ class ApiParameterSchemaBuilder:
                                                     None),
                                                 base_model="ExcludeUnsetBaseModel")
 
-        return self.class_name + "FindManyRequestBody", None, f'{self.class_name}FindManyItemListResponseModel'
+        return self.class_name + "FindManyRequestBody", \
+               None, \
+               f'{self.class_name}FindManyItemListResponseModel'
 
     def find_one(self) -> Tuple:
         query_param: List[dict] = self._get_fizzy_query_param(self.primary_key_str)
@@ -492,7 +492,10 @@ class ApiParameterSchemaBuilder:
                                                 None),
                                             base_model="ExcludeUnsetBaseModel")
 
-        return self.class_name + "PrimaryKeyModel", self.class_name + "FindOneRequestBodyModel", None, self.class_name + "FindOneItemListResponseModel", None
+        return self.class_name + "PrimaryKeyModel", \
+               self.class_name + "FindOneRequestBodyModel", \
+               None, \
+               self.class_name + "FindOneItemListResponseModel", None
 
     def delete_one(self) -> Tuple:
         query_param: List[dict] = self._get_fizzy_query_param(self.primary_key_str)
@@ -517,7 +520,10 @@ class ApiParameterSchemaBuilder:
 
         self.code_gen.build_base_model(class_name=self.class_name + "DeleteOneResponseModel",
                                        fields=response_fields)
-        return self.class_name + "PrimaryKeyModel", self.class_name + "DeleteOneRequestQueryModel", None, self.class_name + "DeleteOneResponseModel"
+        return self.class_name + "PrimaryKeyModel", \
+               self.class_name + "DeleteOneRequestQueryModel", \
+               None, \
+               self.class_name + "DeleteOneResponseModel"
 
     def delete_many(self) -> Tuple:
         query_param: List[dict] = self._get_fizzy_query_param()
@@ -548,7 +554,9 @@ class ApiParameterSchemaBuilder:
                                                 f'{self.class_name + "DeleteManyItemResponseModel"}',
                                                 None))
 
-        return None, self.class_name + "DeleteManyRequestQueryModel", None, self.class_name + "DeleteManyItemListResponseModel"
+        return None, self.class_name + "DeleteManyRequestQueryModel", \
+               None, \
+               self.class_name + "DeleteManyItemListResponseModel"
 
     def patch_one(self) -> Tuple:
         query_param: List[dict] = self._get_fizzy_query_param(self.primary_key_str)
@@ -586,7 +594,10 @@ class ApiParameterSchemaBuilder:
         self.code_gen.build_base_model(class_name=self.class_name + "PatchOneResponseModel",
                                        fields=response_fields)
 
-        return self.class_name + "PrimaryKeyModel", self.class_name + "PatchOneRequestQueryModel", self.class_name + "PatchOneRequestBodyModel", self.class_name + "PatchOneResponseModel"
+        return self.class_name + "PrimaryKeyModel", \
+               self.class_name + "PatchOneRequestQueryModel", \
+               self.class_name + "PatchOneRequestBodyModel", \
+               self.class_name + "PatchOneResponseModel"
 
     def update_one(self) -> Tuple:
         query_param: List[dict] = self._get_fizzy_query_param(self.primary_key_str)
@@ -624,7 +635,10 @@ class ApiParameterSchemaBuilder:
         # I have removed filter none and valuexxx for response model
         self.code_gen.build_base_model(class_name=self.class_name + "UpdateOneResponseModel",
                                        fields=response_fields)
-        return self.class_name + "PrimaryKeyModel", self.class_name + "UpdateOneRequestQueryModel", self.class_name + "UpdateOneRequestBodyModel", self.class_name + "UpdateOneResponseModel"
+        return self.class_name + "PrimaryKeyModel", \
+               self.class_name + "UpdateOneRequestQueryModel", \
+               self.class_name + "UpdateOneRequestBodyModel", \
+               self.class_name + "UpdateOneResponseModel"
 
     def update_many(self) -> Tuple:
         """
@@ -675,7 +689,9 @@ class ApiParameterSchemaBuilder:
                                                 f'{self.class_name + "UpdateManyResponseItemModel"}',
                                                 None))
 
-        return None, self.class_name + "UpdateManyRequestQueryModel", self.class_name + "UpdateManyRequestBodyModel", f'{self.class_name}UpdateManyItemListResponseModel'
+        return None, self.class_name + "UpdateManyRequestQueryModel", \
+               self.class_name + "UpdateManyRequestBodyModel", \
+               f'{self.class_name}UpdateManyItemListResponseModel'
 
     def patch_many(self) -> Tuple:
         """
@@ -726,4 +742,6 @@ class ApiParameterSchemaBuilder:
                                             field=(
                                                 f'{f"{self.class_name}PatchManyItemResponseModel"}',
                                                 None))
-        return None, self.class_name + "PatchManyRequestQueryModel", self.class_name + "PatchManyRequestBodyModel", f'{self.class_name}PatchManyItemListResponseModel'
+        return None, self.class_name + "PatchManyRequestQueryModel", \
+               self.class_name + "PatchManyRequestBodyModel", \
+               f'{self.class_name}PatchManyItemListResponseModel'

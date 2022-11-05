@@ -14,7 +14,8 @@ A code generator that help you to establish a fastapi project with CRUD router f
 >- Delete one
 >- Delete many
 
-## Quick Start with in-memory DB
+## Quick Start with in-memory DB (or see the other ([example](https://github.com/LuisLuii/fastapi-crud-project-generator/tree/feature/fix_code_style/tutorial))
+
 
 ### Install
 ```python
@@ -58,48 +59,39 @@ class SampleTableTwo(Base):
 ### Use `crud_router_builder()` to generate the project from the executing folder (using in-memory sqlite db here)
 
 ```python
+from fastapi_quickcrud_codegen.db_model import DbModel
+from fastapi_quickcrud_codegen.misc.type import CrudMethods
 
-from fastapi_quickcrud_codegen import crud_router_builder, CrudMethods
+from fastapi_quickcrud_codegen import crud_router_builder
 
+model_list = [DbModel(db_model=SampleTable, prefix="/my_first_api", tags=["sample api"],
+                      exclude_columns=['bytea_value']),
+              DbModel(db_model=SampleTableTwo, prefix="/my_second_api", tags=["sample api"],
+                      exclude_columns=['bytea_value'],crud_methods=[CrudMethods.FIND_ONE])]
 crud_router_builder(
-    db_model_list=[
-        {
-            "db_model": SampleTable,
-            "prefix": "/my_first_api",
-            "tags": ["sample api"],
-            "exclude_columns": ['bytea_value'],
-            "crud_methods":[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE, CrudMethods.UPDATE_MANY, CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE],
-
-        },
-
-        {
-            "db_model": SampleTableTwo,
-            "prefix": "/my_second_api",
-            "tags": ["sample api"],
-            "exclude_columns": ['bytea_value'],
-        }
-    ],
-    #is_async=True,
-    #database_url="sqlite+aiosqlite://",
+    db_model_list=model_list,
+    # is_async=True,
+    # database_url="sqlite+aiosqlite://",
     is_async=False,
     database_url="sqlite://"
 )
+
 ```
 
 
 **crud_router_builder args**
-- db_model_list `[Required] `
+- db_model_list `[Required[List[DbModel]]] `
     >  Model list of dict for code generate
   - `List[]`
-    - `Dict[]`
-      - db_model `[Required[SQLALchemy Declarative Base Class]]`
+    - `DbModel`
+      - db_model `[Required[DeclarativeMeta]]`
       - prefix `[Required[str]]`
          > prefix for Fastapi's end point 
       - tags `[Required[List[str]]]`
          > list of tag for Fastapi's end point 
-      - exclude_columns `[Optional[str]]`
+      - exclude_columns `[Optional[List[str]]]`
          > set the columns that not to be operated but the columns should nullable or set the default value)
-      - crud_methods `[Opional[str]]`
+      - crud_methods `[Opional[List[CrudMethods]]]`
         > - Create the following apis for that model, but default: [CrudMethods.FIND_MANY, CrudMethods.FIND_ONE, CrudMethods.CREATE_MANY, CrudMethods.PATCH_ONE, CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE, CrudMethods.UPDATE_MANY, CrudMethods.UPDATE_ONE, CrudMethods.DELETE_MANY, CrudMethods.DELETE_ONE] 
         ```
         - CrudMethods.FIND_ONE

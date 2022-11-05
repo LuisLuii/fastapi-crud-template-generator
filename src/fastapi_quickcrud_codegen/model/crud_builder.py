@@ -23,13 +23,13 @@ class CrudCodeGen():
         template_generator.add_route(file_name, self.import_helper.to_code() + self.code)
 
     def build_find_one_route(self, *, is_async: bool, path: str, file_name, model_name):
-        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/find_one.jinja2'
+        TEMPLATE_FILE_PATH: ClassVar[str] = 'route/find_one.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
         TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
         templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
         templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = f'find_one.jinja2'
+        TEMPLATE_FILE = 'find_one.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
             {"model_name": model_name, "path": path, "is_async": is_async})
@@ -42,13 +42,13 @@ class CrudCodeGen():
         self.code += code + "\n\n"
 
     def build_find_many_route(self, *, is_async: bool, path: str, file_name, model_name):
-        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/find_many.jinja2'
+        TEMPLATE_FILE_PATH: ClassVar[str] = 'route/find_many.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
         TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
         templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
         templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = f'find_many.jinja2'
+        TEMPLATE_FILE = 'find_many.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
             {"model_name": model_name, "path": path, "is_async": is_async})
@@ -67,13 +67,13 @@ class CrudCodeGen():
         self.code += code + "\n\n"
 
     def build_insert_one_route(self, *, is_async: bool, path: str, file_name, model_name):
-        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/insert_one.jinja2'
+        TEMPLATE_FILE_PATH: ClassVar[str] = 'route/insert_one.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
         TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
         templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
         templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = f'insert_one.jinja2'
+        TEMPLATE_FILE = 'insert_one.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
             {"model_name": model_name, "path": path, "is_async": is_async})
@@ -92,13 +92,13 @@ class CrudCodeGen():
         self.code += code + "\n\n"
 
     def build_insert_many_route(self, *, is_async: bool, path: str, file_name, model_name):
-        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/insert_many.jinja2'
+        TEMPLATE_FILE_PATH: ClassVar[str] = 'route/insert_many.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
         TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
         templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
         templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = f'insert_many.jinja2'
+        TEMPLATE_FILE = 'insert_many.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
             {"model_name": model_name, "path": path, "is_async": is_async})
@@ -117,13 +117,13 @@ class CrudCodeGen():
         self.code += code + "\n\n"
 
     def build_update_one_route(self, *, is_async: bool, path: str, file_name, model_name):
-        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/update_one.jinja2'
+        TEMPLATE_FILE_PATH: ClassVar[str] = 'route/update_one.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
         TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
         templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
         templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = f'update_one.jinja2'
+        TEMPLATE_FILE = 'update_one.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
             {"model_name": model_name, "path": path, "is_async": is_async})
@@ -144,13 +144,13 @@ class CrudCodeGen():
         self.code += code + "\n\n"
 
     def build_update_many_route(self, *, is_async: bool, path: str, file_name, model_name):
-        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/update_many.jinja2'
+        TEMPLATE_FILE_PATH: ClassVar[str] = 'route/update_many.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
         TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
         templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
         templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = f'update_many.jinja2'
+        TEMPLATE_FILE = 'update_many.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
             {"model_name": model_name, "path": path, "is_async": is_async})
@@ -170,13 +170,13 @@ class CrudCodeGen():
         self.code += code + "\n\n"
 
     def build_patch_one_route(self, *, is_async: bool, path: str, file_name, model_name):
-        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/patch_one.jinja2'
+        TEMPLATE_FILE_PATH: ClassVar[str] = 'route/patch_one.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
         TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
         templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
         templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = f'patch_one.jinja2'
+        TEMPLATE_FILE = 'patch_one.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
             {"model_name": model_name, "path": path, "is_async": is_async})
@@ -192,13 +192,13 @@ class CrudCodeGen():
         self.code += code + "\n\n"
 
     def build_patch_many_route(self, *, is_async: bool, path: str, file_name, model_name):
-        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/patch_many.jinja2'
+        TEMPLATE_FILE_PATH: ClassVar[str] = 'route/patch_many.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
         TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
         templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
         templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = f'patch_many.jinja2'
+        TEMPLATE_FILE = 'patch_many.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
             {"model_name": model_name, "path": path, "is_async": is_async})
@@ -214,13 +214,13 @@ class CrudCodeGen():
 
 
     def build_delete_one_route(self, *, is_async: bool, path: str, file_name, model_name):
-        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/delete_one.jinja2'
+        TEMPLATE_FILE_PATH: ClassVar[str] = 'route/delete_one.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
         TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
         templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
         templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = f'delete_one.jinja2'
+        TEMPLATE_FILE = 'delete_one.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
             {"model_name": model_name, "path": path, "is_async": is_async})
@@ -234,13 +234,13 @@ class CrudCodeGen():
         self.code += code + "\n\n"
 
     def build_delete_many_route(self, *, is_async: bool, path: str, file_name, model_name):
-        TEMPLATE_FILE_PATH: ClassVar[str] = f'route/delete_many.jinja2'
+        TEMPLATE_FILE_PATH: ClassVar[str] = 'route/delete_many.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
         TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
         templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
         templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = f'delete_many.jinja2'
+        TEMPLATE_FILE = 'delete_many.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
             {"model_name": model_name, "path": path, "is_async": is_async})
