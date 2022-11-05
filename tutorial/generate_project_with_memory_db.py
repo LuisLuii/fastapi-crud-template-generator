@@ -1,6 +1,8 @@
 from sqlalchemy import *
 from sqlalchemy.orm import declarative_base
 
+from fastapi_quickcrud_codegen.db_model import DbModel
+
 Base = declarative_base()
 metadata = Base.metadata
 
@@ -30,32 +32,20 @@ class TestingTableTwo(Base):
     unique_fields = ['primary_key']
     __tablename__ = 'test_build_myself_memory_two'
     __table_args__ = (
-        UniqueConstraint('primary_key', 'bool_value' ),
+        UniqueConstraint('primary_key', 'bool_value'),
     )
     primary_key = Column(Integer, primary_key=True, autoincrement=True)
     bool_value = Column(Boolean, nullable=False, default=False)
     bytea_value = Column(LargeBinary)
 
 
-from fastapi_quickcrud_codegen import crud_router_builder, CrudMethods
+from fastapi_quickcrud_codegen import crud_router_builder
+
+a = [DbModel(db_model=TestingTable, prefix="/my_first_api", tags=["sample api"], exclude_columns=['bytea_value']),
+     DbModel(db_model=TestingTableTwo, prefix="/my_second_api", tags=["sample api"], exclude_columns=['bytea_value'])]
 
 crud_router_builder(
-    db_model_list=[
-        {
-            "db_model": TestingTable,
-            "prefix": "/my_first_api",
-            "tags": ["sample api"],
-            "exclude_columns": ['bytea_value']
-        },
-
-        {
-            "db_model": TestingTableTwo,
-            "prefix": "/my_second_api",
-            "tags": ["sample api"],
-            "exclude_columns": ['bytea_value'],
-            "crud_methods": []
-        }
-    ],
+    db_model_list=a,
     is_async=True,
     database_url="sqlite+aiosqlite://"
 )

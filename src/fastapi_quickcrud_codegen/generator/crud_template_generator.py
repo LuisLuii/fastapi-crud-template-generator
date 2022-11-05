@@ -1,37 +1,24 @@
 import os
-import sys
 
-from ..misc.constant import GENERATION_FOLDER, ROUTE
+from .code_generator import CodeGenerator
+from ..misc.constant import ROUTE
+from ..utils.create_file import create_folder, create_file_and_add_code_into_there
 
 
-class CrudTemplateGenerator:
+class CrudTemplateGenerator(CodeGenerator):
     def __init__(self):
-        dirname, filename = os.path.split(os.path.abspath(sys.argv[0]))
-        self.current_directory = dirname
-        self.template_root_directory = os.path.join(self.current_directory, GENERATION_FOLDER)
-        self.module_path_map = {}
-
-
-    def __create_model_folder(self, path):
-        if not os.path.exists(path):
-            os.makedirs(path)
+        super(CrudTemplateGenerator, self).__init__()
 
     def add_route(self, model_name, code):
         template_model_directory = os.path.join(self.template_root_directory, ROUTE)
 
-        self.__create_model_folder(template_model_directory)
+        create_folder(template_model_directory)
 
         path = f'{template_model_directory}/__init__.py'
-        self.add_code_to_file(path, "")
+        create_file_and_add_code_into_there(path, "")
 
         path = f'{template_model_directory}/{model_name}.py'
-        self.add_code_to_file(path, code)
+        create_file_and_add_code_into_there(path, code)
         # self.module_path_map[model_name] = {'model': path}
 
-
-
-    @staticmethod
-    def add_code_to_file(path, code):
-        with open(path, 'a') as model_file:
-            model_file.write(code)
 
