@@ -1,6 +1,10 @@
 from sqlalchemy import *
 from sqlalchemy.orm import declarative_base
 
+from fastapi_quickcrud_codegen import crud_router_builder
+from fastapi_quickcrud_codegen.db_model import DbModel
+from fastapi_quickcrud_codegen.misc.type import CrudMethods
+
 Base = declarative_base()
 metadata = Base.metadata
 
@@ -36,26 +40,14 @@ class TestingTableTwo(Base):
     bytea_value = Column(LargeBinary)
 
 
-from fastapi_quickcrud_codegen import crud_router_builder, CrudMethods
-
+model_list = [DbModel(db_model=TestingTable, prefix="/my_first_api", tags=["sample api"],
+                      exclude_columns=['bytea_value']),
+              DbModel(db_model=TestingTableTwo, prefix="/my_second_api", tags=["sample api"],
+                      exclude_columns=['bytea_value'],
+                      crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE,
+                                    CrudMethods.UPDATE_MANY, CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE])]
 crud_router_builder(
-    db_model_list=[
-        {
-            "db_model": TestingTable,
-            "prefix": "/my_first_api",
-            "tags": ["sample api"],
-            "exclude_columns": ['bytea_value']
-        },
-
-        {
-            "db_model": TestingTableTwo,
-            "prefix": "/my_second_api",
-            "tags": ["sample api"],
-            "exclude_columns": ['bytea_value'],
-            "crud_methods": [CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_ONE,
-                                 CrudMethods.UPDATE_MANY, CrudMethods.PATCH_MANY, CrudMethods.PATCH_ONE]
-        }
-    ],
+    db_model_list=model_list,
     is_async=True,
     database_url="sqlite+aiosqlite://"
 )

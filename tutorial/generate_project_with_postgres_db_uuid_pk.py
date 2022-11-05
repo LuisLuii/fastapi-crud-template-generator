@@ -1,13 +1,19 @@
-import sqlalchemy
-from fastapi import FastAPI
 from sqlalchemy import BigInteger, Boolean, CHAR, Column, Date, DateTime, Float, Integer, \
-    Numeric, SmallInteger, String, Text, Time, UniqueConstraint, LargeBinary, text, PrimaryKeyConstraint
+    Numeric, SmallInteger, String, Text, Time, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, INTERVAL, JSON, UUID
 from sqlalchemy.orm import declarative_base
 
-from fastapi_quickcrud_codegen import crud_router_builder, CrudMethods
-from fastapi_quickcrud_codegen.misc.type import SqlType
+from fastapi_quickcrud_codegen import crud_router_builder
+from fastapi_quickcrud_codegen.db_model import DbModel
+from fastapi_quickcrud_codegen.misc.type import CrudMethods
+from sqlalchemy import BigInteger, Boolean, CHAR, Column, Date, DateTime, Float, Integer, \
+    Numeric, SmallInteger, String, Text, Time, UniqueConstraint, text
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, INTERVAL, JSON, UUID
+from sqlalchemy.orm import declarative_base
 
+from fastapi_quickcrud_codegen import crud_router_builder
+from fastapi_quickcrud_codegen.db_model import DbModel
+from fastapi_quickcrud_codegen.misc.type import CrudMethods
 
 Base = declarative_base()
 metadata = Base.metadata
@@ -45,6 +51,8 @@ CREATE TABLE public.test_uuid_primary_sync (
 	CONSTRAINT test_uuid_primary_sync_primary_key_int4_value_float4_value_key UNIQUE (primary_key, int4_value, float4_value)
 );
 '''
+
+
 class TestUuidPrimarySync(Base):
     __tablename__ = 'test_uuid_primary_sync'
     __table_args__ = (
@@ -74,18 +82,13 @@ class TestUuidPrimarySync(Base):
     array_str__value = Column(ARRAY(String()))
 
 
+model_list = [DbModel(db_model=TestUuidPrimarySync, prefix="/uuid_pk_api", tags=["sample api"],
+                      exclude_columns=['bytea_value'],
+                      crud_methods=[CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_MANY,
+                                    CrudMethods.UPDATE_ONE, CrudMethods.PATCH_ONE, CrudMethods.DELETE_ONE,
+                                    CrudMethods.DELETE_MANY])]
 crud_router_builder(
-    db_model_list=[
-        {
-            "db_model": TestUuidPrimarySync,
-            "prefix": "/uuid_pk_api",
-            "tags": ["sample api"],
-            "crud_methods": [CrudMethods.FIND_ONE, CrudMethods.FIND_MANY, CrudMethods.CREATE_MANY,
-                             CrudMethods.UPDATE_ONE, CrudMethods.PATCH_ONE, CrudMethods.DELETE_ONE,
-                             CrudMethods.DELETE_MANY],
-
-        }
-    ],
+    db_model_list=model_list,
     is_async=False,
     database_url="postgresql://postgres:1234@127.0.0.1:5432/postgres"
 )

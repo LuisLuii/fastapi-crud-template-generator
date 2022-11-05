@@ -1,14 +1,22 @@
-from fastapi_quickcrud_codegen.generator.crud_template_generator import CrudTemplateGenerator
-from fastapi_quickcrud_codegen.misc.crud_model import CRUDModel
-from fastapi_quickcrud_codegen.misc.get_table_name import get_table_name
-from fastapi_quickcrud_codegen.misc.type import CrudMethods
-from fastapi_quickcrud_codegen.model.crud_builder import CrudCodeGen
-from fastapi_quickcrud_codegen.utils.is_table import is_table
-from fastapi_quickcrud_codegen.utils.sqlalchemy_to_pydantic import sqlalchemy_to_pydantic
+from typing import List
+
+from sqlalchemy.orm import decl_api
+
+from .generator.crud_template_generator import CrudTemplateGenerator
+from .misc.crud_model import CRUDModel
+from .misc.get_table_name import get_table_name
+from .misc.type import CrudMethods
+from .model.crud_builder import CrudCodeGen
+from .utils.is_table import is_table
+from .utils.sqlalchemy_to_pydantic import sqlalchemy_to_pydantic
 
 
 class DbModel:
-    def __init__(self, db_model, prefix, tags, exclude_columns=[], crud_methods=CrudMethods.get_full_crud_method()):
+    def __init__(self, db_model: decl_api.DeclarativeMeta,
+                 prefix: str,
+                 tags: List[str],
+                 exclude_columns: List[str] = [],
+                 crud_methods: List[CrudMethods] = CrudMethods.get_full_crud_method()):
         self.db_model = db_model
         self.prefix = prefix
         self.tags = tags

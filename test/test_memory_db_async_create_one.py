@@ -38,7 +38,6 @@ class SampleTable(Base):
     timetz_value = Column(Time(True))
     varchar_value = Column(String)
 
-
 class SampleTableTwo(Base):
     primary_key_of_table = "primary_key"
     unique_fields = ['primary_key']
