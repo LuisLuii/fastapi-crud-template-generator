@@ -11,7 +11,6 @@ from typing import (Type,
                     NewType,
                     Union)
 
-import pydantic
 from pydantic import (BaseModel)
 from sqlalchemy import UniqueConstraint, Table, Column
 from sqlalchemy.orm import declarative_base
