@@ -8,7 +8,7 @@ from fastapi_quickcrud_codegen.utils.sqlalchemy_to_pydantic import sqlalchemy_to
 
 
 class DbModel:
-    def __init__(self, db_model, prefix, tags, exclude_columns, crud_methods=CrudMethods.get_full_crud_method()):
+    def __init__(self, db_model, prefix, tags, exclude_columns=[], crud_methods=CrudMethods.get_full_crud_method()):
         self.db_model = db_model
         self.prefix = prefix
         self.tags = tags
@@ -57,52 +57,62 @@ class DbModel:
         # router generation
         def find_one_api():
             print("\t\tGenerating find one API")
-            crud_code_generator.build_find_one_route(is_async=is_async, path=path, file_name=model_name, model_name=table_name)
+            crud_code_generator.build_find_one_route(is_async=is_async, path=path, file_name=model_name,
+                                                     model_name=table_name)
             print("\t\tfind one API generate successfully")
 
         def find_many_api():
             print("\t\tGenerating find many API")
-            crud_code_generator.build_find_many_route(is_async=is_async, path="", file_name=model_name, model_name=table_name)
+            crud_code_generator.build_find_many_route(is_async=is_async, path="", file_name=model_name,
+                                                      model_name=table_name)
             print("\t\tfind many API generate successfully")
 
         def create_one_api():
             print("\t\tGenerating insert one API")
-            crud_code_generator.build_insert_one_route(is_async=is_async, path="", file_name=model_name, model_name=table_name)
+            crud_code_generator.build_insert_one_route(is_async=is_async, path="", file_name=model_name,
+                                                       model_name=table_name)
             print("\t\tinsert one API generate successfully")
 
         def create_many_api():
             print("\t\tGenerating insert many API")
-            crud_code_generator.build_insert_many_route(is_async=is_async, path="", file_name=model_name, model_name=table_name)
+            crud_code_generator.build_insert_many_route(is_async=is_async, path="", file_name=model_name,
+                                                        model_name=table_name)
             print("\t\tinsert many API generate successfully")
 
         def update_one_api():
             print("\t\tGenerating update one API")
-            crud_code_generator.build_update_one_route(is_async=is_async, path=path, file_name=model_name, model_name=table_name)
+            crud_code_generator.build_update_one_route(is_async=is_async, path=path, file_name=model_name,
+                                                       model_name=table_name)
             print("\t\tupdate one API generate successfully")
 
         def update_many_api():
             print("\t\tGenerating update many API")
-            crud_code_generator.build_update_many_route(is_async=is_async, path="", file_name=model_name, model_name=table_name)
+            crud_code_generator.build_update_many_route(is_async=is_async, path="", file_name=model_name,
+                                                        model_name=table_name)
             print("\t\tupdate many API generate successfully")
 
         def patch_one_api():
             print("\t\tGenerating patch one API")
-            crud_code_generator.build_patch_one_route(is_async=is_async, path=path, file_name=model_name, model_name=table_name)
+            crud_code_generator.build_patch_one_route(is_async=is_async, path=path, file_name=model_name,
+                                                      model_name=table_name)
             print("\t\tpatch one API generate successfully")
 
         def patch_many_api():
             print("\t\tGenerating patch many API")
-            crud_code_generator.build_patch_many_route(is_async=is_async, path="", file_name=model_name, model_name=table_name)
+            crud_code_generator.build_patch_many_route(is_async=is_async, path="", file_name=model_name,
+                                                       model_name=table_name)
             print("\t\tpatch many API generate successfully")
 
         def delete_one_api():
             print("\t\tGenerating delete one API")
-            crud_code_generator.build_delete_one_route(is_async=is_async, path=path, file_name=model_name, model_name=table_name)
+            crud_code_generator.build_delete_one_route(is_async=is_async, path=path, file_name=model_name,
+                                                       model_name=table_name)
             print("\t\tdelete one API generate successfully")
 
         def delete_many_api():
             print("\t\tGenerating delete many API")
-            crud_code_generator.build_delete_many_route(is_async=is_async, path="", file_name=model_name, model_name=table_name)
+            crud_code_generator.build_delete_many_route(is_async=is_async, path="", file_name=model_name,
+                                                        model_name=table_name)
             print("\t\tdelete many API generate successfully")
 
         api_register = {

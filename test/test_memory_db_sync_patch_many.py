@@ -63,7 +63,7 @@ class Testing(unittest.TestCase):
         model_list = [DbModel(db_model=SampleTable, prefix="/my_first_api", tags=["sample api"],
                               exclude_columns=['bytea_value'], crud_methods={CrudMethods.PATCH_MANY}),
                       DbModel(db_model=SampleTableTwo, prefix="/my_second_api", tags=["sample api"],
-                              exclude_columns=['bytea_value'], crud_methods=[CrudMethods.PATCH_MANY]), ]
+                              exclude_columns=['bytea_value'], crud_methods=[CrudMethods.PATCH_MANY])]
 
         crud_router_builder(
             db_model_list=model_list,

@@ -5,7 +5,9 @@ from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import *
 from sqlalchemy.orm import declarative_base
 
-from src.fastapi_quickcrud_codegen import crud_router_builder, CrudMethods
+from fastapi_quickcrud_codegen.db_model import DbModel
+from fastapi_quickcrud_codegen.misc.type import CrudMethods
+from src.fastapi_quickcrud_codegen import crud_router_builder
 from test.misc.common import *
 
 Base = declarative_base()
@@ -66,25 +68,14 @@ class Testing(unittest.TestCase):
         else:
             database_url = "postgresql://postgres:1234@127.0.0.1:5432/postgres"
 
+        
+        model_list = [DbModel(db_model=SampleTable, prefix="/my_first_api", tags=["sample api"],
+                              exclude_columns=['bytea_value'], crud_methods=[CrudMethods.FIND_ONE]),
+                      DbModel(db_model=SampleTableTwo, prefix="/my_second_api", tags=["sample api"],
+                              exclude_columns=['bytea_value'], crud_methods=[CrudMethods.FIND_ONE])]
+
         crud_router_builder(
-            db_model_list=[
-                {
-                    "db_model": SampleTable,
-                    "prefix": "/my_first_api",
-                    "tags": ["sample api"],
-                    "exclude_columns": ['bytea_value'],
-                    "crud_methods": [CrudMethods.FIND_ONE],
-
-                },
-                {
-                    "db_model": SampleTableTwo,
-                    "prefix": "/my_second_api",
-                    "tags": ["sample api"],
-                    "exclude_columns": ['bytea_value'],
-                    "crud_methods": [CrudMethods.FIND_ONE],
-
-                }
-            ],
+            db_model_list=model_list,
             is_async=is_async,
             database_url=database_url
         )

@@ -5,7 +5,9 @@ from sqlalchemy import *
 from sqlalchemy.dialects.sqlite import *
 from sqlalchemy.orm import declarative_base
 
-from src.fastapi_quickcrud_codegen import crud_router_builder, CrudMethods
+from src.fastapi_quickcrud_codegen import crud_router_builder
+from fastapi_quickcrud_codegen.db_model import DbModel
+from fastapi_quickcrud_codegen.misc.type import CrudMethods
 from test.misc.common import *
 from sqlalchemy.dialects.postgresql import ARRAY, JSONB, INTERVAL, JSON, UUID
 
@@ -51,15 +53,10 @@ class Testing(unittest.TestCase):
         else:
             database_url="postgresql://postgres:1234@127.0.0.1:5432/postgres"
 
+        model_list = [DbModel(db_model=TestUuidPrimary, prefix="/uuid_pk_api", tags=["sample api"], crud_methods=[])]
+
         crud_router_builder(
-            db_model_list=[
-                {
-                    "db_model": TestUuidPrimary,
-                    "prefix": "/uuid_pk_api",
-                    "tags": ["sample api"],
-                    "crud_methods": []
-                }
-            ],
+            db_model_list=model_list,
             is_async=is_async,
             database_url=database_url
         )

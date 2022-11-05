@@ -60,7 +60,6 @@ class Testing(unittest.TestCase):
         else:
             database_url = "sqlite://"
 
-        
         model_list = [DbModel(db_model=SampleTable, prefix="/my_first_api", tags=["sample api"],
                               exclude_columns=['bytea_value'], crud_methods=[CrudMethods.DELETE_MANY]),
                       DbModel(db_model=SampleTableTwo, prefix="/my_second_api", tags=["sample api"],
@@ -99,7 +98,7 @@ uvicorn.run(app, host="0.0.0.0", port=8000)"""
 
         # common
         #   sql_session
-        common_sql_session_expected='''import asyncio
+        common_sql_session_expected = '''import asyncio
 from typing import Generator
 
 from sqlalchemy import create_engine
