@@ -1,17 +1,13 @@
 import os
-import sys
 
-from ..misc.constant import GENERATION_FOLDER, ROUTE
+from .code_generator import CodeGenerator
+from ..misc.constant import ROUTE
 from ..utils.create_file import create_folder, create_file_and_add_code_into_there
 
 
-class CrudTemplateGenerator:
+class CrudTemplateGenerator(CodeGenerator):
     def __init__(self):
-        dirname, _ = os.path.split(os.path.abspath(sys.argv[0]))
-        self.current_directory = dirname
-        self.template_root_directory = os.path.join(self.current_directory, GENERATION_FOLDER)
-        self.module_path_map = {}
-
+        super(CrudTemplateGenerator, self).__init__()
 
     def add_route(self, model_name, code):
         template_model_directory = os.path.join(self.template_root_directory, ROUTE)
