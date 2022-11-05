@@ -1,7 +1,7 @@
 import os
 import sys
 
-from fastapi_quickcrud_codegen.misc.constant import GENERATION_FOLDER
+from ..misc.constant import GENERATION_FOLDER
 
 
 class CodeGenerator:
