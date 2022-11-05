@@ -7,15 +7,9 @@ from pydantic import \
     BaseModel
 
 from .db_model import DbModel
-from .utils.sqlalchemy_to_pydantic import sqlalchemy_to_pydantic
 from .generator.common_module_template_generator import CommonModuleTemplateGenerator
-from .generator.crud_template_generator import CrudTemplateGenerator
-from .misc.crud_model import CRUDModel
-from .misc.get_table_name import get_table_name
-from .misc.type import CrudMethods, SqlType
-from .utils.is_table import is_table
+from .misc.type import SqlType
 from .model.common_builder import CommonCodeGen
-from .model.crud_builder import CrudCodeGen
 
 CRUDModelType = TypeVar("CRUDModelType", bound=BaseModel)
 CompulsoryQueryModelType = TypeVar("CompulsoryQueryModelType", bound=BaseModel)
@@ -27,7 +21,7 @@ def crud_router_builder(
         db_model_list: List[DbModel],
         is_async: Optional[bool],
         database_url: Optional[str],
-) :
+):
     """
         Generate project from sqlalchemy model
 
@@ -219,7 +213,8 @@ def crud_router_builder(
     # sql session
     print("\t\tStart generate session module")
     common_db_session_code_builder = CommonCodeGen()
-    common_db_session_code_builder.build_db_session(model_list=model_list, is_async=is_async, database_url=database_url, is_in_memory_db = is_in_memory_db)
+    common_db_session_code_builder.build_db_session(model_list=model_list, is_async=is_async, database_url=database_url,
+                                                    is_in_memory_db=is_in_memory_db)
     common_db_session_code_builder.gen(common_module_template_generator.add_memory_sql_session)
 
     # app py
@@ -227,6 +222,5 @@ def crud_router_builder(
     common_app_code_builder = CommonCodeGen()
     common_app_code_builder.build_app(model_list=model_list)
     common_app_code_builder.gen(common_module_template_generator.add_app)
-
 
     print("\nProject generation completed successfully")
