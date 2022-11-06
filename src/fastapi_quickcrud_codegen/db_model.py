@@ -5,7 +5,7 @@ from sqlalchemy.orm import decl_api
 from .generator.crud_template_generator import CrudTemplateGenerator
 from .misc.crud_model import CRUDModel
 from .misc.get_table_name import get_table_name
-from .misc.type import CrudMethods
+from .misc.type import CrudMethods, SqlType
 from .model.crud_builder import CrudCodeGen
 from .utils.is_table import is_table
 from .utils.sqlalchemy_to_pydantic import sqlalchemy_to_pydantic
@@ -31,10 +31,10 @@ class DbModel:
         self.crud_methods = crud_methods
         self.model_list = []
 
-    def get_model_list(self):
+    def get_model_list(self) -> List[dict]:
         return self.model_list
 
-    def gen(self, is_async, sql_type):
+    def gen(self, is_async: bool, sql_type: SqlType) -> None:
 
         print(f"\n\t\tGenerating db_model:{self.db_model} prefix:{self.prefix} tags:{self.tags}")
         this_modeL_is_table = is_table(self.db_model)

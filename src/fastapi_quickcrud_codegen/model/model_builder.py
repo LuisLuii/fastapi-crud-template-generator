@@ -1,15 +1,16 @@
 import inspect
 from pathlib import Path
-from typing import ClassVar
+from typing import ClassVar, List, Tuple
 
 import jinja2
+from sqlalchemy.orm import decl_api
 
 from ..generator.model_template_generator import ModelTemplateGenerator
 from ..utils.import_builder import ImportBuilder
 
 
 class ModelCodeGen():
-    def __init__(self, file_name, db_type):
+    def __init__(self, file_name: str, db_type: str):
         self.file_name = file_name
         self.code = ""
         self.model_code = ""
@@ -36,13 +37,13 @@ class ModelCodeGen():
 
     def gen(self):
         return self.model_template_gen.add_model(self.file_name,
-                                                 self.import_helper.to_code() + self.constant +"\n"+ self.model_code + "\n\n" + self.code)
+                                                 self.import_helper.to_code() + self.constant + "\n" + self.model_code + "\n\n" + self.code)
 
-    def gen_model(self, model):
+    def gen_model(self, model: decl_api.DeclarativeMeta):
         self.model_code = inspect.getsource(model)
 
-    def build_base_model(self, *, class_name, fields, description=None, orm_mode=True,
-                         value_of_list_to_str_columns=None, filter_none=None):
+    def build_base_model(self, *, class_name: str, fields: List[Tuple], description: str = None, orm_mode: bool = True,
+                         value_of_list_to_str_columns: List[str] = None, filter_none: bool = None):
         TEMPLATE_FILE_PATH: ClassVar[str] = 'pydantic/BaseModel.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -56,8 +57,9 @@ class ModelCodeGen():
              "value_of_list_to_str_columns": value_of_list_to_str_columns, "filter_none": filter_none})
         self.code += code + "\n\n\n"
 
-    def build_base_model_paginate(self, *, class_name, field, description=None, base_model="BaseModel",
-                                  value_of_list_to_str_columns=None, filter_none=None):
+    def build_base_model_paginate(self, *, class_name: str, field: List[Tuple], description: str = None,
+                                  base_model: str = "BaseModel",
+                                  value_of_list_to_str_columns: List[str] = None, filter_none: bool = None):
         TEMPLATE_FILE_PATH: ClassVar[str] = 'pydantic/base_model_paginate.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -71,8 +73,9 @@ class ModelCodeGen():
              "value_of_list_to_str_columns": value_of_list_to_str_columns, "filter_none": filter_none})
         self.code += code + "\n\n\n"
 
-    def build_base_model_root(self, *, class_name, field, description=None, base_model="BaseModel",
-                              value_of_list_to_str_columns=None, filter_none=None):
+    def build_base_model_root(self, *, class_name: str, field: List[Tuple], description: str = None,
+                              base_model: str = "BaseModel",
+                              value_of_list_to_str_columns: List[str] = None, filter_none: bool = None):
         TEMPLATE_FILE_PATH: ClassVar[str] = 'pydantic/BaseModel.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -86,8 +89,9 @@ class ModelCodeGen():
              "value_of_list_to_str_columns": value_of_list_to_str_columns, "filter_none": filter_none})
         self.code += code + "\n\n\n"
 
-    def build_dataclass(self, *, class_name, fields, description=None, value_of_list_to_str_columns=None,
-                        filter_none=None):
+    def build_dataclass(self, *, class_name: str, fields: List[str], description: str = None,
+                        value_of_list_to_str_columns: List[str] = None,
+                        filter_none: bool = None):
         TEMPLATE_FILE_PATH: ClassVar[str] = 'pydantic/BaseModel.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -101,7 +105,7 @@ class ModelCodeGen():
                                 "filter_none": filter_none})
         self.code += code + "\n\n\n"
 
-    def build_constant(self, *, constants):
+    def build_constant(self, *, constants: List[Tuple]):
         TEMPLATE_FILE_PATH: ClassVar[str] = ''
         template_file_path = Path(TEMPLATE_FILE_PATH)
         TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'

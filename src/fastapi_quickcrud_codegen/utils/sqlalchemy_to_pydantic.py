@@ -12,10 +12,7 @@ def sqlalchemy_to_pydantic(
         sql_type: str = SqlType.postgresql,
         exclude_columns: List[str] = None,
         constraints=None,
-        # foreign_include: Optional[any] = None,
         ) -> CRUDModel:
-    # if foreign_include is None:
-    #     foreign_include = {}
     request_response_mode_set = {}
     model_builder = ApiParameterSchemaBuilder(db_model,
                                               constraints=constraints,
