@@ -6,7 +6,7 @@ import jinja2
 from ..utils.import_builder import ImportBuilder
 
 
-class CommonCodeGen():
+class CommonCodeGen:
     def __init__(self):
         self.code = ""
         self.model_code = ""
@@ -17,7 +17,7 @@ class CommonCodeGen():
     def gen(self, template_generator_method):
         template_generator_method(self.code)
 
-    def build_type(self):
+    def build_type(self) -> None:
         TEMPLATE_FILE_PATH: ClassVar[str] = 'common/typing.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -29,7 +29,7 @@ class CommonCodeGen():
         code = template.render()
         self.code += code
 
-    def build_utils(self):
+    def build_utils(self) -> None:
         TEMPLATE_FILE_PATH: ClassVar[str] = 'common/utils.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -48,7 +48,7 @@ class CommonCodeGen():
 
         self.code += code
 
-    def build_http_exception(self):
+    def build_http_exception(self) -> None:
         TEMPLATE_FILE_PATH: ClassVar[str] = 'common/http_exception.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -60,7 +60,7 @@ class CommonCodeGen():
         code = template.render()
         self.code += code
 
-    def build_db(self):
+    def build_db(self) -> None:
         TEMPLATE_FILE_PATH: ClassVar[str] = 'common/db.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -72,7 +72,7 @@ class CommonCodeGen():
         code = template.render()
         self.code += code
 
-    def build_db_session(self, model_list: dict, is_async: bool, database_url: str, is_in_memory_db: bool):
+    def build_db_session(self, model_list: dict, is_async: bool, database_url: str, is_in_memory_db: bool) -> None:
         TEMPLATE_FILE_PATH: ClassVar[str] = 'common/memory_sql_session.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -85,7 +85,7 @@ class CommonCodeGen():
                                 "is_in_memory_db": is_in_memory_db})
         self.code += code
 
-    def build_app(self, model_list):
+    def build_app(self, model_list) -> None:
         TEMPLATE_FILE_PATH: ClassVar[str] = 'common/app.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 

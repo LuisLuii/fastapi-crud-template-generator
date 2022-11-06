@@ -1,7 +1,7 @@
 from typing import Union
 
 
-class ImportBuilder():
+class ImportBuilder:
     def __init__(self):
         self.import_list = {}
 

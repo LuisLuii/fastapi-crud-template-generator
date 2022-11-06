@@ -226,7 +226,7 @@ class ApiParameterSchemaBuilder:
         return fields
 
     @staticmethod
-    def _get_many_order_by_columns_description_builder(all_columns, primary_name):
+    def _get_many_order_by_columns_description_builder(all_columns: str, primary_name: str)-> str:
         return f'''<br> support column: 
             <br> {all_columns} <hr><br> support ordering:  
             <br> {list(map(str, Ordering))} 
@@ -238,7 +238,7 @@ class ApiParameterSchemaBuilder:
             <br/>&emsp;&emsp;{primary_name} (default sort by ASC)'''
 
     @staticmethod
-    def _extra_default_value(column):
+    def _extra_default_value(column: Column) -> str:
         if not column.nullable:
             if column.default is not None:
                 default = column.default.arg

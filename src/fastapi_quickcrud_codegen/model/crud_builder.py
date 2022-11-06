@@ -19,10 +19,10 @@ class CrudCodeGen():
         self.import_helper.add(import_=set(["find_query_builder"]), from_="fastapi_quick_crud_template.common.utils")
         self.import_helper.add(import_=set(["db_session"]), from_="fastapi_quick_crud_template.common.sql_session")
 
-    def gen(self, *, template_generator: CrudTemplateGenerator, file_name: str):
+    def gen(self, *, template_generator: CrudTemplateGenerator, file_name: str) -> None:
         template_generator.add_route(file_name, self.import_helper.to_code() + self.code)
 
-    def build_find_one_route(self, *, is_async: bool, path: str, file_name, model_name):
+    def build_find_one_route(self, *, is_async: bool, path: str, file_name: str, model_name: str) -> None:
         TEMPLATE_FILE_PATH: ClassVar[str] = 'route/find_one.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -41,7 +41,7 @@ class CrudCodeGen():
         ), from_=f"fastapi_quick_crud_template.model.{file_name}")
         self.code += code + "\n\n"
 
-    def build_find_many_route(self, *, is_async: bool, path: str, file_name, model_name):
+    def build_find_many_route(self, *, is_async: bool, path: str, file_name: str, model_name: str) -> None:
         TEMPLATE_FILE_PATH: ClassVar[str] = 'route/find_many.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -66,7 +66,7 @@ class CrudCodeGen():
 
         self.code += code + "\n\n"
 
-    def build_insert_one_route(self, *, is_async: bool, path: str, file_name, model_name):
+    def build_insert_one_route(self, *, is_async: bool, path: str, file_name: str, model_name: str) -> None:
         TEMPLATE_FILE_PATH: ClassVar[str] = 'route/insert_one.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -91,7 +91,7 @@ class CrudCodeGen():
         ), from_=f"fastapi_quick_crud_template.model.{file_name}")
         self.code += code + "\n\n"
 
-    def build_insert_many_route(self, *, is_async: bool, path: str, file_name, model_name):
+    def build_insert_many_route(self, *, is_async: bool, path: str, file_name: str, model_name: str) -> None:
         TEMPLATE_FILE_PATH: ClassVar[str] = 'route/insert_many.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -116,7 +116,7 @@ class CrudCodeGen():
         ), from_=f"fastapi_quick_crud_template.model.{file_name}")
         self.code += code + "\n\n"
 
-    def build_update_one_route(self, *, is_async: bool, path: str, file_name, model_name):
+    def build_update_one_route(self, *, is_async: bool, path: str, file_name: str, model_name: str) -> None:
         TEMPLATE_FILE_PATH: ClassVar[str] = 'route/update_one.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -143,7 +143,7 @@ class CrudCodeGen():
         ), from_=f"fastapi_quick_crud_template.model.{file_name}")
         self.code += code + "\n\n"
 
-    def build_update_many_route(self, *, is_async: bool, path: str, file_name, model_name):
+    def build_update_many_route(self, *, is_async: bool, path: str, file_name: str, model_name: str):
         TEMPLATE_FILE_PATH: ClassVar[str] = 'route/update_many.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -169,7 +169,7 @@ class CrudCodeGen():
         ), from_=f"fastapi_quick_crud_template.model.{file_name}")
         self.code += code + "\n\n"
 
-    def build_patch_one_route(self, *, is_async: bool, path: str, file_name, model_name):
+    def build_patch_one_route(self, *, is_async: bool, path: str, file_name: str, model_name: str):
         TEMPLATE_FILE_PATH: ClassVar[str] = 'route/patch_one.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -191,7 +191,7 @@ class CrudCodeGen():
         ), from_=f"fastapi_quick_crud_template.model.{file_name}")
         self.code += code + "\n\n"
 
-    def build_patch_many_route(self, *, is_async: bool, path: str, file_name, model_name):
+    def build_patch_many_route(self, *, is_async: bool, path: str, file_name: str, model_name: str):
         TEMPLATE_FILE_PATH: ClassVar[str] = 'route/patch_many.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -212,8 +212,7 @@ class CrudCodeGen():
         ), from_=f"fastapi_quick_crud_template.model.{file_name}")
         self.code += code + "\n\n"
 
-
-    def build_delete_one_route(self, *, is_async: bool, path: str, file_name, model_name):
+    def build_delete_one_route(self, *, is_async: bool, path: str, file_name: str, model_name: str):
         TEMPLATE_FILE_PATH: ClassVar[str] = 'route/delete_one.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -233,7 +232,7 @@ class CrudCodeGen():
         ), from_=f"fastapi_quick_crud_template.model.{file_name}")
         self.code += code + "\n\n"
 
-    def build_delete_many_route(self, *, is_async: bool, path: str, file_name, model_name):
+    def build_delete_many_route(self, *, is_async: bool, path: str, file_name: str, model_name: str):
         TEMPLATE_FILE_PATH: ClassVar[str] = 'route/delete_many.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 

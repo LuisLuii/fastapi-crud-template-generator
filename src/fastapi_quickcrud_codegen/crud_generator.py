@@ -32,7 +32,13 @@ def crud_router_builder(
         :param db_model_list: model list of dict for code generate
 
         Raises:
-            ValueError: TODO
+            RuntimeError: only support DeclarativeMeta Class
+            SchemaException:
+                multiple primary key / or composite not supported
+                Only support one unique constraint/ Use unique constraint and composite unique constraint at same time
+            ColumnTypeNotSupportedException:
+                The type of db column is not supported
+
         Examples:
             >>> crud_router_builder(db_model_list=[
                         {
