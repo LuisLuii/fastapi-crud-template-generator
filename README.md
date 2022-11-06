@@ -57,7 +57,7 @@ class SampleTableTwo(Base):
     bytea_value = Column(LargeBinary)
 ```
 
-### Use `crud_router_builder()` to generate the project from the executing folder (using in-memory sqlite db here)
+### Use `crud_router_builder()` to generate the project to the executing folder (using in-memory sqlite db here)
 
 ```python
 from fastapi_quickcrud_codegen.db_model import DbModel
