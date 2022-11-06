@@ -45,7 +45,7 @@ if __name__ == '__main__':
             "Programming Language :: Python",
             "Topic :: Software Development :: Code Generators",
             "Typing :: Typed",
-            "Development Status :: 4 - Beta",
+            "Development Status ::  5 - Production/Stable",
             "Environment :: Web Environment",
             "Framework :: FastAPI",
             "License :: OSI Approved :: MIT License",
