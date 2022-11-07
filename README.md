@@ -15,6 +15,14 @@ A code generator that help you to establish a fastapi project with CRUD router f
 >- Delete one
 >- Delete many
 
+## Features
+* **CRUD router automatically generated** - In generated project template, it support CRUD router code generation from Sqlalchemy declarative class definitions
+* **API validation Model generation** - help you to generate the model that used for Fastapi router
+* **Customize / Add your own API** - Based on the generated project template, you can add your own code such as your business logic or api router easelly.
+* **Support SQLAlchemy 1.4** - Allows you build a fully asynchronous or synchronous python service
+* **Support Pagination** - Get many API support order by offset limit field in API
+* **Flexible API request** - In generated project, UPDATE ONE/MANY FIND ONE/MANY PATCH ONE/MANY DELETE ONE/MANY supports Path Parameters (primary key) and Query Parameters as a command to the resource to filter and limit the scope of the scope of data in request.
+
 ## Quick Start with in-memory DB (or see the other ([example](https://github.com/LuisLuii/fastapi-crud-project-generator/tree/feature/fix_code_style/tutorial))
 
 
