@@ -78,6 +78,7 @@ crud_router_builder(
 )
 
 ```
+<img width="1292" alt="image" src="https://user-images.githubusercontent.com/31765235/200206184-a16a8622-7db6-4c62-bb56-99cdee126493.png">
 
 
 **crud_router_builder args**
