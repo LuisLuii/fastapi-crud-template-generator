@@ -19,8 +19,8 @@ A code generator that help you to establish a fastapi project with CRUD router f
 ![demo](https://user-images.githubusercontent.com/31765235/200220027-3b6cbadb-a314-4d23-8ac2-76b7457e583d.gif)
 
 ## Features
-* **CRUD router automatically generated** - In generated project template, it support CRUD router code generation from Sqlalchemy declarative class definitions
-* **API validation Model generation** - help you to generate the model that used for Fastapi router
+* **CRUD router code generation** - In generated project template, it support CRUD router code generation from Sqlalchemy declarative class definitions
+* **API validation Model code generation** - Help you to generate the model that used for Fastapi router
 * **Customize / Add your own API** - Based on the generated project template, you can add your own code such as your business logic or api router easelly.
 * **Support SQLAlchemy 1.4** - Allows you build a fully asynchronous or synchronous python service
 * **Support Pagination** - Get many API support order by offset limit field in API
