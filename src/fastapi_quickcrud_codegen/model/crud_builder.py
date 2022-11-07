@@ -16,8 +16,8 @@ class CrudCodeGen():
         self.import_helper.add(import_=set(["and_", "select"]), from_="sqlalchemy")
         self.import_helper.add(import_=set(["Depends", "Response", "APIRouter"]), from_="fastapi")
         self.import_helper.add(import_=set(["BinaryExpression"]), from_="sqlalchemy.sql.elements")
-        self.import_helper.add(import_=set(["find_query_builder"]), from_="fastapi_quick_crud_template.common.utils")
-        self.import_helper.add(import_=set(["db_session"]), from_="fastapi_quick_crud_template.common.sql_session")
+        self.import_helper.add(import_=set(["find_query_builder"]), from_="common.utils")
+        self.import_helper.add(import_=set(["db_session"]), from_="common.sql_session")
 
     def gen(self, *, template_generator: CrudTemplateGenerator, file_name: str) -> None:
         template_generator.add_route(file_name, self.import_helper.to_code() + self.code)
@@ -38,7 +38,7 @@ class CrudCodeGen():
             f"{model_name}FindOneRequestBodyModel",
             f"{model_name}PrimaryKeyModel",
             f"{model_name}"]
-        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        ), from_=f"model.{file_name}")
         self.code += code + "\n\n"
 
     def build_find_many_route(self, *, is_async: bool, path: str, file_name: str, model_name: str) -> None:
@@ -58,11 +58,11 @@ class CrudCodeGen():
             f"{model_name}FindManyRequestBodyModel",
             f"{model_name}FindManyItemListResponseModel",
             f"{model_name}"]
-        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        ), from_=f"model.{file_name}")
         self.import_helper.add(import_="parse_obj_as", from_="pydantic")
         self.import_helper.add(import_=set(["UnknownOrderType", "UnknownColumn"]),
-                               from_="fastapi_quick_crud_template.common.http_exception")
-        self.import_helper.add(import_=set(["Ordering"]), from_="fastapi_quick_crud_template.common.typing")
+                               from_="common.http_exception")
+        self.import_helper.add(import_=set(["Ordering"]), from_="common.typing")
 
         self.code += code + "\n\n"
 
@@ -79,16 +79,16 @@ class CrudCodeGen():
             {"model_name": model_name, "path": path, "is_async": is_async})
         self.import_helper.add(import_="IntegrityError", from_="sqlalchemy.exc")
         self.import_helper.add(import_="parse_obj_as", from_="pydantic")
-        self.import_helper.add(import_="clean_input_fields", from_="fastapi_quick_crud_template.common.utils")
+        self.import_helper.add(import_="clean_input_fields", from_="common.utils")
         self.import_helper.add(import_=set(["UnknownOrderType", "UnknownColumn"]),
-                               from_="fastapi_quick_crud_template.common.http_exception")
-        self.import_helper.add(import_=set(["Ordering"]), from_="fastapi_quick_crud_template.common.typing")
+                               from_="common.http_exception")
+        self.import_helper.add(import_=set(["Ordering"]), from_="common.typing")
 
         self.import_helper.add(import_=set([
             f"{model_name}CreateOneResponseModel",
             f"{model_name}CreateOneRequestBodyModel",
             f"{model_name}"]
-        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        ), from_=f"model.{file_name}")
         self.code += code + "\n\n"
 
     def build_insert_many_route(self, *, is_async: bool, path: str, file_name: str, model_name: str) -> None:
@@ -104,16 +104,16 @@ class CrudCodeGen():
             {"model_name": model_name, "path": path, "is_async": is_async})
         self.import_helper.add(import_="IntegrityError", from_="sqlalchemy.exc")
         self.import_helper.add(import_="parse_obj_as", from_="pydantic")
-        self.import_helper.add(import_="clean_input_fields", from_="fastapi_quick_crud_template.common.utils")
+        self.import_helper.add(import_="clean_input_fields", from_="common.utils")
         self.import_helper.add(import_=set(["UnknownOrderType", "UnknownColumn"]),
-                               from_="fastapi_quick_crud_template.common.http_exception")
-        self.import_helper.add(import_=set(["Ordering"]), from_="fastapi_quick_crud_template.common.typing")
+                               from_="common.http_exception")
+        self.import_helper.add(import_=set(["Ordering"]), from_="common.typing")
 
         self.import_helper.add(import_=set([
             f"{model_name}CreateManyItemListResponseModel",
             f"{model_name}CreateManyItemListRequestModel",
             f"{model_name}"]
-        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        ), from_=f"model.{file_name}")
         self.code += code + "\n\n"
 
     def build_update_one_route(self, *, is_async: bool, path: str, file_name: str, model_name: str) -> None:
@@ -129,10 +129,10 @@ class CrudCodeGen():
             {"model_name": model_name, "path": path, "is_async": is_async})
         self.import_helper.add(import_="IntegrityError", from_="sqlalchemy.exc")
         self.import_helper.add(import_="parse_obj_as", from_="pydantic")
-        self.import_helper.add(import_="clean_input_fields", from_="fastapi_quick_crud_template.common.utils")
+        self.import_helper.add(import_="clean_input_fields", from_="common.utils")
         self.import_helper.add(import_=set(["UnknownOrderType", "UnknownColumn"]),
-                               from_="fastapi_quick_crud_template.common.http_exception")
-        self.import_helper.add(import_=set(["Ordering"]), from_="fastapi_quick_crud_template.common.typing")
+                               from_="common.http_exception")
+        self.import_helper.add(import_=set(["Ordering"]), from_="common.typing")
 
         self.import_helper.add(import_=set([
             f"{model_name}UpdateOneRequestBodyModel",
@@ -140,7 +140,7 @@ class CrudCodeGen():
             f"{model_name}UpdateOneResponseModel",
             f"{model_name}PrimaryKeyModel",
             f"{model_name}"]
-        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        ), from_=f"model.{file_name}")
         self.code += code + "\n\n"
 
     def build_update_many_route(self, *, is_async: bool, path: str, file_name: str, model_name: str):
@@ -156,17 +156,17 @@ class CrudCodeGen():
             {"model_name": model_name, "path": path, "is_async": is_async})
         self.import_helper.add(import_="IntegrityError", from_="sqlalchemy.exc")
         self.import_helper.add(import_="parse_obj_as", from_="pydantic")
-        self.import_helper.add(import_="clean_input_fields", from_="fastapi_quick_crud_template.common.utils")
+        self.import_helper.add(import_="clean_input_fields", from_="common.utils")
         self.import_helper.add(import_=set(["UnknownOrderType", "UnknownColumn"]),
-                               from_="fastapi_quick_crud_template.common.http_exception")
-        self.import_helper.add(import_=set(["Ordering"]), from_="fastapi_quick_crud_template.common.typing")
+                               from_="common.http_exception")
+        self.import_helper.add(import_=set(["Ordering"]), from_="common.typing")
 
         self.import_helper.add(import_=set([
             f"{model_name}UpdateManyRequestQueryModel",
             f"{model_name}UpdateManyRequestBodyModel",
             f"{model_name}UpdateManyItemListResponseModel",
             f"{model_name}"]
-        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        ), from_=f"model.{file_name}")
         self.code += code + "\n\n"
 
     def build_patch_one_route(self, *, is_async: bool, path: str, file_name: str, model_name: str):
@@ -188,7 +188,7 @@ class CrudCodeGen():
             f"{model_name}PatchOneResponseModel",
             f"{model_name}PrimaryKeyModel",
             f"{model_name}"]
-        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        ), from_=f"model.{file_name}")
         self.code += code + "\n\n"
 
     def build_patch_many_route(self, *, is_async: bool, path: str, file_name: str, model_name: str):
@@ -209,7 +209,7 @@ class CrudCodeGen():
             f"{model_name}PatchManyRequestBodyModel",
             f"{model_name}PatchManyItemListResponseModel",
             f"{model_name}"]
-        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        ), from_=f"model.{file_name}")
         self.code += code + "\n\n"
 
     def build_delete_one_route(self, *, is_async: bool, path: str, file_name: str, model_name: str):
@@ -229,7 +229,7 @@ class CrudCodeGen():
             f"{model_name}DeleteOneResponseModel",
             f"{model_name}PrimaryKeyModel",
             f"{model_name}"]
-        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        ), from_=f"model.{file_name}")
         self.code += code + "\n\n"
 
     def build_delete_many_route(self, *, is_async: bool, path: str, file_name: str, model_name: str):
@@ -248,5 +248,5 @@ class CrudCodeGen():
             f"{model_name}DeleteManyRequestQueryModel",
             f"{model_name}DeleteManyItemListResponseModel",
             f"{model_name}"]
-        ), from_=f"fastapi_quick_crud_template.model.{file_name}")
+        ), from_=f"model.{file_name}")
         self.code += code + "\n\n"

@@ -2,7 +2,7 @@ import uvicorn
 from fastapi import FastAPI
 
 {% for model in model_list -%}
-  from fastapi_quick_crud_template.route.{{ model["model_name"] }} import api as {{ model["model_name"] }}_router
+  from route.{{ model["model_name"] }} import api as {{ model["model_name"] }}_router
 {% endfor -%}
 app = FastAPI()
 
