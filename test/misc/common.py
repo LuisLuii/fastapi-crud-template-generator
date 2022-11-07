@@ -252,8 +252,8 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql.elements import BinaryExpression
 from pydantic import BaseModel
 
-from fastapi_quick_crud_template.common.http_exception import QueryOperatorNotFound, UnknownColumn
-from fastapi_quick_crud_template.common.typing import ExtraFieldType, ExtraFieldTypePrefix, process_map, process_type_map
+from common.http_exception import QueryOperatorNotFound, UnknownColumn
+from common.typing import ExtraFieldType, ExtraFieldTypePrefix, process_map, process_type_map
 
 
 Base = TypeVar("Base", bound=declarative_base)

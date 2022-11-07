@@ -39,10 +39,10 @@ class CommonCodeGen:
         TEMPLATE_FILE = 'utils.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         self.import_helper.add(import_=set(["QueryOperatorNotFound", "UnknownColumn"]),
-                               from_="fastapi_quick_crud_template.common.http_exception")
+                               from_="common.http_exception")
         self.import_helper.add(
             import_=set(["ExtraFieldType", "ExtraFieldTypePrefix", "process_type_map", "process_map"]),
-            from_="fastapi_quick_crud_template.common.typing")
+            from_="common.typing")
 
         code = template.render({"import": self.import_helper.to_code()})
 

@@ -93,8 +93,8 @@ class Testing(unittest.TestCase):
             """import uvicorn
 from fastapi import FastAPI
 
-from fastapi_quick_crud_template.route.test_build_myself import api as test_build_myself_router
-from fastapi_quick_crud_template.route.test_build_myself_two import api as test_build_myself_two_router
+from route.test_build_myself import api as test_build_myself_router
+from route.test_build_myself_two import api as test_build_myself_two_router
 app = FastAPI()
 
 [app.include_router(api_route) for api_route in [
@@ -114,8 +114,8 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import StaticPool
 
-from fastapi_quick_crud_template.model.test_build_myself import SampleTable
-from fastapi_quick_crud_template.model.test_build_myself_two import SampleTableTwo
+from model.test_build_myself import SampleTable
+from model.test_build_myself_two import SampleTableTwo
 
 SQLALCHEMY_DATABASE_URL = f"postgresql://postgres:1234@127.0.0.1:5432/postgres"
 
@@ -151,9 +151,9 @@ from pydantic import BaseModel
 from fastapi import Body, Query
 from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import *
-from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filter_none, value_of_list_to_str
-from fastapi_quick_crud_template.common.db import Base
-from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
+from common.utils import ExcludeUnsetBaseModel, filter_none, value_of_list_to_str
+from common.db import Base
+from common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
 PRIMARY_KEY_NAME = "primary_key"
 UNIQUE_LIST = "primary_key"
@@ -235,9 +235,9 @@ from pydantic import BaseModel
 from fastapi import Body, Query
 from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import *
-from fastapi_quick_crud_template.common.utils import ExcludeUnsetBaseModel, filter_none, value_of_list_to_str
-from fastapi_quick_crud_template.common.db import Base
-from fastapi_quick_crud_template.common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
+from common.utils import ExcludeUnsetBaseModel, filter_none, value_of_list_to_str
+from common.db import Base
+from common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
 PRIMARY_KEY_NAME = "primary_key"
 UNIQUE_LIST = "primary_key", "int4_value", "float4_value"
@@ -465,11 +465,11 @@ from typing import List, Union
 from sqlalchemy import and_, select
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
-from fastapi_quick_crud_template.common.utils import find_query_builder
-from fastapi_quick_crud_template.common.sql_session import db_session
+from common.utils import find_query_builder
+from common.sql_session import db_session
 from sqlalchemy.exc import IntegrityError
 from pydantic import parse_obj_as
-from fastapi_quick_crud_template.model.test_build_myself_two import SampleTableTwo, SampleTableTwoPatchManyItemListResponseModel, SampleTableTwoPatchManyRequestBodyModel, SampleTableTwoPatchManyRequestQueryModel
+from model.test_build_myself_two import SampleTableTwo, SampleTableTwoPatchManyItemListResponseModel, SampleTableTwoPatchManyRequestBodyModel, SampleTableTwoPatchManyRequestQueryModel
 
 api = APIRouter(tags=['sample api'],prefix="/my_second_api")
 
@@ -519,11 +519,11 @@ from typing import List, Union
 from sqlalchemy import and_, select
 from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
-from fastapi_quick_crud_template.common.utils import find_query_builder
-from fastapi_quick_crud_template.common.sql_session import db_session
+from common.utils import find_query_builder
+from common.sql_session import db_session
 from sqlalchemy.exc import IntegrityError
 from pydantic import parse_obj_as
-from fastapi_quick_crud_template.model.test_build_myself import SampleTable, SampleTablePatchManyItemListResponseModel, SampleTablePatchManyRequestBodyModel, SampleTablePatchManyRequestQueryModel
+from model.test_build_myself import SampleTable, SampleTablePatchManyItemListResponseModel, SampleTablePatchManyRequestBodyModel, SampleTablePatchManyRequestQueryModel
 
 api = APIRouter(tags=['sample api'],prefix="/my_first_api")
 
