@@ -115,7 +115,7 @@ crud_router_builder(
     >  A database URL. The URL is passed directly to SQLAlchemy's create_engine() method so please refer to SQLAlchemy's documentation for instructions on how to construct a proper URL.
     
 # Known limitations
-* ❌ Please use composite unique constraints instead instead multiple unique constraints
+* ❌ Please use composite unique constraints instead of multiple unique constraints
 * ❌ Composite primary key is not supported
 * ❌ Sqlalchemy table type model schema is not supported
 
