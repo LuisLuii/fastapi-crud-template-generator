@@ -2,6 +2,8 @@
 [![Coverage Status](https://coveralls.io/repos/github/LuisLuii/fastapi-crud-project-generator/badge.svg?branch=main)](https://coveralls.io/github/LuisLuii/fastapi-crud-project-generator?branch=main)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/1c2b9ba9a4fb497383429daa57d9c485)](https://www.codacy.com/gh/LuisLuii/fastapi-crud-project-generator/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=LuisLuii/fastapi-crud-project-generator&amp;utm_campaign=Badge_Grade)
 [![PyPI version](https://badge.fury.io/py/fastapi-crud-code-generator.svg)](https://badge.fury.io/py/fastapi-crud-code-generator)
+[![SupportedVersion](https://img.shields.io/pypi/pyversions/fastapi-crud-code-generator?style=flat-square)](https://pypi.org/project/fastapi-crud-code-generator)
+[![unit test](https://github.com/LuisLuii/fastapi-crud-project-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/LuisLuii/fastapi-crud-project-generator/actions/workflows/ci.yml)
 
 A code generator that help you to establish a fastapi project with CRUD router from your Sqlalchemy model. Which supports following api:
 >- Get one
