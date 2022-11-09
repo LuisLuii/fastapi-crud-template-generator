@@ -12,11 +12,14 @@ class CrudCodeGen():
         self.code = "\n" + "api = APIRouter(tags=" + str(tags) + ',' + "prefix=" + '"' + prefix + '")' + "\n\n\n"
         self.import_helper = ImportBuilder()
         self.import_helper.add(import_="HTTPStatus", from_="http")
+        self.import_helper.add(import_="copy")
         self.import_helper.add(import_=set(["List", "Union"]), from_="typing")
         self.import_helper.add(import_=set(["and_", "select"]), from_="sqlalchemy")
         self.import_helper.add(import_=set(["Depends", "Response", "APIRouter"]), from_="fastapi")
         self.import_helper.add(import_=set(["BinaryExpression"]), from_="sqlalchemy.sql.elements")
-        self.import_helper.add(import_=set(["find_query_builder"]), from_="common.utils")
+        self.import_helper.add(import_=set(
+            ["find_query_builder", "relationship_query_builder", "group_find_many_join", "join_expression_builder"]),
+                               from_="common.utils")
         self.import_helper.add(import_=set(["db_session"]), from_="common.sql_session")
 
     def gen(self, *, template_generator: CrudTemplateGenerator, file_name: str) -> None:

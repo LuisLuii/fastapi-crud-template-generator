@@ -27,6 +27,7 @@ class CrudMethods(Enum):
     CREATE_MANY = "CREATE_MANY"
     DELETE_ONE = "DELETE_ONE"
     DELETE_MANY = "DELETE_MANY"
+    FOREIGN_FIND_MANY = "FOREIGN_FIND_MANY"
 
     @staticmethod
     def get_full_crud_method():

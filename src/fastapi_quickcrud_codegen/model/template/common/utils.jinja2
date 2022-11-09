@@ -11,6 +11,47 @@ from pydantic import BaseModel
 Base = TypeVar("Base", bound=declarative_base)
 
 
+def join_expression_builder(stmt: BinaryExpression, join_table_list, parent_model):
+    if not join_table_list:
+        return stmt
+    for foreign_table in join_table_list:
+        foreign_model = parent_model.metadata.tables.get(str(foreign_table))
+        for foreign_key in foreign_model.foreign_keys:
+            stmt = stmt.join(foreign_key.parent.table, foreign_key.column == foreign_key.parent, isouter=True)
+    return stmt
+
+def group_find_many_join(list_of_dict: List[dict], group_by_columns: List[str]) -> List[dict]:
+    response_list = []
+    group_by = groupby(list_of_dict, key=operator.itemgetter(*group_by_columns))
+    for key, group in group_by:
+        group_by_dict = {}
+        relationship = {}
+        for i in group:
+            for k, v in i.items():
+                if k in group_by_columns:
+                    group_by_dict[k] = v
+                else:
+                    if k not in relationship:
+                        relationship[k] = [v]
+                    else:
+                        relationship[k].append(v)
+        response_list.append({**group_by_dict, "relationship": {**relationship}})
+
+    return response_list
+
+def relationship_query_builder(join_table_list, model):
+    foreign_column_list = []
+    if join_table_list:
+        # foreign_model_list = [getattr(model, str(foreign_table))for foreign_table in join_table_list]
+        for foreign_table in join_table_list:
+            foreign_model = model.metadata.tables.get(str(foreign_table))
+            foreign_table_name = str(foreign_model.fullname)
+            foreign_columns = foreign_model.c
+            for foreign_column in foreign_columns:
+                foreign_column_list.append(foreign_column.label(
+                    "relationship__" + str(foreign_column).split('.')[0] + "_._" + str(foreign_column).split('.')[1]))
+    return foreign_column_list
+
 def find_query_builder(param: dict, model: Base) -> List[Union[BinaryExpression]]:
     query = []
     for column_name, value in param.items():

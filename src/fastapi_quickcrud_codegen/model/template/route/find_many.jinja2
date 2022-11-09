@@ -7,10 +7,18 @@
     limit = filter_args.pop('limit', None)
     offset = filter_args.pop('offset', None)
     order_by_columns = filter_args.pop('order_by_columns', None)
-    filter_list: List[BinaryExpression] = find_query_builder(param=query.__dict__,
-                                                             model={{ model_name }})
+    join_table_list = query.__dict__.pop('join_foreign_table', None)
     model = {{ model_name }}
-    stmt = select(*[model]).filter(and_(*filter_list))
+    table = model.__table__
+    column_list = table.c
+
+    filter_list: List[BinaryExpression] = find_query_builder(param=query.__dict__,
+                                                             model=model)
+    foreign_column_list = relationship_query_builder(join_table_list, table)
+
+    stmt = select(*[table] + foreign_column_list).filter(and_(*filter_list))
+    stmt = join_expression_builder(stmt, join_table_list, table)
+
     if order_by_columns:
         order_by_query_list = []
 
@@ -50,14 +58,24 @@
     result = sql_executed_result.fetchall()
     response_data_list = []
     for i in result:
-        result_value, = dict(i).values()
         temp = {}
-        for column in {{ model_name }}FindManyResponseModel.__fields__:
-            temp[column] = getattr(result_value, column)
+        result = copy.deepcopy(dict(i))
+        for key_, value_ in result.items():
+            # if query with foreign key
+            if 'relationship__' in key_:
+                key_ = key_.replace("relationship__", "")
+                foreign_table, foreign_column = key_.split('_._')
+                if foreign_table not in temp:
+                    temp[foreign_table] = {foreign_column: value_}
+                else:
+                    temp[foreign_table][foreign_column] = value_
+            else:
+                temp[key_] = value_
         response_data_list.append(temp)
 
+    formatted_result = group_find_many_join(response_data_list, [str(i.name) for i in column_list])
     response_format["total"] = total
-    response_format["result"] = response_data_list
+    response_format["result"] = formatted_result
     response_data = parse_obj_as({{ model_name }}FindManyItemListResponseModel, response_format)
     response.headers["x-total-count"] = str(len(response_data_list))
     return response_data

@@ -1,4 +1,6 @@
-from typing import Type, List
+from typing import Type, List, Optional
+
+from sqlalchemy.orm import decl_api
 
 from ..misc.type import CrudMethods
 from ..misc.crud_model import CRUDModel
@@ -9,18 +11,21 @@ from ..utils.schema_builder import ApiParameterSchemaBuilder
 def sqlalchemy_to_pydantic(
         db_model: Type, *,
         crud_methods: List[CrudMethods],
-        sql_type: str = SqlType.postgresql,
+        foreign_include: List[decl_api.DeclarativeMeta],
+        sql_type: str,
         exclude_columns: List[str] = None,
-        constraints=None,
+        constraints=None
         ) -> CRUDModel:
     request_response_mode_set = {}
     model_builder = ApiParameterSchemaBuilder(db_model,
                                               constraints=constraints,
                                               exclude_column=exclude_columns,
                                               sql_type=sql_type,
-                                              # foreign_include=foreign_include,
+                                              foreign_include=foreign_include,
                                               )
     for crud_method in crud_methods:
+        if crud_method.value == CrudMethods.FOREIGN_FIND_MANY.value:
+            model_builder.foreign_find_many()
         if crud_method.value == CrudMethods.CREATE_ONE.value:
             model_builder.create_one()
             request_method = CRUDRequestMapping.get_request_method_by_crud_method(crud_method.value).value

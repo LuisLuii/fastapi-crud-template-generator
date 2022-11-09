@@ -38,6 +38,9 @@ class CommonCodeGen:
         templateEnv = jinja2.Environment(loader=templateLoader)
         TEMPLATE_FILE = 'utils.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
+        self.import_helper.add(import_=set(["groupby"]),
+                               from_="itertools")
+        self.import_helper.add(import_=set(["operator"]))
         self.import_helper.add(import_=set(["QueryOperatorNotFound", "UnknownColumn"]),
                                from_="common.http_exception")
         self.import_helper.add(

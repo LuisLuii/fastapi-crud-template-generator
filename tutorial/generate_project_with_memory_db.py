@@ -1,3 +1,5 @@
+import inspect
+
 from sqlalchemy import *
 from sqlalchemy.orm import declarative_base
 
@@ -40,6 +42,7 @@ class TestingTableTwo(Base):
 
 
 from fastapi_quickcrud_codegen import crud_router_builder
+
 
 a = [DbModel(db_model=TestingTable, prefix="/my_first_api", tags=["sample api"], exclude_columns=['bytea_value']),
      DbModel(db_model=TestingTableTwo, prefix="/my_second_api", tags=["sample api"], exclude_columns=['bytea_value'])]

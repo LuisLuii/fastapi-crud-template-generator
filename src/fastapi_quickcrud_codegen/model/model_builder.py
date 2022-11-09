@@ -13,13 +13,14 @@ class ModelCodeGen():
     def __init__(self, file_name: str, db_type: str):
         self.file_name = file_name
         self.code = ""
+        self.post_code = ""
         self.model_code = ""
         self.constant = ""
         self.import_helper = ImportBuilder()
         self.import_helper.add(import_=set(["dataclass", "field"]), from_="dataclasses")
         self.import_helper.add(import_=set(['datetime', 'timedelta', 'date', 'time']), from_="datetime")
         self.import_helper.add(import_=set(['Decimal']), from_="decimal")
-        self.import_helper.add(import_=set(['Optional', 'List', 'Union', 'NewType']), from_="typing")
+        self.import_helper.add(import_=set(['Optional', 'List', 'Union', 'NewType', 'Dict']), from_="typing")
         self.import_helper.add(import_=set(['pydantic']))
         self.import_helper.add(import_=set(['BaseModel']), from_="pydantic")
         self.import_helper.add(import_=set(['Query', 'Body']), from_="fastapi")
@@ -28,6 +29,8 @@ class ModelCodeGen():
         self.import_helper.add(import_=set(['value_of_list_to_str', 'ExcludeUnsetBaseModel', 'filter_none']),
                                from_="common.utils")
         self.import_helper.add(import_=set(['Base']), from_="common.db")
+        self.import_helper.add(import_=set(['StrEnum']), from_="strenum")
+        self.import_helper.add(import_=set(['relationship']), from_="sqlalchemy.orm")
         self.import_helper.add(import_=set(['ItemComparisonOperators', 'PGSQLMatchingPatternInString',
                                             'ExtraFieldTypePrefix', 'RangeToComparisonOperators',
                                             'MatchingPatternInStringBase', 'RangeFromComparisonOperators']),
@@ -37,7 +40,7 @@ class ModelCodeGen():
 
     def gen(self):
         return self.model_template_gen.add_model(self.file_name,
-                                                 self.import_helper.to_code() + self.constant + "\n" + self.model_code + "\n\n" + self.code)
+                                                 self.import_helper.to_code() + self.constant + "\n" + self.model_code + "\n\n" + self.code + self.post_code)
 
     def gen_model(self, model: decl_api.DeclarativeMeta):
         self.model_code = inspect.getsource(model)
@@ -59,7 +62,8 @@ class ModelCodeGen():
 
     def build_base_model_paginate(self, *, class_name: str, field: List[Tuple], description: str = None,
                                   base_model: str = "BaseModel",
-                                  value_of_list_to_str_columns: List[str] = None, filter_none: bool = None):
+                                  value_of_list_to_str_columns: List[str] = None, filter_none: bool = None,
+                                  is_post_code: bool = False):
         TEMPLATE_FILE_PATH: ClassVar[str] = 'pydantic/base_model_paginate.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -71,7 +75,10 @@ class ModelCodeGen():
         code = template.render(
             {"class_name": class_name, "field": field, "description": description, "base_model": base_model,
              "value_of_list_to_str_columns": value_of_list_to_str_columns, "filter_none": filter_none})
-        self.code += code + "\n\n\n"
+        if is_post_code:
+            self.post_code += code + "\n\n\n"
+        else:
+            self.code += code + "\n\n\n"
 
     def build_base_model_root(self, *, class_name: str, field: List[Tuple], description: str = None,
                               base_model: str = "BaseModel",
@@ -103,6 +110,18 @@ class ModelCodeGen():
         code = template.render({"class_name": class_name, "fields": fields, "description": description,
                                 "value_of_list_to_str_columns": value_of_list_to_str_columns,
                                 "filter_none": filter_none})
+        self.code += code + "\n\n\n"
+
+    def build_enum(self, *, class_name: str, fields: List[Tuple], description=None):
+        TEMPLATE_FILE_PATH: ClassVar[str] = ''
+        template_file_path = Path(TEMPLATE_FILE_PATH)
+
+        TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
+        templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
+        templateEnv = jinja2.Environment(loader=templateLoader)
+        TEMPLATE_FILE = "Enum.jinja2"
+        template = templateEnv.get_template(TEMPLATE_FILE)
+        code = template.render({"class_name": class_name, "fields": fields, "description": description})
         self.code += code + "\n\n\n"
 
     def build_constant(self, *, constants: List[Tuple]):

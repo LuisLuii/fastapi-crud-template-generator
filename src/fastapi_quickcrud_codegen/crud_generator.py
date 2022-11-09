@@ -5,6 +5,7 @@ from typing import \
 import sqlalchemy
 from pydantic import \
     BaseModel
+from sqlalchemy.orm import decl_api
 
 from .db_model import DbModel
 from .generator.common_module_template_generator import CommonModuleTemplateGenerator
@@ -20,7 +21,7 @@ def crud_router_builder(
         *,
         db_model_list: List[DbModel],
         is_async: Optional[bool],
-        database_url: Optional[str],
+        database_url: Optional[str]
 ):
     """
         Generate project from sqlalchemy model

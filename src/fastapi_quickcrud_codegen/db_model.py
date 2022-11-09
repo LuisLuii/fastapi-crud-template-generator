@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy.orm import decl_api
 
@@ -16,12 +16,15 @@ class DbModel:
                  prefix: str,
                  tags: List[str],
                  exclude_columns: List[str] = None,
-                 crud_methods: List[CrudMethods] = None):
+                 crud_methods: List[CrudMethods] = None,
+                 foreign_include: Optional[List[decl_api.DeclarativeMeta]] = None):
 
         self.db_model = db_model
         self.prefix = prefix
         self.tags = tags
-
+        if foreign_include is None:
+            foreign_include = []
+        self.foreign_include = foreign_include
         if exclude_columns is None:
             exclude_columns = []
         self.exclude_columns = exclude_columns
@@ -63,7 +66,8 @@ class DbModel:
                                                      constraints=constraints,
                                                      crud_methods=self.crud_methods,
                                                      exclude_columns=self.exclude_columns,
-                                                     sql_type=sql_type)
+                                                     sql_type=sql_type,
+                                                     foreign_include=self.foreign_include)
         print("\t\tGenerating model success")
         methods_dependencies = crud_models.get_available_request_method()
         primary_name = crud_models.PRIMARY_KEY_NAME
