@@ -667,14 +667,19 @@ class ApiParameterSchemaBuilder:
             response_fields.append((i['column_name'],
                                     i['column_type'],
                                     f'Body({i["column_default"]})'))
-
+        if self.foreign_table_response_model_sets:
+            response_fields.append((
+                "relationship",
+                f"Dict[str, List[Union[{', '.join(self.foreign_table_response_model_sets.values())}]]]",
+                None
+            ))
         request_fields = []
         for i in query_param:
             assert isinstance(i, dict) or isinstance(i, tuple)
             # TODO add description
             request_fields.append((i['column_name'],
                                    i['column_type'],
-                                   f'Query({i["column_default"]})'))
+                                   f'Query({i["column_default"]}, description={i["column_description"]})'))
         self.code_gen.build_dataclass(class_name=self.class_name + "FindOneRequestBodyModel", fields=request_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
 
