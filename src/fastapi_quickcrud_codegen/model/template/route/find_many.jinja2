@@ -49,5 +49,5 @@
     response_format["total"] = total_result
     response_format["result"] = formatted_result
     response_data = parse_obj_as({{ model_name }}FindManyItemListResponseModel, response_format)
-    response.headers["x-total-count"] = str(len(result))
+    response.headers["x-total-count"] = str(len(formatted_result))
     return response_data
