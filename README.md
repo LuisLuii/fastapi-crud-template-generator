@@ -28,7 +28,7 @@ This project will help you to establish a fastapi project template with CRUD rou
 * **Support Pagination** - Get many API support order by offset limit field in API
 * **Flexible API request** - In generated project, UPDATE ONE/MANY FIND ONE/MANY PATCH ONE/MANY DELETE ONE/MANY supports Path Parameters (primary key) and Query Parameters as a command to the resource to filter and limit the scope of the scope of data in request.
 
-## Quick Start with in-memory DB (or see the other ([example](https://github.com/LuisLuii/fastapi-crud-project-generator/tree/feature/fix_code_style/tutorial))
+## Quick Start with in-memory DB (or see the other ([example](https://github.com/LuisLuii/fastapi-crud-template-generator/tree/feature/fix_code_style/tutorial))
 
 
 ### Install
