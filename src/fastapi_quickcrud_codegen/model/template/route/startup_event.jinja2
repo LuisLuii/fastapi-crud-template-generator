@@ -1,0 +1,6 @@
+router_data = {}
+
+
+@api.on_event("startup")
+{{ 'async ' if is_async else '' }}def startup_event():
+    router_data["foreign_key_table"] = build_foreign_mapper({{ model_name }})

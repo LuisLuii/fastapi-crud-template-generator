@@ -82,6 +82,7 @@ class DbModel:
 
         def find_many_api():
             print("\t\tGenerating find many API")
+            crud_code_generator.build_startup_event(is_async=is_async, model_name=table_name, file_name=model_name)
             crud_code_generator.build_find_many_route(is_async=is_async, path="", file_name=model_name,
                                                       model_name=table_name)
             print("\t\tfind many API generate successfully")

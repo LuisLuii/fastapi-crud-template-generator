@@ -9,7 +9,8 @@ from ..utils.import_builder import ImportBuilder
 
 class CrudCodeGen():
     def __init__(self, tags, prefix):
-        self.code = "\n" + "api = APIRouter(tags=" + str(tags) + ',' + "prefix=" + '"' + prefix + '")' + "\n\n\n"
+        self.prefix_code = "\n" + "api = APIRouter(tags=" + str(tags) + ',' + "prefix=" + '"' + prefix + '")' + "\n\n\n"
+        self.code = "\n\n"
         self.import_helper = ImportBuilder()
         self.import_helper.add(import_="HTTPStatus", from_="http")
         self.import_helper.add(import_="copy")
@@ -18,12 +19,14 @@ class CrudCodeGen():
         self.import_helper.add(import_=set(["Depends", "Response", "APIRouter"]), from_="fastapi")
         self.import_helper.add(import_=set(["BinaryExpression"]), from_="sqlalchemy.sql.elements")
         self.import_helper.add(import_=set(
-            ["find_query_builder", "relationship_query_builder", "group_find_many_join", "join_expression_builder"]),
-                               from_="common.utils")
+            ["find_query_builder", "group_find_many_join", "join_expression_builder", "orderby_expression_builder", "build_foreign_mapper"]),
+            from_="common.utils")
         self.import_helper.add(import_=set(["db_session"]), from_="common.sql_session")
 
+        self.startup_event = ""
+
     def gen(self, *, template_generator: CrudTemplateGenerator, file_name: str) -> None:
-        template_generator.add_route(file_name, self.import_helper.to_code() + self.code)
+        template_generator.add_route(file_name, self.import_helper.to_code() + self.prefix_code + self.startup_event + self.code )
 
     def build_find_one_route(self, *, is_async: bool, path: str, file_name: str, model_name: str) -> None:
         TEMPLATE_FILE_PATH: ClassVar[str] = 'route/find_one.jinja2'
@@ -43,6 +46,23 @@ class CrudCodeGen():
             f"{model_name}"]
         ), from_=f"model.{file_name}")
         self.code += code + "\n\n"
+
+    def build_startup_event(self, model_name, is_async, file_name):
+        if self.startup_event is not "":
+            return
+        TEMPLATE_FILE_PATH: ClassVar[str] = 'route/startup_event.jinja2'
+        template_file_path = Path(TEMPLATE_FILE_PATH)
+
+        TEMPLATE_DIR: Path = Path(__file__).parents[0] / 'template'
+        templateLoader = jinja2.FileSystemLoader(str(TEMPLATE_DIR / template_file_path.parent))
+        templateEnv = jinja2.Environment(loader=templateLoader)
+        TEMPLATE_FILE = 'startup_event.jinja2'
+        template = templateEnv.get_template(TEMPLATE_FILE)
+        self.startup_event = template.render(
+            {"model_name": model_name, "is_async": is_async})
+
+        self.import_helper.add(import_=set([f"{model_name}"]
+                                           ), from_=f"model.{file_name}")
 
     def build_find_many_route(self, *, is_async: bool, path: str, file_name: str, model_name: str) -> None:
         TEMPLATE_FILE_PATH: ClassVar[str] = 'route/find_many.jinja2'

@@ -41,10 +41,10 @@ class CommonCodeGen:
         self.import_helper.add(import_=set(["groupby"]),
                                from_="itertools")
         self.import_helper.add(import_=set(["operator"]))
-        self.import_helper.add(import_=set(["QueryOperatorNotFound", "UnknownColumn"]),
+        self.import_helper.add(import_=set(["QueryOperatorNotFound", "UnknownColumn", "UnknownOrderType"]),
                                from_="common.http_exception")
         self.import_helper.add(
-            import_=set(["ExtraFieldType", "ExtraFieldTypePrefix", "process_type_map", "process_map"]),
+            import_=set(["ExtraFieldType", "ExtraFieldTypePrefix", "process_type_map", "process_map", "Ordering"]),
             from_="common.typing")
 
         code = template.render({"import": self.import_helper.to_code()})

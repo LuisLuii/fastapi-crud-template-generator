@@ -7,37 +7,13 @@
     limit = filter_args.pop('limit', None)
     offset = filter_args.pop('offset', None)
     order_by_columns = filter_args.pop('order_by_columns', None)
-    join_table_list = query.__dict__.pop('join_foreign_table', None)
+    join_table_list = query.__dict__.pop('relationship', [])
     model = {{ model_name }}
     table = model.__table__
     column_list = table.c
-
     filter_list: List[BinaryExpression] = find_query_builder(param=query.__dict__,
                                                              model=model)
-    foreign_column_list = relationship_query_builder(join_table_list, table)
-
-    stmt = select(*[table] + foreign_column_list).filter(and_(*filter_list))
-    stmt = join_expression_builder(stmt, join_table_list, table)
-
-    if order_by_columns:
-        order_by_query_list = []
-
-        for order_by_column in order_by_columns:
-            if not order_by_column:
-                continue
-            sort_column, order_by = (order_by_column.replace(' ', '').split(':') + [None])[:2]
-            if not hasattr(model, sort_column):
-                raise UnknownColumn(400,f'Column {sort_column} is not existed')
-            if not order_by:
-                order_by_query_list.append(getattr(model, sort_column).asc())
-            elif order_by.upper() == Ordering.DESC.upper():
-                order_by_query_list.append(getattr(model, sort_column).desc())
-            elif order_by.upper() == Ordering.ASC.upper():
-                order_by_query_list.append(getattr(model, sort_column).asc())
-            else:
-                raise UnknownOrderType(400,f"Unknown order type {order_by}, only accept DESC or ASC")
-        if order_by_query_list:
-            stmt = stmt.order_by(*order_by_query_list)
+    stmt = select(*[table]).filter(and_(*filter_list))
 
     sql_executed_result_without_paginate = {{ 'await ' if is_async else '' }}session.execute(stmt)
     total = len(sql_executed_result_without_paginate.fetchall())
@@ -51,31 +27,29 @@
         response.headers["x-total-count"] = str(0)
         return response_data
 
+    # add page
     stmt = stmt.limit(limit).offset(offset)
+
+    # add join expression
+    join_table_list = [str(i) for i in join_table_list]
+    relationship_mapper = {}
+    for table_name, mapper in router_data["foreign_key_table"].items():
+        if table_name in join_table_list:
+            relationship_mapper[table_name] = mapper
+    stmt, sub_query = join_expression_builder(stmt, relationship_mapper, table)
+
+    # add orderby
+    if sub_query is not None:
+        model = sub_query.c
+    stmt = orderby_expression_builder(stmt, order_by_columns, model)
 
     sql_executed_result = {{ 'await ' if is_async else '' }}session.execute(stmt)
 
     result = sql_executed_result.fetchall()
-    response_data_list = []
-    for i in result:
-        temp = {}
-        result = copy.deepcopy(dict(i))
-        for key_, value_ in result.items():
-            # if query with foreign key
-            if 'relationship__' in key_:
-                key_ = key_.replace("relationship__", "")
-                foreign_table, foreign_column = key_.split('_._')
-                if foreign_table not in temp:
-                    temp[foreign_table] = {foreign_column: value_}
-                else:
-                    temp[foreign_table][foreign_column] = value_
-            else:
-                temp[key_] = value_
-        response_data_list.append(temp)
 
-    formatted_result = group_find_many_join(response_data_list, [str(i.name) for i in column_list])
+    formatted_result = group_find_many_join(result, [str(i.name) for i in column_list])
     response_format["total"] = total
     response_format["result"] = formatted_result
     response_data = parse_obj_as({{ model_name }}FindManyItemListResponseModel, response_format)
-    response.headers["x-total-count"] = str(len(response_data_list))
+    response.headers["x-total-count"] = str(total)
     return response_data

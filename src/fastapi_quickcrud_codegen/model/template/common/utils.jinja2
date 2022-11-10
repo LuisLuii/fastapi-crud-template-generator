@@ -1,7 +1,8 @@
-from typing import TypeVar, List, Union
+from typing import TypeVar, List, Union, Tuple
 from copy import deepcopy
 
-from sqlalchemy import or_
+from sqlalchemy import and_, select, or_, inspect, Table
+from sqlalchemy.sql import Subquery
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql.elements import BinaryExpression
 from pydantic import BaseModel
@@ -10,19 +11,155 @@ from pydantic import BaseModel
 
 Base = TypeVar("Base", bound=declarative_base)
 
+OriginalStmt = TypeVar("OriginalStmt", bound=BinaryExpression)
+SubQuery = TypeVar("SubQuery", bound=BinaryExpression)
 
-def join_expression_builder(stmt: BinaryExpression, join_table_list, parent_model):
-    if not join_table_list:
+
+def build_foreign_mapper(model):
+    foreign_key_table = {}
+    mapper = inspect(model)
+    for r in mapper.relationships:
+        local, = r.local_columns
+        local = mapper.get_property_by_column(local).expression
+        local_table = str(local).split('.')[0]
+        local_column = str(local).split('.')[1]
+        local_table_instance = local.table
+
+        foreign_table = r.mapper.class_
+        foreign_table_name = foreign_table.__tablename__
+        foreign_secondary_table_name = ''
+        if r.secondary_synchronize_pairs:
+            # foreign_table_name = r.secondary.key
+            foreign_secondary_table_name = str(r.secondary.key)
+
+        local_reference_pairs = []
+        for i in r.synchronize_pairs:
+            for column in i:
+                table_name_ = str(column).split('.')[0]
+                column_name_ = str(column).split('.')[1]
+                if table_name_ not in [foreign_secondary_table_name, foreign_table_name]:
+                    continue
+
+                reference_table = table_name_
+                reference_column = column_name_
+                reference_table_instance = column.table
+                if r.secondary_synchronize_pairs:
+                    exclude = True
+                else:
+
+                    exclude = False
+                local_reference_pairs.append({'local': {"local_table": local_table,
+                                                        "local_column": local_column},
+                                              "reference": {"reference_table": reference_table,
+                                                            "reference_column": reference_column},
+                                              'local_table': local_table_instance,
+                                              'local_table_columns': local_table_instance.c,
+                                              'reference_table': reference_table_instance,
+                                              'reference_table_columns': reference_table_instance.c,
+                                              'exclude': exclude})
+        for i in r.secondary_synchronize_pairs:
+            local_table_: str = None
+            local_column_: str = None
+            reference_table_: str = None
+            reference_column_: str = None
+            local_table_instance_: Table = None
+            reference_table_instance_: Table = None
+            for column in i:
+
+                table_name_ = str(column).split('.')[0]
+                column_name_ = str(column).split('.')[1]
+                if table_name_ == foreign_secondary_table_name:
+                    local_table_ = str(column).split('.')[0]
+                    local_column_ = str(column).split('.')[1]
+                    local_table_instance_ = column.table
+                if table_name_ == foreign_table_name:
+                    reference_table_ = str(column).split('.')[0]
+                    reference_column_ = str(column).split('.')[1]
+                    reference_table_instance_ = column.table
+
+            local_reference_pairs.append({'local': {"local_table": local_table_,
+                                                    "local_column": local_column_},
+                                          "reference": {"reference_table": reference_table_,
+                                                        "reference_column": reference_column_},
+                                          'local_table': local_table_instance_,
+                                          'local_table_columns': local_table_instance_.c,
+                                          'reference_table': reference_table_instance_,
+                                          'reference_table_columns': reference_table_instance_.c,
+                                          'exclude': False})
+
+        foreign_key_table[foreign_table_name] = {'local_reference_pairs_set': local_reference_pairs,
+                                                 'instance': foreign_table,
+                                                 'db_column': foreign_table}
+    return foreign_key_table
+
+
+def orderby_expression_builder(stmt, order_by_columns, model):
+    if not order_by_columns:
         return stmt
-    for foreign_table in join_table_list:
-        foreign_model = parent_model.metadata.tables.get(str(foreign_table))
-        for foreign_key in foreign_model.foreign_keys:
-            stmt = stmt.join(foreign_key.parent.table, foreign_key.column == foreign_key.parent, isouter=True)
+    order_by_query_list = []
+
+    for order_by_column in order_by_columns:
+        if not order_by_column:
+            continue
+        sort_column, order_by = (order_by_column.replace(' ', '').split(':') + [None])[:2]
+        if not hasattr(model, sort_column):
+            raise UnknownColumn(400, f'Column {sort_column} is not existed')
+        if not order_by:
+            order_by_query_list.append(getattr(model, sort_column).asc())
+        elif order_by.upper() == Ordering.DESC.upper():
+            order_by_query_list.append(getattr(model, sort_column).desc())
+        elif order_by.upper() == Ordering.ASC.upper():
+            order_by_query_list.append(getattr(model, sort_column).asc())
+        else:
+            raise UnknownOrderType(400, f"Unknown order type {order_by}, only accept DESC or ASC")
+    if order_by_query_list:
+        stmt = stmt.order_by(*order_by_query_list)
     return stmt
 
-def group_find_many_join(list_of_dict: List[dict], group_by_columns: List[str]) -> List[dict]:
+
+def join_expression_builder(stmt: BinaryExpression, join_table_dict, parent_table) -> Tuple[OriginalStmt, SubQuery]:
+    if not join_table_dict:
+        return stmt, None
+
+    foreign_column_list = relationship_query_builder(join_table_dict)
+
+    original_query = stmt.subquery()
+    query_set = original_query.c._all_columns + foreign_column_list
+
+    nested_query = select(query_set)
+    for _, foreign_table_mapper in join_table_dict.items():
+        for local_reference in foreign_table_mapper['local_reference_pairs_set']:
+            if 'exclude' in local_reference and local_reference['exclude']:
+                continue
+            foreign_table = local_reference["reference_table"]
+            nested_query = nested_query.join(foreign_table, getattr(original_query.c, local_reference["local"][
+                "local_column"]) == getattr(foreign_table.c, local_reference["reference"]["reference_column"]),
+                                             isouter=True)
+
+    return nested_query, original_query
+
+
+def group_find_many_join(result, group_by_columns: List[str]) -> List[dict]:
+
+    response_data_list = []
+    for i in result:
+        temp = {}
+        result = deepcopy(dict(i))
+        for key_, value_ in result.items():
+            # if query with foreign key
+            if 'relationship__' in key_:
+                key_ = key_.replace("relationship__", "")
+                foreign_table, foreign_column = key_.split('_._')
+                if foreign_table not in temp:
+                    temp[foreign_table] = {foreign_column: value_}
+                else:
+                    temp[foreign_table][foreign_column] = value_
+            else:
+                temp[key_] = value_
+        response_data_list.append(temp)
+
     response_list = []
-    group_by = groupby(list_of_dict, key=operator.itemgetter(*group_by_columns))
+    group_by = groupby(response_data_list, key=operator.itemgetter(*group_by_columns))
     for key, group in group_by:
         group_by_dict = {}
         relationship = {}
@@ -39,17 +176,17 @@ def group_find_many_join(list_of_dict: List[dict], group_by_columns: List[str]) 
 
     return response_list
 
-def relationship_query_builder(join_table_list, model):
+def relationship_query_builder(join_table_dict):
     foreign_column_list = []
-    if join_table_list:
+    if join_table_dict:
         # foreign_model_list = [getattr(model, str(foreign_table))for foreign_table in join_table_list]
-        for foreign_table in join_table_list:
-            foreign_model = model.metadata.tables.get(str(foreign_table))
-            foreign_table_name = str(foreign_model.fullname)
-            foreign_columns = foreign_model.c
-            for foreign_column in foreign_columns:
-                foreign_column_list.append(foreign_column.label(
-                    "relationship__" + str(foreign_column).split('.')[0] + "_._" + str(foreign_column).split('.')[1]))
+        for _, table_instance in join_table_dict.items():
+            for local_reference in table_instance['local_reference_pairs_set']:
+                if 'exclude' in local_reference and local_reference['exclude']:
+                    continue
+                for column in local_reference['reference_table_columns']:
+                    foreign_column_list.append(column.label(
+                        "relationship__" + str(column).split('.')[0] + "_._" + str(column).split('.')[1]))
     return foreign_column_list
 
 def find_query_builder(param: dict, model: Base) -> List[Union[BinaryExpression]]:

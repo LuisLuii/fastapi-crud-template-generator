@@ -100,8 +100,8 @@ class ApiParameterSchemaBuilder:
             tmp["db_model_table"] = db_model.__table__
             tmp["db_name"] = db_model.__tablename__
             tmp["columns"] = db_model.__table__.c
-            tmp["all_fields"] = self._extract_all_field(tmp["columns"])
-            tmp["primary_key"] = self._extract_primary(tmp["db_model_table"])
+            # tmp["all_fields"] = self._extract_all_field(tmp["columns"])
+            # tmp["primary_key"] = self._extract_primary(tmp["db_model_table"])
             foreign_mapper[table_name] = tmp
         return foreign_mapper
 
@@ -539,7 +539,7 @@ class ApiParameterSchemaBuilder:
         self.code_gen.build_enum(class_name=self.db_name + 'Relationship',
                                  fields=[(table_name, f"'{table_name}'") for table_name in table_of_foreign])
 
-        return {"column_name": 'join_foreign_table', "column_type": f"Optional[List[{self.db_name + 'Relationship'}]]",
+        return {"column_name": 'relationship', "column_type": f"Optional[List[{self.db_name + 'Relationship'}]]",
                 "column_default": "None", "column_description": "'try to query the other table with foreign key'"}
 
     def create_one(self) -> Tuple:
