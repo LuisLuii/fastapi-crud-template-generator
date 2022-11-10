@@ -5,7 +5,7 @@
 [![SupportedVersion](https://img.shields.io/pypi/pyversions/fastapi-crud-code-generator?style=flat-square)](https://pypi.org/project/fastapi-crud-code-generator)
 [![unit test](https://github.com/LuisLuii/fastapi-crud-project-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/LuisLuii/fastapi-crud-project-generator/actions/workflows/ci.yml)
 
-This project will help you to establish a fastapi project with CRUD router from your Sqlalchemy model. Which supports following api:
+This project will help you to establish a fastapi project template with CRUD router from your Sqlalchemy model. Which supports following api:
 >- Get one
 >- Get many
 >- Insert one
