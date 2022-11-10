@@ -39,7 +39,7 @@ model_list = [DbModel(db_model=Account, prefix="/account", tags=["Account"], for
 crud_router_builder(
     db_model_list=model_list,
     # is_async=True,
-    # database_url="sqlite+aiosqlite://",
+    # database_url="sqlite+aiosqlite://./test.db",
     is_async=False,
-    database_url="sqlite://"
+    database_url="sqlite:////Users/luilui/Documents/test.db"
 )

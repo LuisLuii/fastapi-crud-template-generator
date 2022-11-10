@@ -1,11 +1,12 @@
 from typing import TypeVar, List, Union, Tuple
 from copy import deepcopy
 
-from sqlalchemy import and_, select, or_, inspect, Table
+from sqlalchemy import and_, select, or_, inspect, Table, Table, Column
 from sqlalchemy.sql import Subquery
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base, decl_api
 from sqlalchemy.sql.elements import BinaryExpression
 from pydantic import BaseModel
+
 
 {{ import }}
 
@@ -13,9 +14,25 @@ Base = TypeVar("Base", bound=declarative_base)
 
 OriginalStmt = TypeVar("OriginalStmt", bound=BinaryExpression)
 SubQuery = TypeVar("SubQuery", bound=BinaryExpression)
+PrimaryColumn = TypeVar("PrimaryColumn", bound=Column)
 
 
-def build_foreign_mapper(model):
+def build_relationship_mapper(foreign_key_table, join_table_list) -> dict:
+    relationship_mapper = {}
+    if foreign_key_table is None:
+        return relationship_mapper
+    for table_name, mapper in foreign_key_table.items():
+        if table_name in join_table_list:
+            relationship_mapper[table_name] = mapper
+    return relationship_mapper
+
+
+def get_pk(model: decl_api.DeclarativeMeta) -> PrimaryColumn:
+    pk, = model.__table__.primary_key
+    return pk
+
+
+def build_foreign_mapper(model: decl_api.DeclarativeMeta):
     foreign_key_table = {}
     mapper = inspect(model)
     for r in mapper.relationships:
@@ -117,26 +134,21 @@ def orderby_expression_builder(stmt, order_by_columns, model):
     return stmt
 
 
-def join_expression_builder(stmt: BinaryExpression, join_table_dict, parent_table) -> Tuple[OriginalStmt, SubQuery]:
-    if not join_table_dict:
-        return stmt, None
+def join_expression_builder(stmt: BinaryExpression, relationship_mapper: dict) -> Tuple[OriginalStmt, SubQuery]:
+    if relationship_mapper is None:
+        return stmt
 
-    foreign_column_list = relationship_query_builder(join_table_dict)
-
-    original_query = stmt.subquery()
-    query_set = original_query.c._all_columns + foreign_column_list
-
-    nested_query = select(query_set)
-    for _, foreign_table_mapper in join_table_dict.items():
+    for _, foreign_table_mapper in relationship_mapper.items():
         for local_reference in foreign_table_mapper['local_reference_pairs_set']:
             if 'exclude' in local_reference and local_reference['exclude']:
                 continue
             foreign_table = local_reference["reference_table"]
-            nested_query = nested_query.join(foreign_table, getattr(original_query.c, local_reference["local"][
+            local_table = local_reference["local_table"]
+            stmt = stmt.join(foreign_table, getattr(local_table.c, local_reference["local"][
                 "local_column"]) == getattr(foreign_table.c, local_reference["reference"]["reference_column"]),
-                                             isouter=True)
+                             isouter=True)
 
-    return nested_query, original_query
+    return stmt
 
 
 def group_find_many_join(result, group_by_columns: List[str]) -> List[dict]:
@@ -179,15 +191,13 @@ def group_find_many_join(result, group_by_columns: List[str]) -> List[dict]:
 
 def relationship_query_builder(join_table_dict):
     foreign_column_list = []
-    if join_table_dict:
-        # foreign_model_list = [getattr(model, str(foreign_table))for foreign_table in join_table_list]
-        for _, table_instance in join_table_dict.items():
-            for local_reference in table_instance['local_reference_pairs_set']:
-                if 'exclude' in local_reference and local_reference['exclude']:
-                    continue
-                for column in local_reference['reference_table_columns']:
-                    foreign_column_list.append(column.label(
-                        "relationship__" + str(column).split('.')[0] + "_._" + str(column).split('.')[1]))
+    for _, table_instance in join_table_dict.items():
+        for local_reference in table_instance['local_reference_pairs_set']:
+            if 'exclude' in local_reference and local_reference['exclude']:
+                continue
+            for column in local_reference['reference_table_columns']:
+                foreign_column_list.append(column.label(
+                    "relationship__" + str(column).split('.')[0] + "_._" + str(column).split('.')[1]))
     return foreign_column_list
 
 def find_query_builder(param: dict, model: Base) -> List[Union[BinaryExpression]]:

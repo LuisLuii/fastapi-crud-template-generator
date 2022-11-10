@@ -76,6 +76,7 @@ class DbModel:
         # router generation
         def find_one_api():
             print("\t\tGenerating find one API")
+            crud_code_generator.build_startup_event(is_async=is_async, model_name=table_name, file_name=model_name)
             crud_code_generator.build_find_one_route(is_async=is_async, path=path, file_name=model_name,
                                                      model_name=table_name)
             print("\t\tfind one API generate successfully")

@@ -15,11 +15,11 @@ class CrudCodeGen():
         self.import_helper.add(import_="HTTPStatus", from_="http")
         self.import_helper.add(import_="copy")
         self.import_helper.add(import_=set(["List", "Union"]), from_="typing")
-        self.import_helper.add(import_=set(["and_", "select"]), from_="sqlalchemy")
+        self.import_helper.add(import_=set(["and_", "select", "func"]), from_="sqlalchemy")
         self.import_helper.add(import_=set(["Depends", "Response", "APIRouter"]), from_="fastapi")
         self.import_helper.add(import_=set(["BinaryExpression"]), from_="sqlalchemy.sql.elements")
         self.import_helper.add(import_=set(
-            ["find_query_builder", "group_find_many_join", "join_expression_builder", "orderby_expression_builder", "build_foreign_mapper"]),
+            ["find_query_builder", "group_find_many_join", "join_expression_builder", "orderby_expression_builder", "build_foreign_mapper", "get_pk", "relationship_query_builder", "build_relationship_mapper"]),
             from_="common.utils")
         self.import_helper.add(import_=set(["db_session"]), from_="common.sql_session")
 
