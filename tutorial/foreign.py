@@ -28,14 +28,19 @@ class BlogComment(Base):
     blog_id = Column(Integer, ForeignKey("blog_post.id"), nullable=False)
     blog_post = relationship("BlogPost", back_populates="blog_comment")
 
+
 from fastapi_quickcrud_codegen.db_model import DbModel
 from fastapi_quickcrud_codegen.misc.type import CrudMethods
 
 from fastapi_quickcrud_codegen import crud_router_builder
 
-model_list = [DbModel(db_model=Account, prefix="/account", tags=["Account"], foreign_include=[BlogPost]),
-              DbModel(db_model=BlogPost, prefix="/blog", tags=["Blog Post"], foreign_include=[Account, BlogComment]),
-              DbModel(db_model=BlogComment, prefix="/comment", tags=["Blog Comment"], foreign_include=[BlogPost])]
+model_list = [
+    # DbModel(db_model=Account, prefix="/account", tags=["Account"], foreign_include=[BlogPost],
+    #         crud_methods=[CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_ONE]),
+    DbModel(db_model=BlogPost, prefix="/blog", tags=["Blog Post"], foreign_include=[BlogComment],
+            crud_methods=[CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_ONE]),
+    DbModel(db_model=BlogComment, prefix="/comment", tags=["Blog Comment"], foreign_include=[BlogPost],
+            crud_methods=[CrudMethods.FIND_ONE])]
 crud_router_builder(
     db_model_list=model_list,
     # is_async=True,

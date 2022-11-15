@@ -83,7 +83,7 @@ class ApiParameterSchemaBuilder:
         # find many foreign base
         self.table_of_foreign, self.reference_mapper = self._extra_foreign_find_table_from_declarative_base(
             self.__db_model)
-        self.foreign_join_common_column: dict = self._assign_foreign_join()
+        self.foreign_join_common_column: Union[dict, None] = self._assign_foreign_join()
 
     def _foreign_mapper_builder(self):
         foreign_mapper = {}
@@ -100,8 +100,8 @@ class ApiParameterSchemaBuilder:
             tmp["db_model_table"] = db_model.__table__
             tmp["db_name"] = db_model.__tablename__
             tmp["columns"] = db_model.__table__.c
-            # tmp["all_fields"] = self._extract_all_field(tmp["columns"])
-            # tmp["primary_key"] = self._extract_primary(tmp["db_model_table"])
+            tmp["all_fields"] = self._extract_all_field(tmp["columns"])
+            tmp["primary_key"] = self._extract_primary(tmp["db_model_table"], gen_model=False)
             foreign_mapper[table_name] = tmp
         return foreign_mapper
 
@@ -125,7 +125,8 @@ class ApiParameterSchemaBuilder:
                                                              )
         return relation_level
 
-    def _extra_foreign_find_table_from_declarative_base(self, db_model: decl_api.DeclarativeMeta):
+    def _extra_foreign_find_table_from_declarative_base(self, db_model: decl_api.DeclarativeMeta,
+                                                        is_foreign_tree: bool = False):
         mapper = inspect(db_model)
         foreign_key_table = {}
         reference_mapper = {}
@@ -138,6 +139,8 @@ class ApiParameterSchemaBuilder:
 
             foreign_table = r.mapper.class_
             foreign_table_name = foreign_table.__tablename__
+            if foreign_table_name not in self.foreign_mapper:
+                continue
             foreign_secondary_table_name = ''
             if r.secondary_synchronize_pairs:
                 # foreign_table_name = r.secondary.key
@@ -209,34 +212,31 @@ class ApiParameterSchemaBuilder:
                 response_fields.append((i['column_name'],
                                         i['column_type'],
                                         None))
+            if is_foreign_tree:
+                response_model_name = "FindManyForeignTreeResponseModel"
+            else:
+                response_model_name = "FindManyResponseModel"
+            self.code_gen.build_base_model(
+                class_name=db_model.__name__ + "To" + foreign_table.__name__ + response_model_name,
+                fields=response_fields)
 
-            self.code_gen.build_base_model(class_name=self.class_name + "To" + table_name_ + "FindManyResponseModel",
-                                           fields=response_fields)
-
-            # self.code_gen.build_base_model_paginate(
-            #     class_name=self.class_name + "To" + table_name_ + "FindManyItemListResponseModel",
-            #     field=(
-            #         f'{self.class_name + "FindManyResponseModel"}',
-            #         None),
-            #     base_model="ExcludeUnsetBaseModel",
-            #     is_post_code=True
-            # )
             self.foreign_table_response_model_sets[
-                foreign_table] = self.class_name + "To" + table_name_ + "FindManyResponseModel"
+                foreign_table] = db_model.__name__ + "To" + foreign_table.__name__ + response_model_name
             foreign_key_table[foreign_table_name] = {'local_reference_pairs_set': local_reference_pairs,
                                                      'fields': all_fields_,
                                                      'instance': foreign_table,
                                                      'db_column': foreign_table}
         return foreign_key_table, reference_mapper
 
-    def _extract_primary(self, db_model_table: Table = None) -> Union[tuple, Tuple[Union[str, Any],
-                                                                                   DataClassT,
-                                                                                   Tuple[Union[
-                                                                                             str, Any],
-                                                                                         Union[Type[
-                                                                                                   uuid.UUID], Any],
-                                                                                         Optional[
-                                                                                             Any]]]]:
+    def _extract_primary(self, db_model_table: Table = None, gen_model: bool = True) -> Union[
+        tuple, Tuple[Union[str, Any],
+                     DataClassT,
+                     Tuple[Union[
+                               str, Any],
+                           Union[Type[
+                                     uuid.UUID], Any],
+                           Optional[
+                               Any]]]]:
         if db_model_table is None:
             db_model_table = self.__db_model_table
         primary_list = db_model_table.primary_key.columns.values()
@@ -279,13 +279,14 @@ class ApiParameterSchemaBuilder:
                 f'and it is not nullable and in exclude_list'
                 f'it may throw error when you insert data ')
         primary_column_name = str(primary_key_column.key)
-        primary_field_definitions = (primary_column_name, column_type, default)
+        primary_field_definitions = (primary_column_name, column_type, default, description)
         class_name = f'{self.class_name}PrimaryKeyModel'
-        self.code_gen.build_dataclass(class_name=class_name,
-                                      fields=[(primary_field_definitions[0],
-                                               primary_field_definitions[1],
-                                               f'Query({primary_field_definitions[2]}, description={description})')],
-                                      value_of_list_to_str_columns=self.uuid_type_columns)
+        if gen_model:
+            self.code_gen.build_dataclass(class_name=class_name,
+                                          fields=[(primary_field_definitions[0],
+                                                   primary_field_definitions[1],
+                                                   f'Query({primary_field_definitions[2]}, description={primary_field_definitions[3]})')],
+                                          value_of_list_to_str_columns=self.uuid_type_columns)
 
         return primary_column_name
 
@@ -536,11 +537,78 @@ class ApiParameterSchemaBuilder:
     def _assign_foreign_join(self, table_of_foreign=None) -> List[Union[Tuple, Dict]]:
         if table_of_foreign is None:
             table_of_foreign = self.table_of_foreign
-        self.code_gen.build_enum(class_name=self.db_name + 'Relationship',
-                                 fields=[(table_name, f"'{table_name}'") for table_name in table_of_foreign])
+        if table_of_foreign:
+            self.code_gen.build_enum(class_name=self.class_name + 'Relationship',
+                                     fields=[(table_name, f"'{table_name}'") for table_name in table_of_foreign])
 
-        return {"column_name": 'relationship', "column_type": f"Optional[List[{self.db_name + 'Relationship'}]]",
-                "column_default": "None", "column_description": "'try to query the other table with foreign key'"}
+            return {"column_name": 'relationship', "column_type": f"Optional[List[{self.class_name + 'Relationship'}]]",
+                    "column_default": "None", "column_description": "'try to query the other table with foreign key'"}
+        return None
+
+    def _extra_relation_primary_key(self, relation_dbs):
+        primary_key_columns = []
+        foreign_table_name = ""
+        primary_column_names = []
+        for db_model_table in relation_dbs:
+            table_name = db_model_table.key
+            foreign_table_name += table_name + "_"
+            primary_list = db_model_table.primary_key.columns.values()
+            primary_key_column, = primary_list
+            column_type = str(primary_key_column.type)
+            try:
+                python_type = primary_key_column.type.python_type
+                if column_type in self.unsupported_data_types:
+                    raise ColumnTypeNotSupportedException(
+                        f'The type of column {primary_key_column.key} ({column_type}) not supported yet')
+                if column_type in self.partial_supported_data_types:
+                    warnings.warn(
+                        f'The type of column {primary_key_column.key} ({column_type}) '
+                        f'is not support data query (as a query parameters )')
+
+            except NotImplementedError:
+                if column_type == "UUID":
+                    python_type = uuid.UUID
+                else:
+                    raise ColumnTypeNotSupportedException(
+                        f'The type of column {primary_key_column.key} ({column_type}) not supported yet')
+            # handle if python type is UUID
+            if python_type.__name__ in ['str',
+                                        'int',
+                                        'float',
+                                        'Decimal',
+                                        'UUID',
+                                        'bool',
+                                        'date',
+                                        'time',
+                                        'datetime']:
+                column_type = python_type.__name__
+            else:
+                raise ColumnTypeNotSupportedException(
+                    f'The type of column {primary_key_column.key} ({column_type}) not supported yet')
+            default = self._extra_default_value(primary_key_column)
+            if default is ...:
+                warnings.warn(
+                    f'The column of {primary_key_column.key} has not default value '
+                    f'and it is not nullable and in exclude_list'
+                    f'it may throw error when you insert data ')
+            description = self._get_field_description(primary_key_column)
+            primary_column_name = str(primary_key_column.key)
+            alias_primary_column_name = table_name + FOREIGN_PATH_PARAM_KEYWORD + str(primary_key_column.key)
+            primary_column_names.append(alias_primary_column_name)
+            primary_key_columns.append(
+                (alias_primary_column_name, column_type, default, description))
+
+        # TODO test foreign uuid key
+        class_name = f'{self.class_name}RelationshipPrimaryKeyModel'
+        self.code_gen.build_dataclass(class_name=class_name,
+                                      fields=[(primary_key_column[0],
+                                               primary_key_column[1],
+                                               f"Query({primary_key_column[2]}, description={primary_key_column[3]})"
+                                               ) for primary_key_column in primary_key_columns],
+                                      value_of_list_to_str_columns=self.uuid_type_columns,
+                                      filter_none=self.uuid_type_columns)
+
+        return primary_column_names, f"{foreign_table_name}_PrimaryKeyModel", primary_key_columns
 
     def create_one(self) -> Tuple:
         request_fields = []
@@ -605,18 +673,88 @@ class ApiParameterSchemaBuilder:
                self.class_name + "CreateManyItemListRequestModel", \
                self.class_name + "CreateManyItemListResponseModel"
 
-    def foreign_find_many(self) -> Tuple:
-        if self.table_of_foreign:
-            query_param: List[dict] = self._get_fizzy_query_param()
-            query_param: List[Tuple] = self._assign_pagination_param(query_param)
-            if self.foreign_join_common_column:
-                query_param.append(self.foreign_join_common_column)
+    def foreign_tree_get_many(self) -> Tuple:
+        _tmp = []
+        path = ""
+        path += '/{' + self.db_name + FOREIGN_PATH_PARAM_KEYWORD + self.primary_key_str + '}'
+        path_model = [self.__db_model_table]
+        pk_list = [self.db_name + "." + self.primary_key_str]
+        total_table_of_foreign = {}
+        function_name = "get_many_by_pk_from"
+        for idx, relation in enumerate(self.relation_level):
+            table_detail = self.foreign_mapper[relation]
+            _all_fields = table_detail["all_fields"]
+            _primary_key = table_detail["primary_key"]
+            _db_name = table_detail["db_name"]
+            _db_model = table_detail["db_model"]
+            _db_model_table = table_detail["db_model_table"]
+            _primary_key_dataclass_model = self._extra_relation_primary_key(path_model)
+            path_model.append(_db_model_table)
+            _query_param: List[dict] = self._get_fizzy_query_param(pk_list, _all_fields)
+            table_of_foreign, reference_mapper = self._extra_foreign_find_table_from_declarative_base(_db_model,
+                                                                                                      is_foreign_tree=True)
+            total_table_of_foreign.update(table_of_foreign)
+
+            foreign_join_common_column: Union[dict, None] = self._assign_foreign_join(table_of_foreign)
+            if foreign_join_common_column is not None:
+                _query_param += [foreign_join_common_column]
+            response_fields = []
+            all_field = deepcopy(_all_fields)
+            path += '/' + _db_name + ''
+            function_name += "_/_" + _db_name
+            pk_list.append(_db_name + "." + _primary_key[0])
+
+            for i in all_field:
+                response_fields.append((i['column_name'],
+                                        i['column_type'],
+                                        f"Body({i['column_default']})"))
+
+            request_fields = []
+            for i in _query_param:
+                assert isinstance(i, dict) or isinstance(i, tuple)
+                if isinstance(i, Tuple):
+                    request_fields.append(i)
+                else:
+                    request_fields.append((i['column_name'],
+                                           i['column_type'],
+                                           f"Query({i['column_default']}, description={i['column_description']})"))
+
+            for local_column, refer_table_info in reference_mapper.items():
+                response_fields.append((f"{refer_table_info['foreign_table_name']}_foreign",
+                                        self.foreign_table_response_model_sets[refer_table_info['foreign_table']],
+                                        None))
+
+            self.code_gen.build_dataclass(class_name=self.class_name + "FindManyForeignTreeRequestBody",
+                                          fields=request_fields,
+                                          value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
+
+            self.code_gen.build_base_model(class_name=self.class_name + "FindManyForeignTreeResponseModel",
+                                           fields=response_fields,
+                                           value_of_list_to_str_columns=self.uuid_type_columns)
+
+            self.code_gen.build_base_model_paginate(
+                class_name=self.class_name + "FindManyForeignTreeItemListResponseModel",
+                field=(
+                    f'{self.class_name + "FindManyForeignTreeResponseModel"}',
+                    None),
+                base_model="ExcludeUnsetBaseModel")
+
+            _response_model = {}
+            _response_model["primary_key_dataclass_model"] = _primary_key_dataclass_model[1]
+            _response_model["request_query_model"] = self.class_name + "_FindManyForeignTreeRequestBody"
+            _response_model["response_model"] = self.class_name + "FindManyItemListResponseModel"
+            _response_model["path"] = path
+            _response_model["function_name"] = function_name
+            _tmp.append(_response_model)
+            path += '/{' + _db_name + FOREIGN_PATH_PARAM_KEYWORD + _primary_key[0] + '}'
+
+        return _tmp
 
     def find_many(self) -> Tuple:
 
         query_param: List[dict] = self._get_fizzy_query_param()
         query_param: List[Tuple] = self._assign_pagination_param(query_param)
-        if self.foreign_join_common_column:
+        if self.foreign_join_common_column is not None:
             query_param.append(self.foreign_join_common_column)
 
         response_fields = []
@@ -657,7 +795,7 @@ class ApiParameterSchemaBuilder:
 
     def find_one(self) -> Tuple:
         query_param: List[dict] = self._get_fizzy_query_param(self.primary_key_str)
-        if self.foreign_join_common_column:
+        if self.foreign_join_common_column is not None:
             query_param.append(self.foreign_join_common_column)
 
         response_fields = []
