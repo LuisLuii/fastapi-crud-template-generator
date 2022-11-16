@@ -1,0 +1,63 @@
+@api.get("{{ path }}", status_code=200, response_model={{ model_name }}FindManyForeignTreeItemListResponseModel)
+{{ 'async ' if is_async else '' }}def foreign_get_many(
+            response: Response,
+            request: Request,
+            url_param=Depends({{ model_name }}RelationshipPrimaryKeyModel),
+            query=Depends({{ model_name }}FindManyForeignTreeRequestBody),
+            session=Depends(db_session)):
+
+    target_model = request.url.path.split("/")[-1]
+
+    filter_args = query.__dict__
+    limit = filter_args.pop('limit', None)
+    offset = filter_args.pop('offset', None)
+    order_by_columns = filter_args.pop('order_by_columns', None)
+
+    join_table_list = query.__dict__.pop('relationship', [])
+
+    model = router_data["foreign_key_table"][target_model]["instance"]
+    table = model.__table__
+    column_list = table.c
+    filter_list: List[BinaryExpression] = find_query_builder(param=query.__dict__,
+                                                             model=model)
+    path_filter_list: List[BinaryExpression] = foreign_path_query_builder(param=url_param.__dict__,
+                                                                        model=router_data["foreign_key_table"])
+
+    # init response format
+    response_format = {
+            "total": 0,
+            "result": []
+        }
+
+
+    total_stmt = select(func.count(router_data["pk"])).where(and_(*filter_list+path_filter_list))
+    total_result = session.execute(total_stmt).scalar()
+    if total_result < 1:
+        response_data = parse_obj_as(BlogPostFindManyForeignTreeItemListResponseModel, response_format)
+        response.headers["x-total-count"] = str(0)
+        return response_data
+
+
+    relationship_mapper = build_relationship_mapper(router_data.get("foreign_key_table", None), join_table_list)
+    foreign_column_list = relationship_query_builder(relationship_mapper)
+
+    query_stmt = select(*[table] + foreign_column_list).filter(and_(*filter_list+path_filter_list))
+
+    # add page
+    query_stmt = query_stmt.limit(limit).offset(offset)
+
+    # add join expression
+    query_stmt = join_expression_builder(query_stmt, relationship_mapper)
+
+    # add orderby
+    query_stmt = orderby_expression_builder(query_stmt, order_by_columns, model)
+
+    sql_executed_result = {{ 'await ' if is_async else '' }}session.execute(query_stmt)
+    result = sql_executed_result.fetchall()
+
+    formatted_result = group_find_many_join(result, [str(i.name) for i in column_list])
+    response_format["total"] = total_result
+    response_format["result"] = formatted_result
+    response_data = parse_obj_as({{ model_name }}FindManyForeignTreeItemListResponseModel, response_format)
+    response.headers["x-total-count"] = str(len(formatted_result))
+    return response_data

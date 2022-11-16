@@ -141,7 +141,7 @@ class ApiParameterSchemaBuilder:
             foreign_table = r.mapper.class_
             foreign_table_name = foreign_table.__tablename__
 
-            if mirror_relationship and local_table not in self.foreign_mapper:
+            if mirror_relationship and (local_table not in self.foreign_mapper or foreign_table_name != self.db_name):
                 continue
             if not mirror_relationship and foreign_table_name not in self.foreign_mapper:
                 continue

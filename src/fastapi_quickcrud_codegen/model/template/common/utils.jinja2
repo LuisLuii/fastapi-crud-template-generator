@@ -12,6 +12,8 @@ from pydantic import BaseModel
 
 Base = TypeVar("Base", bound=declarative_base)
 
+FOREIGN_PATH_PARAM_KEYWORD = "__pk__"
+
 OriginalStmt = TypeVar("OriginalStmt", bound=BinaryExpression)
 SubQuery = TypeVar("SubQuery", bound=BinaryExpression)
 PrimaryColumn = TypeVar("PrimaryColumn", bound=Column)
@@ -107,6 +109,9 @@ def build_foreign_mapper(model: decl_api.DeclarativeMeta):
         foreign_key_table[foreign_table_name] = {'local_reference_pairs_set': local_reference_pairs,
                                                  'instance': foreign_table,
                                                  'db_column': foreign_table}
+    foreign_key_table[model.__tablename__] = {
+        "instance": model
+    }
     return foreign_key_table
 
 
@@ -313,3 +318,16 @@ def clean_input_fields(param: Union[dict, list], model: Base):
             actual_column_name = column.expression.key
             stmt.append(actual_column_name)
         return stmt
+
+
+def foreign_path_query_builder(param, model) -> List[Union[BinaryExpression]]:
+    query = []
+    if not param:
+        return query
+    for param_name, param_value in param.items():
+        table_with_column = param_name.split(FOREIGN_PATH_PARAM_KEYWORD)
+        assert len(table_with_column) == 2
+        table_name, column_name = table_with_column
+        table_model = model[table_name]["instance"]
+        query.append((getattr(table_model, column_name) == param_value))
+    return query

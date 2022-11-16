@@ -11,14 +11,12 @@ class Account(Base):
     name = Column(VARCHAR)
     age = Column(Integer)
     email = Column(VARCHAR)
-    blog_post = relationship("BlogPost", back_populates="account")
 
 
 class BlogPost(Base):
     __tablename__ = "blog_post"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    account_id = Column(Integer, ForeignKey("account.id"), nullable=False)
-    account = relationship("Account", back_populates="blog_post")
+    account_id = Column(Integer, nullable=False)
     blog_comment = relationship("BlogComment", back_populates="blog_post")
 
 
