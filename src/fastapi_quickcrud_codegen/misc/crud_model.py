@@ -1,6 +1,6 @@
 from typing import (Optional,
                     Dict,
-                    List)
+                    List, Union)
 
 from pydantic import BaseModel
 
@@ -20,7 +20,7 @@ class RequestResponseModel(BaseModel):
 
 
 class CRUDModel(BaseModel):
-    GET: Optional[Dict[CrudMethods, bool]]
+    GET: Optional[Dict[CrudMethods, Union[bool, List[dict]]]]
     POST: Optional[Dict[CrudMethods, bool]]
     PUT: Optional[Dict[CrudMethods, bool]]
     PATCH: Optional[Dict[CrudMethods, bool]]

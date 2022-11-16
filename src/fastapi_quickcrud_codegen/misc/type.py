@@ -56,7 +56,7 @@ class CRUDRequestMapping(Enum):
     FIND_ONE_WITH_FOREIGN_TREE = RequestMethods.GET
 
     FIND_MANY = RequestMethods.GET
-    FIND_MANY_WITH_FOREIGN_TREE = RequestMethods.GET
+    FOREIGN_FIND_MANY = RequestMethods.GET
 
     UPDATE_ONE = RequestMethods.PUT
     UPDATE_MANY = RequestMethods.PUT

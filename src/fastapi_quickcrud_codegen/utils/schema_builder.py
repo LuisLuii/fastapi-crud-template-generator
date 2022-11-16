@@ -74,7 +74,7 @@ class ApiParameterSchemaBuilder:
         self.sql_type = sql_type
 
         # relationship api related variable
-        self.foreign_table_response_model_sets: Dict[TableNameT, ResponseModelT] = {}
+        self.foreign_table_response_model_sets: Dict[dict] = {}
 
         self.foreign_include = foreign_include
 
@@ -126,7 +126,8 @@ class ApiParameterSchemaBuilder:
         return relation_level
 
     def _extra_foreign_find_table_from_declarative_base(self, db_model: decl_api.DeclarativeMeta,
-                                                        is_foreign_tree: bool = False):
+                                                        is_foreign_tree: bool = False,
+                                                        mirror_relationship: bool = False):
         mapper = inspect(db_model)
         foreign_key_table = {}
         reference_mapper = {}
@@ -139,8 +140,12 @@ class ApiParameterSchemaBuilder:
 
             foreign_table = r.mapper.class_
             foreign_table_name = foreign_table.__tablename__
-            if foreign_table_name not in self.foreign_mapper:
+
+            if mirror_relationship and local_table not in self.foreign_mapper:
                 continue
+            if not mirror_relationship and foreign_table_name not in self.foreign_mapper:
+                continue
+
             foreign_secondary_table_name = ''
             if r.secondary_synchronize_pairs:
                 # foreign_table_name = r.secondary.key
@@ -221,7 +226,8 @@ class ApiParameterSchemaBuilder:
                 fields=response_fields)
 
             self.foreign_table_response_model_sets[
-                foreign_table] = db_model.__name__ + "To" + foreign_table.__name__ + response_model_name
+                foreign_table] = {"class_name": db_model.__name__ + "To" + foreign_table.__name__ + response_model_name,
+                                  "is_foreign_tree": is_foreign_tree}
             foreign_key_table[foreign_table_name] = {'local_reference_pairs_set': local_reference_pairs,
                                                      'fields': all_fields_,
                                                      'instance': foreign_table,
@@ -534,14 +540,18 @@ class ApiParameterSchemaBuilder:
             result_.append(i)
         return result_
 
-    def _assign_foreign_join(self, table_of_foreign=None) -> List[Union[Tuple, Dict]]:
+    def _assign_foreign_join(self, table_of_foreign=None, model_name=None) -> List[Union[Tuple, Dict]]:
         if table_of_foreign is None:
             table_of_foreign = self.table_of_foreign
+        if model_name is None:
+            model_name = self.class_name + 'Relationship'
+        else:
+            model_name += 'Relationship'
         if table_of_foreign:
-            self.code_gen.build_enum(class_name=self.class_name + 'Relationship',
+            self.code_gen.build_enum(class_name=model_name,
                                      fields=[(table_name, f"'{table_name}'") for table_name in table_of_foreign])
 
-            return {"column_name": 'relationship', "column_type": f"Optional[List[{self.class_name + 'Relationship'}]]",
+            return {"column_name": 'relationship', "column_type": f"Optional[List[{model_name}]]",
                     "column_default": "None", "column_description": "'try to query the other table with foreign key'"}
         return None
 
@@ -692,10 +702,12 @@ class ApiParameterSchemaBuilder:
             path_model.append(_db_model_table)
             _query_param: List[dict] = self._get_fizzy_query_param(pk_list, _all_fields)
             table_of_foreign, reference_mapper = self._extra_foreign_find_table_from_declarative_base(_db_model,
-                                                                                                      is_foreign_tree=True)
+                                                                                                      is_foreign_tree=True,
+                                                                                                      mirror_relationship=True)
             total_table_of_foreign.update(table_of_foreign)
 
-            foreign_join_common_column: Union[dict, None] = self._assign_foreign_join(table_of_foreign)
+            foreign_join_common_column: Union[dict, None] = self._assign_foreign_join(table_of_foreign,
+                                                                                      model_name=_db_model.__name__)
             if foreign_join_common_column is not None:
                 _query_param += [foreign_join_common_column]
             response_fields = []
@@ -721,7 +733,8 @@ class ApiParameterSchemaBuilder:
 
             for local_column, refer_table_info in reference_mapper.items():
                 response_fields.append((f"{refer_table_info['foreign_table_name']}_foreign",
-                                        self.foreign_table_response_model_sets[refer_table_info['foreign_table']],
+                                        self.foreign_table_response_model_sets[refer_table_info['foreign_table']][
+                                            "class_name"],
                                         None))
 
             self.code_gen.build_dataclass(class_name=self.class_name + "FindManyForeignTreeRequestBody",
@@ -741,8 +754,8 @@ class ApiParameterSchemaBuilder:
 
             _response_model = {}
             _response_model["primary_key_dataclass_model"] = _primary_key_dataclass_model[1]
-            _response_model["request_query_model"] = self.class_name + "_FindManyForeignTreeRequestBody"
-            _response_model["response_model"] = self.class_name + "FindManyItemListResponseModel"
+            _response_model["request_query_model"] = self.class_name + "FindManyForeignTreeRequestBody"
+            _response_model["response_model"] = self.class_name + "FindManyForeignTreeItemListResponseModel"
             _response_model["path"] = path
             _response_model["function_name"] = function_name
             _tmp.append(_response_model)
@@ -766,7 +779,7 @@ class ApiParameterSchemaBuilder:
         if self.foreign_table_response_model_sets:
             response_fields.append((
                 "relationship",
-                f"Dict[str, List[Union[{', '.join(self.foreign_table_response_model_sets.values())}]]]",
+                f"Dict[str, List[Union[{', '.join([foreign_info_dict['class_name'] for foreign_info_dict in self.foreign_table_response_model_sets.values() if foreign_info_dict['is_foreign_tree'] is not True])}]]]",
                 None
             ))
         request_fields = []
@@ -808,7 +821,7 @@ class ApiParameterSchemaBuilder:
         if self.foreign_table_response_model_sets:
             response_fields.append((
                 "relationship",
-                f"Dict[str, List[Union[{', '.join(self.foreign_table_response_model_sets.values())}]]]",
+                f"Dict[str, List[Union[{', '.join([foreign_info_dict['class_name'] for foreign_info_dict in self.foreign_table_response_model_sets.values() if foreign_info_dict['is_foreign_tree'] is not True])}]]]",
                 None
             ))
         request_fields = []

@@ -87,6 +87,14 @@ def sqlalchemy_to_pydantic(
             if request_method not in request_response_mode_set:
                 request_response_mode_set[request_method] = {}
             request_response_mode_set[request_method][crud_method.value] = True
+
+        elif crud_method.value == CrudMethods.FOREIGN_FIND_MANY.value:
+            model = model_builder.foreign_tree_get_many()
+            request_method = CRUDRequestMapping.get_request_method_by_crud_method(crud_method.value).value
+            if request_method not in request_response_mode_set:
+                request_response_mode_set[request_method] = {}
+            request_response_mode_set[request_method][crud_method.value] = model
+
     model_builder.code_gen.gen()
 
     return CRUDModel(

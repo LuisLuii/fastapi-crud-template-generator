@@ -22,7 +22,7 @@
     # add join expression
     query_stmt = join_expression_builder(query_stmt, relationship_mapper)
 
-    sql_executed_result = {{ 'await ' if is_async else '' }}session.execute(stmt)
+    sql_executed_result = {{ 'await ' if is_async else '' }}session.execute(query_stmt)
 
     one_row_data = sql_executed_result.fetchall()
     formatted_result = group_find_many_join(one_row_data, [str(i.name) for i in column_list])

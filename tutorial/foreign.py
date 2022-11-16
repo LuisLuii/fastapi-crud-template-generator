@@ -40,7 +40,7 @@ model_list = [
     DbModel(db_model=BlogPost, prefix="/blog", tags=["Blog Post"], foreign_include=[BlogComment],
             crud_methods=[CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_ONE]),
     DbModel(db_model=BlogComment, prefix="/comment", tags=["Blog Comment"], foreign_include=[BlogPost],
-            crud_methods=[CrudMethods.FIND_ONE])]
+            crud_methods=[CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_ONE])]
 crud_router_builder(
     db_model_list=model_list,
     # is_async=True,
