@@ -24,8 +24,6 @@ def sqlalchemy_to_pydantic(
                                               foreign_include=foreign_include,
                                               )
     for crud_method in crud_methods:
-        if crud_method.value == CrudMethods.FOREIGN_FIND_MANY.value:
-            model_builder.foreign_tree_get_many()
         if crud_method.value == CrudMethods.CREATE_ONE.value:
             model_builder.create_one()
             request_method = CRUDRequestMapping.get_request_method_by_crud_method(crud_method.value).value

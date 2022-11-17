@@ -33,7 +33,7 @@
     total_stmt = select(func.count(router_data["pk"])).where(and_(*filter_list+path_filter_list))
     total_result = session.execute(total_stmt).scalar()
     if total_result < 1:
-        response_data = parse_obj_as(BlogPostFindManyForeignTreeItemListResponseModel, response_format)
+        response_data = parse_obj_as({{ model_name }}FindManyForeignTreeItemListResponseModel, response_format)
         response.headers["x-total-count"] = str(0)
         return response_data
 

@@ -277,7 +277,8 @@ class CrudCodeGen():
         ), from_=f"model.{file_name}")
         self.code += code + "\n\n"
 
-    def build_foreign_find_many_route(self, *, is_async: bool, path: str, file_name: str, model_name: str):
+    def build_foreign_find_many_route(self, *, is_async: bool, path: str, file_name: str, model_name: str,
+                                      foreign_model_name: str = None):
         TEMPLATE_FILE_PATH: ClassVar[str] = 'route/foreign_find_many.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -287,13 +288,13 @@ class CrudCodeGen():
         TEMPLATE_FILE = 'foreign_find_many.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
-            {"model_name": model_name, "path": path, "is_async": is_async})
+            {"model_name": foreign_model_name, "path": path, "is_async": is_async})
         self.import_helper.add(import_="Request", from_="starlette.requests")
         self.import_helper.add(import_="parse_obj_as", from_="pydantic")
         self.import_helper.add(import_=set([
-            f"{model_name}RelationshipPrimaryKeyModel",
-            f"{model_name}FindManyForeignTreeRequestBody",
-            f"{model_name}FindManyForeignTreeItemListResponseModel",
+            f"{foreign_model_name}RelationshipPrimaryKeyModel",
+            f"{foreign_model_name}FindManyForeignTreeRequestBody",
+            f"{foreign_model_name}FindManyForeignTreeItemListResponseModel",
             f"{model_name}"]
         ), from_=f"model.{file_name}")
         self.code += code + "\n\n"

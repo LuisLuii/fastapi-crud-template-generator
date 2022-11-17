@@ -142,7 +142,8 @@ class DbModel:
                 crud_code_generator.build_foreign_find_many_route(is_async=is_async,
                                                                   path=crud_model['path'],
                                                                   file_name=model_name,
-                                                                  model_name=table_name)
+                                                                  model_name=table_name,
+                                                                  foreign_model_name=crud_model['class_name'])
 
             print("\t\tforeign find many API generate successfully")
 

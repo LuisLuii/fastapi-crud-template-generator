@@ -555,7 +555,9 @@ class ApiParameterSchemaBuilder:
                     "column_default": "None", "column_description": "'try to query the other table with foreign key'"}
         return None
 
-    def _extra_relation_primary_key(self, relation_dbs):
+    def _extra_relation_primary_key(self, relation_dbs, default_class_name=None):
+        if default_class_name is None:
+            default_class_name = self.class_name
         primary_key_columns = []
         foreign_table_name = ""
         primary_column_names = []
@@ -609,7 +611,7 @@ class ApiParameterSchemaBuilder:
                 (alias_primary_column_name, column_type, default, description))
 
         # TODO test foreign uuid key
-        class_name = f'{self.class_name}RelationshipPrimaryKeyModel'
+        class_name = f'{default_class_name}RelationshipPrimaryKeyModel'
         self.code_gen.build_dataclass(class_name=class_name,
                                       fields=[(primary_key_column[0],
                                                primary_key_column[1],
@@ -691,6 +693,7 @@ class ApiParameterSchemaBuilder:
         pk_list = [self.db_name + "." + self.primary_key_str]
         total_table_of_foreign = {}
         function_name = "get_many_by_pk_from"
+        class_name = self.__db_model.__name__
         for idx, relation in enumerate(self.relation_level):
             table_detail = self.foreign_mapper[relation]
             _all_fields = table_detail["all_fields"]
@@ -698,7 +701,9 @@ class ApiParameterSchemaBuilder:
             _db_name = table_detail["db_name"]
             _db_model = table_detail["db_model"]
             _db_model_table = table_detail["db_model_table"]
-            _primary_key_dataclass_model = self._extra_relation_primary_key(path_model)
+            class_name += "To" + _db_model.__name__
+
+            _primary_key_dataclass_model = self._extra_relation_primary_key(path_model, class_name)
             path_model.append(_db_model_table)
             _query_param: List[dict] = self._get_fizzy_query_param(pk_list, _all_fields)
             table_of_foreign, reference_mapper = self._extra_foreign_find_table_from_declarative_base(_db_model,
@@ -714,7 +719,7 @@ class ApiParameterSchemaBuilder:
             all_field = deepcopy(_all_fields)
             path += '/' + _db_name + ''
             function_name += "_/_" + _db_name
-            pk_list.append(_db_name + "." + _primary_key[0])
+            pk_list.append(_db_name + "." + _primary_key)
 
             for i in all_field:
                 response_fields.append((i['column_name'],
@@ -737,29 +742,30 @@ class ApiParameterSchemaBuilder:
                                             "class_name"],
                                         None))
 
-            self.code_gen.build_dataclass(class_name=self.class_name + "FindManyForeignTreeRequestBody",
+            self.code_gen.build_dataclass(class_name=class_name + "FindManyForeignTreeRequestBody",
                                           fields=request_fields,
                                           value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
 
-            self.code_gen.build_base_model(class_name=self.class_name + "FindManyForeignTreeResponseModel",
+            self.code_gen.build_base_model(class_name=class_name + "FindManyForeignTreeResponseModel",
                                            fields=response_fields,
                                            value_of_list_to_str_columns=self.uuid_type_columns)
 
             self.code_gen.build_base_model_paginate(
-                class_name=self.class_name + "FindManyForeignTreeItemListResponseModel",
+                class_name=class_name + "FindManyForeignTreeItemListResponseModel",
                 field=(
-                    f'{self.class_name + "FindManyForeignTreeResponseModel"}',
+                    f'{class_name + "FindManyForeignTreeResponseModel"}',
                     None),
                 base_model="ExcludeUnsetBaseModel")
 
             _response_model = {}
             _response_model["primary_key_dataclass_model"] = _primary_key_dataclass_model[1]
-            _response_model["request_query_model"] = self.class_name + "FindManyForeignTreeRequestBody"
-            _response_model["response_model"] = self.class_name + "FindManyForeignTreeItemListResponseModel"
+            _response_model["request_query_model"] = class_name + "FindManyForeignTreeRequestBody"
+            _response_model["response_model"] = class_name + "FindManyForeignTreeItemListResponseModel"
             _response_model["path"] = path
+            _response_model['class_name'] = class_name
             _response_model["function_name"] = function_name
             _tmp.append(_response_model)
-            path += '/{' + _db_name + FOREIGN_PATH_PARAM_KEYWORD + _primary_key[0] + '}'
+            path += '/{' + _db_name + FOREIGN_PATH_PARAM_KEYWORD + _primary_key + '}'
 
         return _tmp
 
