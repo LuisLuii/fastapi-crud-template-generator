@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Unit test in 🐍3.7/🐍3.8/🐍3.9/🐍3.10
 
 # Controls when the workflow will run
 on:
