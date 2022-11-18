@@ -5,7 +5,7 @@
 [![SupportedVersion](https://img.shields.io/pypi/pyversions/fastapi-crud-code-generator?style=flat-square)](https://pypi.org/project/fastapi-crud-code-generator)
 [![unit test](https://github.com/LuisLuii/fastapi-crud-template-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/LuisLuii/fastapi-crud-template-generator/actions/workflows/ci.yml)
 
-## The purpose of this project/ What you can get from this project
+## The purpose of this project/ What you can get out of this project
 In this project, `It will generate simple Fastapi's scaffold CRUD operations using the Sqlalchemy schema`. This scaffolding is a technique used to generate views and controllers based on your Sqlalcehmy schema present in the application. Using scaffolding, you can save your time by creating CRUD operations and validation model automatically from your Sqlalchemy model and `extend the code easily, such as add some business logic in the api router or modify the Pedantic/Dataclass model, api end point etc...` Which supports following api:
 >- Get one
 >- Get many
