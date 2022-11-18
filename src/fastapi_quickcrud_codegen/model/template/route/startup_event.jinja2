@@ -3,5 +3,14 @@ router_data = {}
 
 @api.on_event("startup")
 {{ 'async ' if is_async else '' }}def startup_event():
-    router_data["foreign_key_table"] = build_foreign_mapper({{ model_name }})
+
+    foreign_mapping = {}
+    init_mapping = build_foreign_mapper({{ model_name }})
+    foreign_mapping[{{ model_name }}.__tablename__] = init_mapping
+    if init_mapping:
+        for table in init_mapping:
+            if table not in foreign_mapping:
+                mapping = build_foreign_mapper(init_mapping[table]["instance"])
+                foreign_mapping[table] = mapping
+    router_data["foreign_key_table"] = foreign_mapping
     router_data["pk"] = get_pk({{ model_name }})

@@ -15,13 +15,15 @@
 
     join_table_list = query.__dict__.pop('relationship', [])
 
-    model = router_data["foreign_key_table"][target_model]["instance"]
+    foreign_key_table = router_data["foreign_key_table"]
+    model = foreign_key_table[{{ base_mode }}.__tablename__][target_model]["instance"]
+    pk = get_pk(model)
     table = model.__table__
     column_list = table.c
     filter_list: List[BinaryExpression] = find_query_builder(param=query.__dict__,
                                                              model=model)
     path_filter_list: List[BinaryExpression] = foreign_path_query_builder(param=url_param.__dict__,
-                                                                        model=router_data["foreign_key_table"])
+                                                                        model=foreign_key_table[target_model])
 
     # init response format
     response_format = {
@@ -29,19 +31,30 @@
             "result": []
         }
 
+    relationship_mapper = build_relationship_mapper(foreign_key_table[target_model], [str(path_filter.left).split('.')[0] for path_filter in path_filter_list])
+    if relationship_mapper:
+        relationship_mapper = remove_unnecessary_table(model, relationship_mapper, [str(path_filter.left).split('.')[0] for path_filter in path_filter_list])
 
-    total_stmt = select(func.count(router_data["pk"])).where(and_(*filter_list+path_filter_list))
+
+    total_stmt = select(func.count(pk)).where(and_(*filter_list + path_filter_list))
+
+    # add join expression
+    total_stmt = join_expression_builder(total_stmt, relationship_mapper)
+
     total_result = session.execute(total_stmt).scalar()
     if total_result < 1:
         response_data = parse_obj_as({{ model_name }}FindManyForeignTreeItemListResponseModel, response_format)
         response.headers["x-total-count"] = str(0)
         return response_data
 
+    relationship_mapper = build_relationship_mapper(foreign_key_table[target_model], join_table_list)
+    if relationship_mapper:
+        relationship_mapper = remove_unnecessary_table(model, relationship_mapper,
+                                                       [i.value for i in join_table_list])
 
-    relationship_mapper = build_relationship_mapper(router_data.get("foreign_key_table", None), join_table_list)
     foreign_column_list = relationship_query_builder(relationship_mapper)
 
-    query_stmt = select(*[table] + foreign_column_list).filter(and_(*filter_list+path_filter_list))
+    query_stmt = select(*[table] + foreign_column_list).filter(and_(*filter_list + path_filter_list))
 
     # add page
     query_stmt = query_stmt.limit(limit).offset(offset)

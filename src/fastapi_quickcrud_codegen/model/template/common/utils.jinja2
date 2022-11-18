@@ -19,6 +19,18 @@ SubQuery = TypeVar("SubQuery", bound=BinaryExpression)
 PrimaryColumn = TypeVar("PrimaryColumn", bound=Column)
 
 
+def remove_unnecessary_table(model, relationship_mapper, join_table_list):
+    excluded_table = [model.__tablename__, *join_table_list]
+    for k, v in relationship_mapper.items():
+        tmp = []
+        for local_reference in v["local_reference_pairs_set"]:
+            if local_reference["local"]["table"] not in excluded_table:
+                continue
+            tmp.append(local_reference)
+        relationship_mapper[k]["local_reference_pairs_set"] = tmp
+    return relationship_mapper
+
+
 def build_relationship_mapper(foreign_key_table, join_table_list) -> dict:
     relationship_mapper = {}
     if foreign_key_table is None:
@@ -67,10 +79,10 @@ def build_foreign_mapper(model: decl_api.DeclarativeMeta):
                 else:
 
                     exclude = False
-                local_reference_pairs.append({'local': {"local_table": local_table,
-                                                        "local_column": local_column},
-                                              "reference": {"reference_table": reference_table,
-                                                            "reference_column": reference_column},
+                local_reference_pairs.append({'local': {"table": local_table,
+                                                        "column": local_column},
+                                              "reference": {"table": reference_table,
+                                                            "column": reference_column},
                                               'local_table': local_table_instance,
                                               'local_table_columns': local_table_instance.c,
                                               'reference_table': reference_table_instance,
@@ -96,10 +108,10 @@ def build_foreign_mapper(model: decl_api.DeclarativeMeta):
                     reference_column_ = str(column).split('.')[1]
                     reference_table_instance_ = column.table
 
-            local_reference_pairs.append({'local': {"local_table": local_table_,
-                                                    "local_column": local_column_},
-                                          "reference": {"reference_table": reference_table_,
-                                                        "reference_column": reference_column_},
+            local_reference_pairs.append({'local': {"table": local_table_,
+                                                    "column": local_column_},
+                                          "reference": {"table": reference_table_,
+                                                        "column": reference_column_},
                                           'local_table': local_table_instance_,
                                           'local_table_columns': local_table_instance_.c,
                                           'reference_table': reference_table_instance_,
@@ -109,9 +121,6 @@ def build_foreign_mapper(model: decl_api.DeclarativeMeta):
         foreign_key_table[foreign_table_name] = {'local_reference_pairs_set': local_reference_pairs,
                                                  'instance': foreign_table,
                                                  'db_column': foreign_table}
-    foreign_key_table[model.__tablename__] = {
-        "instance": model
-    }
     return foreign_key_table
 
 
@@ -150,7 +159,7 @@ def join_expression_builder(stmt: BinaryExpression, relationship_mapper: dict) -
             foreign_table = local_reference["reference_table"]
             local_table = local_reference["local_table"]
             stmt = stmt.join(foreign_table, getattr(local_table.c, local_reference["local"][
-                "local_column"]) == getattr(foreign_table.c, local_reference["reference"]["reference_column"]),
+                "column"]) == getattr(foreign_table.c, local_reference["reference"]["column"]),
                              isouter=True)
 
     return stmt
