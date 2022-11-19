@@ -21,7 +21,7 @@ class CrudCodeGen():
         self.import_helper.add(import_=set(
             ["find_query_builder", "group_find_many_join", "join_expression_builder", "orderby_expression_builder",
              "build_foreign_mapper", "get_pk", "relationship_query_builder", "build_relationship_mapper",
-             "foreign_path_query_builder"]),
+             "foreign_path_query_builder", "remove_unnecessary_table"]),
             from_="common.utils")
         self.import_helper.add(import_=set(["db_session"]), from_="common.sql_session")
 
@@ -288,7 +288,7 @@ class CrudCodeGen():
         TEMPLATE_FILE = 'foreign_find_many.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
-            {"model_name": foreign_model_name, "path": path, "is_async": is_async})
+            {"model_name": foreign_model_name, "path": path, "is_async": is_async, "base_mode": model_name})
         self.import_helper.add(import_="Request", from_="starlette.requests")
         self.import_helper.add(import_="parse_obj_as", from_="pydantic")
         self.import_helper.add(import_=set([

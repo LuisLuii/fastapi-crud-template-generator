@@ -31,9 +31,10 @@
             "result": []
         }
 
+    # prepare a sql stmt that number of total result for response
     relationship_mapper = build_relationship_mapper(foreign_key_table[target_model], [str(path_filter.left).split('.')[0] for path_filter in path_filter_list])
-    if relationship_mapper:
-        relationship_mapper = remove_unnecessary_table(model, relationship_mapper, [str(path_filter.left).split('.')[0] for path_filter in path_filter_list])
+    #if relationship_mapper:
+    #    relationship_mapper = remove_unnecessary_table(model, relationship_mapper, [str(path_filter.left).split('.')[0] for path_filter in path_filter_list])
 
 
     total_stmt = select(func.count(pk)).where(and_(*filter_list + path_filter_list))
@@ -47,10 +48,11 @@
         response.headers["x-total-count"] = str(0)
         return response_data
 
+    # prepare query stmt that query result for response
     relationship_mapper = build_relationship_mapper(foreign_key_table[target_model], join_table_list)
-    if relationship_mapper:
-        relationship_mapper = remove_unnecessary_table(model, relationship_mapper,
-                                                       [i.value for i in join_table_list])
+    #if relationship_mapper:
+    #    relationship_mapper = remove_unnecessary_table(model, relationship_mapper,
+    #                                                   [i.value for i in join_table_list])
 
     foreign_column_list = relationship_query_builder(relationship_mapper)
 
