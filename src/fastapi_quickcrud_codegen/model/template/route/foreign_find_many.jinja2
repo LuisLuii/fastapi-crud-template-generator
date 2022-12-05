@@ -6,7 +6,14 @@
             query=Depends({{ model_name }}FindManyForeignTreeRequestBody),
             session=Depends(db_session)):
 
-    target_model = request.url.path.split("/")[-1]
+
+    request_path = request.url.path
+    target_model = request_path.split("/")[-1]
+
+    path_include_table_regex = "/(.*?)/"
+    path_include_table = re.search(path_include_table_regex, request.url.path)
+    if path_include_table is not None:
+        path_include_table = path_include_table.groups()
 
     filter_args = query.__dict__
     limit = filter_args.pop('limit', None)
@@ -14,16 +21,18 @@
     order_by_columns = filter_args.pop('order_by_columns', None)
 
     join_table_list = query.__dict__.pop('relationship', [])
+    join_table_list = [str(i) for i in join_table_list]
 
     foreign_key_table = router_data["foreign_key_table"]
-    model = foreign_key_table[{{ base_mode }}.__tablename__][target_model]["instance"]
-    pk = get_pk(model)
+    model = router_data["instance_mapper"][target_model]
     table = model.__table__
+    base_model_name = model.__tablename__
+    pk = get_pk(model)
     column_list = table.c
     filter_list: List[BinaryExpression] = find_query_builder(param=query.__dict__,
                                                              model=model)
     path_filter_list: List[BinaryExpression] = foreign_path_query_builder(param=url_param.__dict__,
-                                                                        model=foreign_key_table[target_model])
+                                                                        model=router_data["instance_mapper"])
 
     # init response format
     response_format = {
@@ -31,30 +40,28 @@
             "result": []
         }
 
-    # prepare a sql stmt that number of total result for response
-    relationship_mapper = build_relationship_mapper(foreign_key_table[target_model], [str(path_filter.left).split('.')[0] for path_filter in path_filter_list])
-    #if relationship_mapper:
-    #    relationship_mapper = remove_unnecessary_table(model, relationship_mapper, [str(path_filter.left).split('.')[0] for path_filter in path_filter_list])
 
+    # prepare a sql stmt that number of total result for response
+    relationship_mapper = build_relationship_mapper(foreign_key_table, base_model_name)
+
+    join_relationship_mapping = join_relationship_mapping_builder(relationship_mapper, target_model, join_table_list)
 
     total_stmt = select(func.count(pk)).where(and_(*filter_list + path_filter_list))
 
     # add join expression
-    total_stmt = join_expression_builder(total_stmt, relationship_mapper)
+    join_relationship_mapping_for_total_count_query = {**join_relationship_mapping}
+    for joining_table in {**join_relationship_mapping}:
+        if joining_table not in path_include_table:
+            join_relationship_mapping_for_total_count_query.pop(joining_table, None)
+    total_stmt = join_expression_builder(total_stmt, join_relationship_mapping_for_total_count_query)
 
-    total_result = session.execute(total_stmt).scalar()
+    total_result = {{ 'await ' if is_async else '' }}session.execute(total_stmt).scalar()
     if total_result < 1:
         response_data = parse_obj_as({{ model_name }}FindManyForeignTreeItemListResponseModel, response_format)
         response.headers["x-total-count"] = str(0)
         return response_data
 
-    # prepare query stmt that query result for response
-    relationship_mapper = build_relationship_mapper(foreign_key_table[target_model], join_table_list)
-    #if relationship_mapper:
-    #    relationship_mapper = remove_unnecessary_table(model, relationship_mapper,
-    #                                                   [i.value for i in join_table_list])
-
-    foreign_column_list = relationship_query_builder(relationship_mapper)
+    foreign_column_list = relationship_query_builder(join_relationship_mapping)
 
     query_stmt = select(*[table] + foreign_column_list).filter(and_(*filter_list + path_filter_list))
 
@@ -62,7 +69,7 @@
     query_stmt = query_stmt.limit(limit).offset(offset)
 
     # add join expression
-    query_stmt = join_expression_builder(query_stmt, relationship_mapper)
+    query_stmt = join_expression_builder(query_stmt, join_relationship_mapping)
 
     # add orderby
     query_stmt = orderby_expression_builder(query_stmt, order_by_columns, model)

@@ -51,7 +51,7 @@ class DbModel:
         self.model_list.append({"model_name": model_name, "file_name": table_name})
 
         # code gen
-        crud_code_generator = CrudCodeGen(tags=self.tags, prefix=self.prefix)
+        crud_code_generator = CrudCodeGen(tags=self.tags, prefix=self.prefix, table_include=[self.db_model, *self.foreign_include])
         # create a file
         crud_template_generator = CrudTemplateGenerator()
 
@@ -139,6 +139,7 @@ class DbModel:
         def foreign_find_many_api():
             print("\t\tGenerating foreign find many API")
             for crud_model in crud_models.GET[CrudMethods.FOREIGN_FIND_MANY]:
+                crud_code_generator.build_startup_event(is_async=is_async, model_name=table_name, file_name=model_name)
                 crud_code_generator.build_foreign_find_many_route(is_async=is_async,
                                                                   path=crud_model['path'],
                                                                   file_name=model_name,

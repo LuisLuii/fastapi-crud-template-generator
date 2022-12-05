@@ -11,12 +11,14 @@ class Account(Base):
     name = Column(VARCHAR)
     age = Column(Integer)
     email = Column(VARCHAR)
+    blog_post = relationship("BlogPost", back_populates="account")
 
 
 class BlogPost(Base):
     __tablename__ = "blog_post"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    account_id = Column(Integer, nullable=False)
+    account_id = Column(Integer, ForeignKey("account.id"), nullable=False)
+    account = relationship("Account", back_populates="blog_post")
     blog_comment = relationship("BlogComment", back_populates="blog_post")
 
 
@@ -33,12 +35,12 @@ from fastapi_quickcrud_codegen.misc.type import CrudMethods
 from fastapi_quickcrud_codegen import crud_router_builder
 
 model_list = [
-    # DbModel(db_model=Account, prefix="/account", tags=["Account"], foreign_include=[BlogPost],
-    #         crud_methods=[CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_ONE]),
-    DbModel(db_model=BlogPost, prefix="/blog", tags=["Blog Post"], foreign_include=[BlogComment],
-            crud_methods=[CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_ONE]),
+    DbModel(db_model=Account, prefix="/account", tags=["Account"], foreign_include=[BlogPost, BlogComment],
+            crud_methods=[CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_MANY]),
+    DbModel(db_model=BlogPost, prefix="/blog", tags=["Blog Post"], foreign_include=[Account, BlogComment],
+            crud_methods=[CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_MANY]),
     DbModel(db_model=BlogComment, prefix="/comment", tags=["Blog Comment"], foreign_include=[BlogPost],
-            crud_methods=[CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_ONE])]
+            crud_methods=[CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_MANY])]
 crud_router_builder(
     db_model_list=model_list,
     # is_async=True,

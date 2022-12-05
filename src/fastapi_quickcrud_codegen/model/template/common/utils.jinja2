@@ -31,12 +31,20 @@ def remove_unnecessary_table(model, relationship_mapper, join_table_list):
     return relationship_mapper
 
 
-def build_relationship_mapper(foreign_key_table, join_table_list) -> dict:
+def build_foreign_key_table(models: List[decl_api.DeclarativeMeta]) -> dict:
+    tmp = {}
+
+    for k in models:
+        tmp[k.__tablename__] = build_foreign_mapper(k)
+    return tmp
+
+
+def build_relationship_mapper(foreign_key_table, join_table_name) -> dict:
     relationship_mapper = {}
     if foreign_key_table is None:
         return relationship_mapper
     for table_name, mapper in foreign_key_table.items():
-        if table_name in join_table_list:
+        if table_name == join_table_name:
             relationship_mapper[table_name] = mapper
     return relationship_mapper
 
@@ -124,6 +132,18 @@ def build_foreign_mapper(model: decl_api.DeclarativeMeta):
     return foreign_key_table
 
 
+def join_relationship_mapping_builder(relationship_mapper: dict, target_model: str, join_table_list: List[str]):
+    join_list = {}
+    for _, foreign_table_mappers in relationship_mapper.items():
+        for foreign_table_name, foreign_table_mapper in foreign_table_mappers.items():
+            if foreign_table_name != target_model:
+                foreign_table_mapper["join"] = False
+                if foreign_table_name in join_table_list:
+                    foreign_table_mapper["join"] = True
+                join_list[foreign_table_name] = foreign_table_mapper
+    return join_list
+
+
 def orderby_expression_builder(stmt, order_by_columns, model):
     if not order_by_columns:
         return stmt
@@ -148,12 +168,13 @@ def orderby_expression_builder(stmt, order_by_columns, model):
     return stmt
 
 
-def join_expression_builder(stmt: BinaryExpression, relationship_mapper: dict) -> Tuple[OriginalStmt, SubQuery]:
-    if relationship_mapper is None:
+def join_expression_builder(stmt: BinaryExpression, join_relationship_mapping: dict) -> Tuple[OriginalStmt, SubQuery]:
+    if join_relationship_mapping is None:
         return stmt
 
-    for _, foreign_table_mapper in relationship_mapper.items():
-        for local_reference in foreign_table_mapper['local_reference_pairs_set']:
+    for join_table_name, join_table in join_relationship_mapping.items():
+        for local_reference in join_table['local_reference_pairs_set']:
+
             if 'exclude' in local_reference and local_reference['exclude']:
                 continue
             foreign_table = local_reference["reference_table"]
@@ -203,9 +224,12 @@ def group_find_many_join(result, group_by_columns: List[str]) -> List[dict]:
 
     return response_list
 
+
 def relationship_query_builder(join_table_dict):
     foreign_column_list = []
     for _, table_instance in join_table_dict.items():
+        if table_instance["join"] is not True:
+            continue
         for local_reference in table_instance['local_reference_pairs_set']:
             if 'exclude' in local_reference and local_reference['exclude']:
                 continue
@@ -213,6 +237,7 @@ def relationship_query_builder(join_table_dict):
                 foreign_column_list.append(column.label(
                     "relationship__" + str(column).split('.')[0] + "_._" + str(column).split('.')[1]))
     return foreign_column_list
+
 
 def find_query_builder(param: dict, model: Base) -> List[Union[BinaryExpression]]:
     query = []
@@ -337,6 +362,6 @@ def foreign_path_query_builder(param, model) -> List[Union[BinaryExpression]]:
         table_with_column = param_name.split(FOREIGN_PATH_PARAM_KEYWORD)
         assert len(table_with_column) == 2
         table_name, column_name = table_with_column
-        table_model = model[table_name]["instance"]
+        table_model = model[table_name]
         query.append((getattr(table_model, column_name) == param_value))
     return query

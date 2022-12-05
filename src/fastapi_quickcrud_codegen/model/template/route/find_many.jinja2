@@ -27,9 +27,13 @@
         response.headers["x-total-count"] = str(0)
         return response_data
 
+    foreign_key_table = router_data["foreign_key_table"]
 
-    relationship_mapper = build_relationship_mapper(router_data.get("foreign_key_table", None), join_table_list)
-    foreign_column_list = relationship_query_builder(relationship_mapper)
+    relationship_mapper = build_relationship_mapper(foreign_key_table, model.__tablename__)
+
+    join_relationship_mapping = join_relationship_mapping_builder(relationship_mapper, model.__tablename__, join_table_list)
+
+    foreign_column_list = relationship_query_builder(join_relationship_mapping)
 
     query_stmt = select(*[table] + foreign_column_list).filter(and_(*filter_list))
 
@@ -37,7 +41,7 @@
     query_stmt = query_stmt.limit(limit).offset(offset)
 
     # add join expression
-    query_stmt = join_expression_builder(query_stmt, relationship_mapper)
+    query_stmt = join_expression_builder(query_stmt, join_relationship_mapping)
 
     # add orderby
     query_stmt = orderby_expression_builder(query_stmt, order_by_columns, model)

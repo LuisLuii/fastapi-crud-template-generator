@@ -8,7 +8,7 @@ from ..utils.import_builder import ImportBuilder
 
 
 class CrudCodeGen():
-    def __init__(self, tags, prefix):
+    def __init__(self, tags, prefix, table_include):
         self.prefix_code = "\n" + "api = APIRouter(tags=" + str(tags) + ',' + "prefix=" + '"' + prefix + '")' + "\n\n\n"
         self.code = "\n\n"
         self.import_helper = ImportBuilder()
@@ -21,12 +21,12 @@ class CrudCodeGen():
         self.import_helper.add(import_=set(
             ["find_query_builder", "group_find_many_join", "join_expression_builder", "orderby_expression_builder",
              "build_foreign_mapper", "get_pk", "relationship_query_builder", "build_relationship_mapper",
-             "foreign_path_query_builder", "remove_unnecessary_table"]),
+             "foreign_path_query_builder", "remove_unnecessary_table", "build_foreign_key_table", "join_relationship_mapping_builder"]),
             from_="common.utils")
         self.import_helper.add(import_=set(["db_session"]), from_="common.sql_session")
 
         self.startup_event = ""
-
+        self.table_include = table_include
     def gen(self, *, template_generator: CrudTemplateGenerator, file_name: str) -> None:
         template_generator.add_route(file_name,
                                      self.import_helper.to_code() + self.prefix_code + self.startup_event + self.code)
@@ -61,11 +61,15 @@ class CrudCodeGen():
         templateEnv = jinja2.Environment(loader=templateLoader)
         TEMPLATE_FILE = 'startup_event.jinja2'
         template = templateEnv.get_template(TEMPLATE_FILE)
-        self.startup_event = template.render(
-            {"model_name": model_name, "is_async": is_async})
+        for i in self.table_include:
+            foreign_table_model_name = i.__name__
+            file_name = i.__tablename__
+            self.import_helper.add(import_=set([f"{foreign_table_model_name}"]
+                                               ), from_=f"model.{file_name}")
+        table_mapping_include = [i.__name__ for i in self.table_include]
 
-        self.import_helper.add(import_=set([f"{model_name}"]
-                                           ), from_=f"model.{file_name}")
+        self.startup_event = template.render(
+            {"table_mapping_include": table_mapping_include, "is_async": is_async, "model_name": model_name})
 
     def build_find_many_route(self, *, is_async: bool, path: str, file_name: str, model_name: str) -> None:
         TEMPLATE_FILE_PATH: ClassVar[str] = 'route/find_many.jinja2'
@@ -289,6 +293,8 @@ class CrudCodeGen():
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
             {"model_name": foreign_model_name, "path": path, "is_async": is_async, "base_mode": model_name})
+
+        self.import_helper.add(import_="re")
         self.import_helper.add(import_="Request", from_="starlette.requests")
         self.import_helper.add(import_="parse_obj_as", from_="pydantic")
         self.import_helper.add(import_=set([
