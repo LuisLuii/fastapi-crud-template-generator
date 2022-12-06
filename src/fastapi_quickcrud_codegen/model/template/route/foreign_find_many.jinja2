@@ -10,10 +10,8 @@
     request_path = request.url.path
     target_model = request_path.split("/")[-1]
 
-    path_include_table_regex = "/(.*?)/"
-    path_include_table = re.search(path_include_table_regex, request.url.path)
-    if path_include_table is not None:
-        path_include_table = path_include_table.groups()
+    path_include_table_regex = re.compile(r'\/([^\/]+)+/')
+    path_include_table = path_include_table_regex.findall(request.url.path)
 
     filter_args = query.__dict__
     limit = filter_args.pop('limit', None)
