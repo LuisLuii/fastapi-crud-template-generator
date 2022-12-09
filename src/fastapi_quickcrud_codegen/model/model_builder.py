@@ -46,7 +46,7 @@ class ModelCodeGen():
         self.model_code = inspect.getsource(model)
 
     def build_base_model(self, *, class_name: str, fields: List[Tuple], description: str = None, orm_mode: bool = True,
-                         value_of_list_to_str_columns: List[str] = None, filter_none: bool = None):
+                         value_of_list_to_str_columns: List[str] = None, filter_none: bool = None, forbid: bool = False):
         TEMPLATE_FILE_PATH: ClassVar[str] = 'pydantic/BaseModel.jinja2'
         template_file_path = Path(TEMPLATE_FILE_PATH)
 
@@ -57,7 +57,8 @@ class ModelCodeGen():
         template = templateEnv.get_template(TEMPLATE_FILE)
         code = template.render(
             {"class_name": class_name, "fields": fields, "description": description, "orm_mode": orm_mode,
-             "value_of_list_to_str_columns": value_of_list_to_str_columns, "filter_none": filter_none})
+             "value_of_list_to_str_columns": value_of_list_to_str_columns, "filter_none": filter_none,
+             "forbid": forbid})
         self.code += code + "\n\n\n"
 
     def build_base_model_paginate(self, *, class_name: str, field: List[Tuple], description: str = None,

@@ -32,8 +32,14 @@ class {{ class_name }}(BaseModel):
     {%- endif %}
 {%- endif %}
 
-{%- if orm_mode %}
+class Config:
+{%- if orm_mode -%}
+    orm_mode = True
+{%- endif -%}
+{%- if forbid -%}
+    extra = 'forbid'
+{%- endif -%}
+{% if not forbid  and not orm_mode %}
+    pass
+{% endif %}
 
-    class Config:
-        orm_mode = True
-{%- endif %}
