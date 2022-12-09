@@ -839,48 +839,6 @@ class ApiParameterSchemaBuilder:
                self.class_name + "CreateManyItemListRequestModel", \
                self.class_name + "CreateManyItemListResponseModel"
 
-    def build_foreign_tree_many_model(self, model: DeclarativeClassT = None,
-                                      relation_level: Optional[List[str]] = None,
-                                      class_name: str = None,
-                                      parent_tables: List[Table] = None,
-                                      pk_list: List[str] = None):
-        if model is None:
-            model = self.__db_model
-        if relation_level is None:
-            foreign_tables = self.relation_level
-        if class_name is None:
-            class_name = self.db_name
-        if parent_tables is None:
-            parent_tables = [self.__db_model_table]
-        if pk_list is None:
-            pk_list = [self.db_name + "." + self.primary_key_str]
-
-        path = "/"
-        path += f'{model.__tablename__}'
-        for foreign_table in foreign_tables:
-            if foreign_table not in self.foreign_mapper:
-                print(f"try to process {foreign_table} but you have no include it.")
-                continue
-            foreign_table_detail = self.foreign_mapper[foreign_table]
-
-            # prepare the db model data
-            _all_fields = foreign_table_detail["all_fields"]
-            _primary_key = foreign_table_detail["primary_key"]
-            _db_name = foreign_table_detail["db_name"]
-            _db_model = foreign_table_detail["db_model"]
-            _db_model_table = foreign_table_detail["db_model_table"]
-            class_name += "To" + _db_model.__name__
-
-            # create path query model
-            _primary_key_dataclass_model = self._extra_relation_primary_key(parent_tables, class_name)
-            parent_tables.append(_db_model_table)
-
-            # create request query param list
-            _query_param: List[dict] = self._get_fizzy_query_param(pk_list, _all_fields)
-
-            table_of_foreign, reference_mapper = self._extra_foreign_find_table_from_declarative_base(_db_model,
-                                                                                                      is_foreign_tree=True)
-
     def foreign_tree_get_many(self, foreign_tree: dict=None, path: str = None, pk_list: List[str] =None, class_name: str=None,
                               included_model_list: List[Table]=None, is_foreign_tree=False) -> Tuple:
 
@@ -902,7 +860,7 @@ class ApiParameterSchemaBuilder:
         _db_model_table = table_detail["db_model_table"]
 
         if path is None:
-            path = '/{' + _db_name + FOREIGN_PATH_PARAM_KEYWORD + _primary_key + '}'
+            path = '/' + self.db_name + '/{' + _db_name + FOREIGN_PATH_PARAM_KEYWORD + _primary_key + '}'
         else:
             if _db_name == self.db_name:
                 return foreign_tree_api_list
@@ -988,6 +946,7 @@ class ApiParameterSchemaBuilder:
 
             self.code_gen.build_base_model(class_name=class_name + "FindManyForeignTreeResponseModel",
                                            fields=response_fields,
+                                           forbid=True,
                                            value_of_list_to_str_columns=self.uuid_type_columns)
 
             self.code_gen.build_base_model_paginate(

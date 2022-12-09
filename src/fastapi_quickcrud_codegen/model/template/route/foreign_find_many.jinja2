@@ -7,11 +7,11 @@
             session=Depends(db_session)):
 
 
-    request_path = request.url.path
+    request_path = request.url.path.replace(api.prefix, "")
     target_model = request_path.split("/")[-1]
 
     path_include_table_regex = re.compile(r'\/([^\/]+)+/')
-    path_include_table = path_include_table_regex.findall(request.url.path)
+    path_include_table = path_include_table_regex.findall(request_path)
 
     filter_args = query.__dict__
     limit = filter_args.pop('limit', None)
