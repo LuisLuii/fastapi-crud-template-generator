@@ -666,8 +666,10 @@ class ApiParameterSchemaBuilder:
 
         return result
 
-    def _assign_pagination_param(self, result_: List[tuple]) -> List[Union[Tuple, Dict]]:
-        all_column_ = [i['column_name'] for i in self.all_field]
+    def _assign_pagination_param(self, result_: List[tuple], all_field = None) -> List[Union[Tuple, Dict]]:
+        if not all_field:
+            all_field = self.all_field
+        all_column_ = [i['column_name'] for i in all_field]
 
         regex_validation = "(?=(" + '|'.join(all_column_) + r")?\s?:?\s*?(?=(" + '|'.join(
             list(map(str, Ordering))) + r"))?)"
@@ -896,7 +898,7 @@ class ApiParameterSchemaBuilder:
 
             _primary_key_dataclass_model = self._extra_relation_primary_key(foreign_included_model_list[:-1:], class_name)
             _query_param: List[dict] = self._get_fizzy_query_param(foreign_tree_pk_list, _all_fields)
-            _query_param: List[Tuple] = self._assign_pagination_param(_query_param)
+            _query_param: List[Tuple] = self._assign_pagination_param(_query_param, _all_fields)
 
             table_of_foreign, reference_mapper = self._extra_foreign_find_table_from_declarative_base(_db_model,
                                                                                                       is_foreign_tree=True)
