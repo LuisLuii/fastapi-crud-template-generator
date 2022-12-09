@@ -46,11 +46,15 @@
 
     total_stmt = select(func.count(pk)).where(and_(*filter_list + path_filter_list))
 
+
     # add join expression
     join_relationship_mapping_for_total_count_query = {**join_relationship_mapping}
+    join_relationship_mapping_for_data_query = {**join_relationship_mapping}
     for joining_table in {**join_relationship_mapping}:
         if joining_table not in path_include_table:
             join_relationship_mapping_for_total_count_query.pop(joining_table, None)
+        if joining_table not in join_table_list and joining_table not in path_include_table:
+            join_relationship_mapping_for_data_query.pop(joining_table, None)
     total_stmt = join_expression_builder(total_stmt, join_relationship_mapping_for_total_count_query)
 
     total_result = {{ 'await ' if is_async else '' }}session.execute(total_stmt).scalar()
@@ -59,7 +63,7 @@
         response.headers["x-total-count"] = str(0)
         return response_data
 
-    foreign_column_list = relationship_query_builder(join_relationship_mapping)
+    foreign_column_list = relationship_query_builder(join_relationship_mapping_for_data_query)
 
     query_stmt = select(*[table] + foreign_column_list).filter(and_(*filter_list + path_filter_list))
 
@@ -67,7 +71,7 @@
     query_stmt = query_stmt.limit(limit).offset(offset)
 
     # add join expression
-    query_stmt = join_expression_builder(query_stmt, join_relationship_mapping)
+    query_stmt = join_expression_builder(query_stmt, join_relationship_mapping_for_data_query)
 
     # add orderby
     query_stmt = orderby_expression_builder(query_stmt, order_by_columns, model)

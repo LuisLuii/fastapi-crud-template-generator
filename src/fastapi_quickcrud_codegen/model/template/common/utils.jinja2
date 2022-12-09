@@ -32,11 +32,22 @@ def remove_unnecessary_table(model, relationship_mapper, join_table_list):
 
 
 def build_foreign_key_table(models: List[decl_api.DeclarativeMeta]) -> dict:
-    tmp = {}
+    foreign_key_table = {}
 
     for k in models:
-        tmp[k.__tablename__] = build_foreign_mapper(k)
-    return tmp
+        foreign_key_table[k.__tablename__] = build_foreign_mapper(k)
+    tmp = deepcopy(foreign_key_table)
+    for k_1, v_1 in tmp.items():
+        for relationships_table, relationships_pairs in v_1.items():
+            relationships_pairs_list = relationships_pairs["local_reference_pairs_set"]
+            for pair_dict in relationships_pairs_list:
+                reference_table = pair_dict["reference"]["table"]
+                if reference_table in foreign_key_table:
+                    for nested_relationship in foreign_key_table[reference_table]:
+                        if nested_relationship not in foreign_key_table[k_1]:
+                            foreign_key_table[k_1][nested_relationship] = foreign_key_table[reference_table][nested_relationship]
+
+    return foreign_key_table
 
 
 def build_relationship_mapper(foreign_key_table, join_table_name) -> dict:

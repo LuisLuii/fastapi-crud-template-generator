@@ -313,6 +313,7 @@ class ApiParameterSchemaBuilder:
                 response_model_name = "FindManyResponseModel"
             self.code_gen.build_base_model(
                 class_name=db_model.__name__ + "To" + foreign_table.__name__ + response_model_name,
+                forbid=True,
                 fields=response_fields)
 
             self.foreign_table_response_model_sets[
@@ -929,8 +930,6 @@ class ApiParameterSchemaBuilder:
                 relationship_table_list = []
                 for local_column, refer_table_info in reference_mapper.items():
                     if refer_table_info['foreign_table'] in self.foreign_table_response_model_sets:
-                            # self.foreign_table_response_model_sets[refer_table_info['foreign_table']][
-                            #     "is_foreign_tree"] is True:
 
                         relationship_table_list.append(
                             self.foreign_table_response_model_sets[refer_table_info['foreign_table']]["class_name"])
@@ -948,7 +947,6 @@ class ApiParameterSchemaBuilder:
 
             self.code_gen.build_base_model(class_name=class_name + "FindManyForeignTreeResponseModel",
                                            fields=response_fields,
-                                           forbid=True,
                                            value_of_list_to_str_columns=self.uuid_type_columns)
 
             self.code_gen.build_base_model_paginate(
@@ -987,7 +985,7 @@ class ApiParameterSchemaBuilder:
 
             _primary_key_dataclass_model = self._extra_relation_primary_key(foreign_included_model_list[:-1:], class_name)
             _query_param: List[dict] = self._get_fizzy_query_param(foreign_tree_pk_list, _all_fields)
-            _query_param: List[Tuple] = self._assign_pagination_param(_query_param)
+            _query_param: List[Tuple] = self._assign_pagination_param(_query_param, _all_fields)
 
             table_of_foreign, reference_mapper = self._extra_foreign_find_table_from_declarative_base(_db_model,
                                                                                                       is_foreign_tree=True)
@@ -1018,9 +1016,6 @@ class ApiParameterSchemaBuilder:
                 relationship_table_list = []
                 for local_column, refer_table_info in reference_mapper.items():
                     if refer_table_info['foreign_table'] in self.foreign_table_response_model_sets:
-                        # self.foreign_table_response_model_sets[refer_table_info['foreign_table']][
-                        #     "is_foreign_tree"] is True:
-
                         relationship_table_list.append(
                             self.foreign_table_response_model_sets[refer_table_info['foreign_table']]["class_name"])
                 if not relationship_table_list:
