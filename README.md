@@ -6,7 +6,7 @@
 [![unit test](https://github.com/LuisLuii/fastapi-crud-template-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/LuisLuii/fastapi-crud-template-generator/actions/workflows/ci.yml)
 
 ## Introducing FastAPI CRUD Template Generator
-FastAPI CRUD Template Generator is a tool that helps developers quickly scaffold FastAPI projects with CRUD operations for their SQLAlchemy databases. It saves time and effort by generating the CRUD operations and validation model automatically from the SQLAlchemy schema. The generated code can be customized to add business logic and extend the functionality of the FastAPI project. The tool supports the following APIs:
+FastAPI CRUD Template Generator is a tool that helps developers quickly scaffold FastAPI projects with CRUD operations for their SQLAlchemy databases. It can provide a starting point for your project and can save time and effort by providing pre-written code of the CRUD operations and validation model, and a pre-defined project structureIt. The generated code can be customized to add business logic and extend the functionality of the FastAPI project. The tool supports the following APIs:
 >- Get one
 >- Get many
 >- Insert one
