@@ -1,4 +1,4 @@
-from typing import TypeVar, List, Union, Tuple
+from typing import TypeVar, List, Union, Tuple, Dict
 from copy import deepcopy
 
 from sqlalchemy import and_, select, or_, inspect, Table, Table, Column
@@ -179,7 +179,9 @@ def orderby_expression_builder(stmt, order_by_columns, model):
     return stmt
 
 
-def join_expression_builder(stmt: BinaryExpression, join_relationship_mapping: dict) -> Tuple[OriginalStmt, SubQuery]:
+def join_expression_builder(stmt: BinaryExpression, join_relationship_mapping: dict, base_table_dict: Dict[Table, SubQuery] = None) -> Tuple[OriginalStmt, SubQuery]:
+    if base_table_dict is None:
+        base_table_dict = {}
     if join_relationship_mapping is None:
         return stmt
 
@@ -190,6 +192,9 @@ def join_expression_builder(stmt: BinaryExpression, join_relationship_mapping: d
                 continue
             foreign_table = local_reference["reference_table"]
             local_table = local_reference["local_table"]
+            # handle subquery
+            if local_table in base_table_dict:
+                local_table = base_table_dict[local_table]
             stmt = stmt.join(foreign_table, getattr(local_table.c, local_reference["local"][
                 "column"]) == getattr(foreign_table.c, local_reference["reference"]["column"]),
                              isouter=True)

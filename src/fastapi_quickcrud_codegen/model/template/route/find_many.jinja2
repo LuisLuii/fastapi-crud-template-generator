@@ -35,16 +35,36 @@
 
     foreign_column_list = relationship_query_builder(join_relationship_mapping)
 
-    query_stmt = select(*[table] + foreign_column_list).filter(and_(*filter_list))
+    if join_table_list and (limit or offset):
+        # use sub query and join
 
-    # add page
-    query_stmt = query_stmt.limit(limit).offset(offset)
+        subquery_stmt = select(*[table]).filter(and_(*filter_list))
 
-    # add join expression
-    query_stmt = join_expression_builder(query_stmt, join_relationship_mapping)
+        # add page
+        subquery_stmt = subquery_stmt.limit(limit).offset(offset)
 
-    # add orderby
-    query_stmt = orderby_expression_builder(query_stmt, order_by_columns, model)
+        # add orderby
+        subquery_stmt = orderby_expression_builder(subquery_stmt, order_by_columns, model)
+        subquery_stmt = subquery_stmt.subquery()
+
+        # build base query
+        base_query_stmt = select(*[subquery_stmt] + foreign_column_list)
+
+        # add join expression
+        query_stmt = join_expression_builder(base_query_stmt, join_relationship_mapping, {table: subquery_stmt})
+    else:
+        # use join only
+
+        query_stmt = select(*[table] + foreign_column_list).filter(and_(*filter_list))
+
+        # add page
+        query_stmt = query_stmt.limit(limit).offset(offset)
+
+        # add join expression
+        query_stmt = join_expression_builder(query_stmt, join_relationship_mapping)
+
+        # add orderby
+        query_stmt = orderby_expression_builder(query_stmt, order_by_columns, model)
 
     sql_executed_result = {{ 'await ' if is_async else '' }}session.execute(query_stmt)
     result = sql_executed_result.fetchall()
