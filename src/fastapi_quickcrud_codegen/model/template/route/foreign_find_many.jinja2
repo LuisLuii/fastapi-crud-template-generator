@@ -58,7 +58,7 @@
             joining_table_v["join"] = True
             join_relationship_mapping_for_data_query[joining_table_k] = joining_table_v
 
-    total_stmt = join_expression_builder(total_stmt, join_relationship_mapping_for_total_count_query)
+    total_stmt = join_expression_builder(total_stmt, join_relationship_mapping_for_total_count_query_and_path_query)
 
     total_result = {{ 'await ' if is_async else '' }}session.execute(total_stmt).scalar()
     if total_result < 1:
@@ -68,7 +68,7 @@
 
     foreign_column_list = relationship_query_builder(join_relationship_mapping_for_data_query)
 
-        if join_table_list and (limit or offset):
+    if join_table_list and (limit or offset):
         # use sub query and join
 
         subquery_stmt = select(*[table]).filter(and_(*filter_list + path_filter_list))
@@ -88,7 +88,7 @@
         base_query_stmt = select(*[subquery_stmt] + foreign_column_list)
 
         # add join expression
-        query_stmt = join_expression_builder(base_query_stmt, join_relationship_mapping, {table: subquery_stmt})
+        query_stmt = join_expression_builder(base_query_stmt, join_relationship_mapping_for_data_query, {table: subquery_stmt})
     else:
         # use join only
 
@@ -98,10 +98,11 @@
         query_stmt = query_stmt.limit(limit).offset(offset)
 
         # add join expression
-        query_stmt = join_expression_builder(query_stmt, join_relationship_mapping)
+        query_stmt = join_expression_builder(query_stmt, {**join_relationship_mapping_for_data_query, **join_relationship_mapping_for_total_count_query_and_path_query})
 
         # add orderby
         query_stmt = orderby_expression_builder(query_stmt, order_by_columns, model)
+
 
     sql_executed_result = {{ 'await ' if is_async else '' }}session.execute(query_stmt)
     result = sql_executed_result.fetchall()
