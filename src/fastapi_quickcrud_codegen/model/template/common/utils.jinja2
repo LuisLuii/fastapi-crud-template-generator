@@ -186,6 +186,10 @@ def join_expression_builder(stmt: BinaryExpression, join_relationship_mapping: d
         return stmt
 
     for join_table_name, join_table in join_relationship_mapping.items():
+
+        if join_table["join"] is not True:
+            continue
+
         for local_reference in join_table['local_reference_pairs_set']:
 
             if 'exclude' in local_reference and local_reference['exclude']:
@@ -231,11 +235,12 @@ def group_find_many_join(result, group_by_columns: List[str]) -> List[dict]:
                 if column_name in group_by_columns:
                     group_by_dict[column_name] = column_value
                 else:
+                    is_all_null = all(v is None for _, v in column_value.items())
+
                     if column_name not in relationship:
-                        relationship[column_name] = [column_value]
-                    else:
-                        if column_value not in relationship[column_name]:
-                            relationship[column_name].append(column_value)
+                        relationship[column_name] = []
+                    if not is_all_null:
+                        relationship[column_name].append(column_value)
         response_list.append({**group_by_dict, "relationship": {**relationship}})
 
     return response_list
