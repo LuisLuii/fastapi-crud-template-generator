@@ -239,7 +239,7 @@ def group_find_many_join(result, group_by_columns: List[str]) -> List[dict]:
 
                     if column_name not in relationship:
                         relationship[column_name] = []
-                    if not is_all_null:
+                    if not is_all_null and column_value not in relationship[column_name]:
                         relationship[column_name].append(column_value)
         response_list.append({**group_by_dict, "relationship": {**relationship}})
 
