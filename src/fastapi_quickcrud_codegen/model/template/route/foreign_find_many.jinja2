@@ -60,7 +60,8 @@
 
     total_stmt = join_expression_builder(total_stmt, join_relationship_mapping_for_total_count_query_and_path_query)
 
-    total_result = {{ 'await ' if is_async else '' }}session.execute(total_stmt).scalar()
+    total_result = {{ 'await ' if is_async else '' }}session.execute(total_stmt)
+    total_result = total_result.scalar()
     if total_result < 1:
         response_data = parse_obj_as({{ model_name }}FindManyForeignTreeItemListResponseModel, response_format)
         response.headers["x-total-count"] = str(0)

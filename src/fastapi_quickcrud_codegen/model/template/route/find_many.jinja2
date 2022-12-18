@@ -21,7 +21,8 @@
 
 
     total_stmt = select(func.count(router_data["pk"])).where(and_(*filter_list))
-    total_result = {{ 'await ' if is_async else '' }}session.execute(total_stmt).scalar()
+    total_result = {{ 'await ' if is_async else '' }}session.execute(total_stmt)
+    total_result = total_result.scalar()
     if total_result < 1:
         response_data = parse_obj_as({{ model_name }}FindManyItemListResponseModel, response_format)
         response.headers["x-total-count"] = str(0)
