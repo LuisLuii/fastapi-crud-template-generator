@@ -52,6 +52,10 @@
 
         # add join expression
         query_stmt = join_expression_builder(base_query_stmt, join_relationship_mapping, {table: subquery_stmt})
+
+        # add orderby
+        query_stmt = orderby_expression_builder(query_stmt, order_by_columns, subquery_stmt.c)
+
     else:
         # use join only
 
