@@ -1121,7 +1121,6 @@ def account_many():
     assert response.headers["x-total-count"] == "3"
     assert response.status_code == 200
 
-
 def account_blog_post_many():
     # basic find many without any param
     params = {
@@ -2475,7 +2474,6 @@ def account_blog_post_many():
                                                                                         'email': 'string'}]}}]}
     assert response.headers["x-total-count"] == "2"
     assert response.status_code == 200
-
 
 def account_blog_post_blog_comment():
     # basic find many without any param
@@ -6251,7 +6249,6 @@ def blog_post_many():
     find_many_with_query_param_and_paging_and_order_by_and_relationship()
     find_many_with_relationship_and_query_param()
 
-
 def blog_post_account():
     def basic_find_many_without_any_param():
         params = {
@@ -8939,7 +8936,6 @@ def blog_post_account():
     find_many_with_query_param_and_paging_and_order_by_and_relationship()
     find_many_with_relationship_and_query_param()
 
-
 def blog_post_comment():
     def basic_find_many_without_any_param():
         params = {
@@ -10849,6 +10845,6969 @@ def blog_post_comment():
     find_many_with_query_param_and_order_by_and_relationship()
 
 
+def blog_comment():
+    def basic_find_many_without_any_param():
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____list_____comparison_operator': 'In',
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____list_____comparison_operator': 'In',
+        }
+
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 5,
+            "result": [
+                {
+                    "id": 0,
+                    "blog_id": 0,
+                    "relationship": {}
+                },
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {}
+                },
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "5"
+        assert response.status_code == 200
+
+    def basic_find_many_with_param():
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+        }
+
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {}
+                },
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "4"
+        assert response.status_code == 200
+
+    def find_many_with_query_param_and_paging():
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '10',
+            'offset': '0'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {}
+                },
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "4"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '0'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '1'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '2'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '3'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+
+    def find_many_with_query_param_and_paging_and_order_by():
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '10',
+            'offset': '0',
+            'order_by_columns': 'id:ASC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {}
+                },
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "4"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '10',
+            'offset': '0',
+            'order_by_columns': 'id:DESC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {}
+                },
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+
+            ]
+        }
+        assert response.headers["x-total-count"] == "4"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '10',
+            'offset': '0',
+            'order_by_columns': 'blog_id:ASC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "4"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '10',
+            'offset': '0',
+            'order_by_columns': 'blog_id:DESC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {}
+                },
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "4"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '0',
+            'order_by_columns': 'id:ASC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '0',
+            'order_by_columns': 'id:DESC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '0',
+            'order_by_columns': 'blog_id:ASC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '0',
+            'order_by_columns': 'blog_id:DESC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '1',
+            'order_by_columns': 'id:ASC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '1',
+            'order_by_columns': 'id:DESC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '1',
+            'order_by_columns': 'blog_id:ASC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '1',
+            'order_by_columns': 'blog_id:DESC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '2',
+            'order_by_columns': 'id:ASC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '2',
+            'order_by_columns': 'id:DESC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '2',
+            'order_by_columns': 'blog_id:ASC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '2',
+            'order_by_columns': 'blog_id:DESC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '3',
+            'order_by_columns': 'id:ASC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '3',
+            'order_by_columns': 'id:DESC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '3',
+            'order_by_columns': 'blog_id:ASC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '3',
+            'order_by_columns': 'blog_id:DESC'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {}
+                },
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+
+    def find_many_with_query_param_and_paging_and_order_by_and_relationship():
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '10',
+            'offset': '0',
+            'order_by_columns': 'id:ASC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 2,
+                                "account_id": 2
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "4"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '10',
+            'offset': '0',
+            'order_by_columns': 'id:DESC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 2,
+                                "account_id": 2
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "4"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '10',
+            'offset': '0',
+            'order_by_columns': 'blog_id:ASC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 2,
+                                "account_id": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "4"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '10',
+            'offset': '0',
+            'order_by_columns': 'blog_id:DESC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 2,
+                                "account_id": 2
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "4"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '0',
+            'order_by_columns': 'id:ASC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '0',
+            'order_by_columns': 'id:DESC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '0',
+            'order_by_columns': 'blog_id:ASC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '0',
+            'order_by_columns': 'blog_id:DESC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 2,
+                                "account_id": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '1',
+            'order_by_columns': 'id:ASC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 2,
+                                "account_id": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '1',
+            'order_by_columns': 'id:DESC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '1',
+            'order_by_columns': 'blog_id:ASC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '1',
+            'order_by_columns': 'blog_id:DESC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '2',
+            'order_by_columns': 'id:ASC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '2',
+            'order_by_columns': 'id:DESC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 2,
+                                "account_id": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '2',
+            'order_by_columns': 'blog_id:ASC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '2',
+            'order_by_columns': 'blog_id:DESC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '3',
+            'order_by_columns': 'id:ASC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '3',
+            'order_by_columns': 'id:DESC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '3',
+            'order_by_columns': 'blog_id:ASC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 2,
+                                "account_id": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'limit': '1',
+            'offset': '3',
+            'order_by_columns': 'blog_id:DESC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+
+    def find_many_with_query_param_and_order_by_and_relationship():
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'order_by_columns': 'id:ASC',
+            'relationship': 'blog_post'
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 2,
+                                "account_id": 2
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "4"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'order_by_columns': 'id:DESC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 2,
+                                "account_id": 2
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "4"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'order_by_columns': 'blog_id:ASC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 2,
+                                "account_id": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "4"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than',
+            'id____to_____comparison_operator': 'Less_than',
+            'id____from': '0',
+            'id____to': '10',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'blog_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'blog_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'blog_id____from': '0',
+            'blog_id____to': '10',
+            'blog_id____list_____comparison_operator': 'In',
+            'blog_id____list': [
+                '0',
+                '1',
+                '2',
+            ],
+            'order_by_columns': 'blog_id:DESC',
+            'relationship': 'blog_post'
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment', params=params, headers=headers)
+        assert response.json() == {
+            "total": 4,
+            "result": [
+                {
+                    "id": 2,
+                    "blog_id": 2,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 2,
+                                "account_id": 2
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 1,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 3,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                },
+                {
+                    "id": 4,
+                    "blog_id": 1,
+                    "relationship": {
+                        "blog_post": [
+                            {
+                                "id": 1,
+                                "account_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "4"
+        assert response.status_code == 200
+
+    basic_find_many_without_any_param()
+    basic_find_many_with_param()
+    find_many_with_query_param_and_paging()
+    find_many_with_query_param_and_paging_and_order_by()
+    find_many_with_query_param_and_paging_and_order_by_and_relationship()
+    find_many_with_query_param_and_order_by_and_relationship()
+
+
+def blog_comment_blog_post_account():
+    def basic_find_many_without_any_param():
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____list_____comparison_operator': 'In',
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____list_____comparison_operator': 'In',
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____list_____comparison_operator': 'In',
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____list_____comparison_operator': 'In',
+        }
+
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____list_____comparison_operator': 'In',
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____list_____comparison_operator': 'In',
+        }
+
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____list_____comparison_operator': 'In',
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____list_____comparison_operator': 'In',
+        }
+
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+    def basic_find_many_with_param():
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+        }
+
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+        }
+
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+        }
+
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+    def find_many_with_query_param_and_paging():
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+
+    def find_many_with_query_param_and_paging_and_order_by():
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {}
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:ASC",
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:DESC",
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:ASC",
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:DESC",
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:ASC",
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:DESC",
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:ASC",
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:DESC",
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+
+    def find_many_with_query_param_and_paging_and_order_by_and_relationship():
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+            "relationship": ["account", "blog_comment"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 0,
+                                "blog_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+            "relationship": ["account"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+            "relationship": ["blog_comment"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 0,
+                                "blog_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+            "relationship": ["account", "blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 0,
+                                "blog_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+            "relationship": ["account"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+            "relationship": ["blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 0,
+                                "blog_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+            "relationship": ["account", "blog_comment"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+            "relationship": ["account"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+            "relationship": ["blog_comment"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+            "relationship": ["account", "blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+            "relationship": ["account"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+            "relationship": ["blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+            "relationship": ["account", "blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 2,
+                                "name": "string2",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 2,
+                                "blog_id": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+            "relationship": ["blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 2,
+                                "blog_id": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+            "relationship": ["account"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 2,
+                                "name": "string2",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+            "relationship": ["account", "blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 2,
+                                "name": "string2",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 2,
+                                "blog_id": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+            "relationship": ["account"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 2,
+                                "name": "string2",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+            "relationship": ["blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 2,
+                                "blog_id": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+            "relationship": ["account", "blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+            "relationship": ["account"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:ASC",
+            "relationship": ["blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+            "relationship": ["account", "blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+            "relationship": ["account"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 0,
+            "order_by_columns": "id:DESC",
+            "relationship": ["blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:ASC",
+            "relationship": ["account", "blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:DESC",
+            "relationship": ["account", "blog_comment"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:ASC",
+            "relationship": ["account", "blog_comment"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:DESC",
+            "relationship": ["account", "blog_comment"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:ASC",
+            "relationship": ["account", "blog_comment"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:DESC",
+            "relationship": ["account", "blog_comment"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:ASC",
+            "relationship": ["account", "blog_comment"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "limit": 1,
+            "offset": 1,
+            "order_by_columns": "id:DESC",
+            "relationship": ["account", "blog_comment"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": []
+        }
+        assert response.headers["x-total-count"] == "0"
+        assert response.status_code == 200
+
+    def find_many_with_query_param_and_order_by_and_relationship():
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:ASC",
+            "relationship": ["account", "blog_comment"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 0,
+                                "blog_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:ASC",
+            "relationship": ["account"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:ASC",
+            "relationship": ["blog_comment"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 0,
+                                "blog_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:DESC",
+            "relationship": ["account", "blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 0,
+                                "blog_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:DESC",
+            "relationship": ["account"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:DESC",
+            "relationship": ["blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/0/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 0,
+                    "account_id": 0,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 0,
+                                "blog_id": 0
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:ASC",
+            "relationship": ["account", "blog_comment"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:ASC",
+            "relationship": ["account"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:ASC",
+            "relationship": ["blog_comment"]
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:DESC",
+            "relationship": ["account", "blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:DESC",
+            "relationship": ["account"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:DESC",
+            "relationship": ["blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/1/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:ASC",
+            "relationship": ["account", "blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 2,
+                                "name": "string2",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 2,
+                                "blog_id": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:ASC",
+            "relationship": ["blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 2,
+                                "blog_id": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:ASC",
+            "relationship": ["account"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 2,
+                                "name": "string2",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:DESC",
+            "relationship": ["account", "blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 2,
+                                "name": "string2",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 2,
+                                "blog_id": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:DESC",
+            "relationship": ["account"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 2,
+                                "name": "string2",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:DESC",
+            "relationship": ["blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/2/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 2,
+                    "account_id": 2,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 2,
+                                "blog_id": 2
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:ASC",
+            "relationship": ["account", "blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:ASC",
+            "relationship": ["account"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:ASC",
+            "relationship": ["blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:DESC",
+            "relationship": ["account", "blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:DESC",
+            "relationship": ["account"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "account": [
+                            {
+                                "id": 0,
+                                "name": "string1",
+                                "age": 0,
+                                "email": "string"
+                            }
+                        ],
+
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+        params = {
+            'id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'id____from': '0',
+            'id____to': '100',
+            'id____list_____comparison_operator': 'In',
+            'id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+                '5',
+            ],
+            'account_id____from_____comparison_operator': 'Greater_than_or_equal_to',
+            'account_id____to_____comparison_operator': 'Less_than_or_equal_to',
+            'account_id____from': '0',
+            'account_id____to': '100',
+            'account_id____list_____comparison_operator': 'In',
+            'account_id____list': [
+                '0',
+                '1',
+                '2',
+                '3',
+                '4',
+            ],
+            "order_by_columns": "id:DESC",
+            "relationship": ["blog_comment"]
+
+        }
+        response = requests.get('http://localhost:8000/v1/blog_comment/3/blog_post', params=params, headers=headers)
+        assert response.json() == {
+            "total": 1,
+            "result": [
+                {
+                    "id": 1,
+                    "account_id": 0,
+                    "relationship": {
+                        "blog_comment": [
+                            {
+                                "id": 1,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 3,
+                                "blog_id": 1
+                            },
+                            {
+                                "id": 4,
+                                "blog_id": 1
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+        assert response.headers["x-total-count"] == "1"
+        assert response.status_code == 200
+
+
+    basic_find_many_without_any_param()
+    basic_find_many_with_param()
+    find_many_with_query_param_and_paging()
+    find_many_with_query_param_and_paging_and_order_by()
+    find_many_with_query_param_and_paging_and_order_by_and_relationship()
+    find_many_with_query_param_and_order_by_and_relationship()
+
+
 account_many()
 account_blog_post_many()
 account_blog_post_blog_comment()
@@ -10856,3 +17815,6 @@ account_blog_post_blog_comment()
 blog_post_many()
 blog_post_account()
 blog_post_comment()
+
+blog_comment()
+blog_comment_blog_post_account()
