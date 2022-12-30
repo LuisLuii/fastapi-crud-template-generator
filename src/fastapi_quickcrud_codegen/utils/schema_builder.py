@@ -1,3 +1,4 @@
+import re
 import uuid
 import warnings
 from copy import deepcopy
@@ -732,7 +733,7 @@ class ApiParameterSchemaBuilder:
             return {"column_name": 'relationship', "column_type": f"Optional[List[{model_name}]]",
                     "column_default": "None", "column_description": "'try to query the other table with foreign key'"}
 
-    def _extra_relation_primary_key(self, relation_dbs: List[Table], default_class_name: Optional[str] = None) -> Tuple[
+    def _extra_relation_primary_key(self, relation_dbs: List[Table], default_class_name: Optional[str] = None, postfix: Optional[str] = "") -> Tuple[
         List[str], str, List[Tuple[str, str, Union[str, Type[Any]], str]]]:
 
         if default_class_name is None:
@@ -788,7 +789,7 @@ class ApiParameterSchemaBuilder:
                 (alias_primary_column_name, column_type, default, description))
 
         # TODO test foreign uuid key
-        class_name = f'{default_class_name}RelationshipPrimaryKeyModel'
+        class_name = f'{default_class_name}{postfix}RelationshipPrimaryKeyModel'
         self.code_gen.build_dataclass(class_name=class_name,
                                       fields=[(primary_key_column[0],
                                                primary_key_column[1],
@@ -918,7 +919,7 @@ class ApiParameterSchemaBuilder:
                 else:
                     break
 
-            _primary_key_dataclass_model = self._extra_relation_primary_key(foreign_included_model_list[:-1:], class_name)
+            _primary_key_dataclass_model = self._extra_relation_primary_key(foreign_included_model_list[:-1:], class_name, postfix="FindMany")
             _query_param: List[dict] = self._get_fizzy_query_param(foreign_tree_pk_list, _all_fields)
             _query_param: List[Tuple] = self._assign_pagination_param(_query_param, _all_fields)
 
@@ -1005,7 +1006,7 @@ class ApiParameterSchemaBuilder:
                 else:
                     break
 
-            _primary_key_dataclass_model = self._extra_relation_primary_key(foreign_included_model_list[:-1:], class_name)
+            _primary_key_dataclass_model = self._extra_relation_primary_key(foreign_included_model_list[:-1:], class_name, postfix="FindMany")
             _query_param: List[dict] = self._get_fizzy_query_param(foreign_tree_pk_list, _all_fields)
             _query_param: List[Tuple] = self._assign_pagination_param(_query_param, _all_fields)
 
@@ -1122,21 +1123,20 @@ class ApiParameterSchemaBuilder:
             # use pk_list to build url
             for index, pk in enumerate(foreign_tree_pk_list[1::]):
                 foreign_table_name, foreign_column_name = pk.split(".")
-                path += '/' + foreign_table_name
-                if foreign_table_name != _db_name:
-                    return foreign_tree_api_list
-                else:
-                    path += '/{' + foreign_table_name + FOREIGN_PATH_PARAM_KEYWORD + foreign_column_name + '}'
-
-            _primary_key_dataclass_model = self._extra_relation_primary_key(foreign_included_model_list[:-1:],
-                                                                            class_name)
+                path += '/' + foreign_table_name + '/{' + foreign_table_name + FOREIGN_PATH_PARAM_KEYWORD + foreign_column_name + '}'
+            foreign_included_list = []
+            path_include_table_regex = re.compile(r'\/([^\/]+)+/')
+            path_included_list = path_include_table_regex.findall(path)
+            for table in foreign_included_model_list:
+                if table.name in path_included_list:
+                    foreign_included_list.append(table)
+            _primary_key_dataclass_model = self._extra_relation_primary_key(foreign_included_list,
+                                                                            class_name, postfix="FindOne")
             _query_param: List[dict] = self._get_fizzy_query_param(foreign_tree_pk_list, _all_fields)
-
+            _query_param: List[Tuple] = self._assign_pagination_param(_query_param, _all_fields)
             table_of_foreign, reference_mapper = self._extra_foreign_find_table_from_declarative_base(_db_model,
                                                                                                       is_foreign_tree=True,
-                                                                                                      is_get_many=False,
                                                                                                       is_gen_code=True)
-
             foreign_join_common_column: Union[dict, None] = self._assign_foreign_join(table_of_foreign,
                                                                                       model_name=_db_model.__name__,
                                                                                       is_foreign_tree=True)
@@ -1144,12 +1144,10 @@ class ApiParameterSchemaBuilder:
                 _query_param += [foreign_join_common_column]
             response_fields = []
             all_field = deepcopy(_all_fields)
-
             for i in all_field:
                 response_fields.append((i['column_name'],
                                         i['column_type'],
                                         f"Body({i['column_default']})"))
-
             request_fields = []
             for i in _query_param:
                 assert isinstance(i, dict) or isinstance(i, tuple)
@@ -1173,29 +1171,25 @@ class ApiParameterSchemaBuilder:
                     f"Dict[str, List[Union[{', '.join(relationship_table_list)}]]]",
                     None
                 ))
-
             self.code_gen.build_dataclass(class_name=class_name + "FindOneForeignTreeRequestBody",
                                           fields=request_fields,
                                           value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
-
             self.code_gen.build_base_model(class_name=class_name + "FindOneForeignTreeResponseModel",
                                            fields=response_fields,
                                            value_of_list_to_str_columns=self.uuid_type_columns)
-
             self.code_gen.build_base_model_paginate(
                 class_name=class_name + "FindOneForeignTreeItemListResponseModel",
                 field=(
                     f'{class_name + "FindOneForeignTreeResponseModel"}',
                     None),
                 base_model="ExcludeUnsetBaseModel")
-
             _response_model = {}
             _response_model["primary_key_dataclass_model"] = _primary_key_dataclass_model[1]
             _response_model["request_query_model"] = class_name + "FindOneForeignTreeRequestBody"
             _response_model["response_model"] = class_name + "FindOneForeignTreeItemListResponseModel"
             _response_model["path"] = path
             _response_model['class_name'] = class_name
-            _response_model["function_name"] = "get_many_by_" + "_".join(
+            _response_model["function_name"] = "get_one_by_" + "_".join(
                 [pk.split(".")[0] for pk in pk_list]) + "_foreign_key"
             foreign_tree_api_list.append(_response_model)
             return foreign_tree_api_list
@@ -1205,27 +1199,26 @@ class ApiParameterSchemaBuilder:
             if not foreign_table:
                 continue
             foreign_tree_api_list += self.foreign_tree_get_one(foreign_table, path, foreign_tree_pk_list, class_name,
-                                                               foreign_included_model_list)
+                                                                foreign_included_model_list)
 
         if _db_name != self.root_table_name:
             # use pk_list to build url
             for index, pk in enumerate(foreign_tree_pk_list[1::]):
                 foreign_table_name, foreign_column_name = pk.split(".")
-                path += '/' + foreign_table_name
-                if foreign_table_name != _db_name:
-                    break
-                else:
-                    path += '/{' + foreign_table_name + FOREIGN_PATH_PARAM_KEYWORD + foreign_column_name + '}'
-
-            _primary_key_dataclass_model = self._extra_relation_primary_key(foreign_included_model_list[:-1:],
-                                                                            class_name)
+                path += '/' + foreign_table_name + '/{' + foreign_table_name + FOREIGN_PATH_PARAM_KEYWORD + foreign_column_name + '}'
+            foreign_included_list = []
+            path_include_table_regex = re.compile(r'\/([^\/]+)+/')
+            path_included_list = path_include_table_regex.findall(path)
+            for table in foreign_included_model_list:
+                if table.name in path_included_list:
+                    foreign_included_list.append(table)
+            _primary_key_dataclass_model = self._extra_relation_primary_key(foreign_included_list,
+                                                                            class_name, postfix="FindOne")
             _query_param: List[dict] = self._get_fizzy_query_param(foreign_tree_pk_list, _all_fields)
-
+            _query_param: List[Tuple] = self._assign_pagination_param(_query_param, _all_fields)
             table_of_foreign, reference_mapper = self._extra_foreign_find_table_from_declarative_base(_db_model,
                                                                                                       is_foreign_tree=True,
-                                                                                                      is_get_many=False,
                                                                                                       is_gen_code=True)
-
             foreign_join_common_column: Union[dict, None] = self._assign_foreign_join(table_of_foreign,
                                                                                       model_name=_db_model.__name__,
                                                                                       is_foreign_tree=True)
@@ -1233,12 +1226,10 @@ class ApiParameterSchemaBuilder:
                 _query_param += [foreign_join_common_column]
             response_fields = []
             all_field = deepcopy(_all_fields)
-
             for i in all_field:
                 response_fields.append((i['column_name'],
                                         i['column_type'],
                                         f"Body({i['column_default']})"))
-
             request_fields = []
             for i in _query_param:
                 assert isinstance(i, dict) or isinstance(i, tuple)
@@ -1262,19 +1253,22 @@ class ApiParameterSchemaBuilder:
                     f"Dict[str, List[Union[{', '.join(relationship_table_list)}]]]",
                     None
                 ))
-
             self.code_gen.build_dataclass(class_name=class_name + "FindOneForeignTreeRequestBody",
                                           fields=request_fields,
                                           value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
-
             self.code_gen.build_base_model(class_name=class_name + "FindOneForeignTreeResponseModel",
                                            fields=response_fields,
                                            value_of_list_to_str_columns=self.uuid_type_columns)
-
+            self.code_gen.build_base_model_paginate(
+                class_name=class_name + "FindOneForeignTreeItemListResponseModel",
+                field=(
+                    f'{class_name + "FindOneForeignTreeResponseModel"}',
+                    None),
+                base_model="ExcludeUnsetBaseModel")
             _response_model = {}
             _response_model["primary_key_dataclass_model"] = _primary_key_dataclass_model[1]
             _response_model["request_query_model"] = class_name + "FindOneForeignTreeRequestBody"
-            _response_model["response_model"] = class_name + "FindOneForeignTreeResponseModel"
+            _response_model["response_model"] = class_name + "FindOneForeignTreeItemListResponseModel"
             _response_model["path"] = path
             _response_model['class_name'] = class_name
             _response_model["function_name"] = "get_one_by_foreign_key"

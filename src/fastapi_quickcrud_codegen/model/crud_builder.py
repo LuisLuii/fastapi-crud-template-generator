@@ -298,7 +298,7 @@ class CrudCodeGen():
         self.import_helper.add(import_="Request", from_="starlette.requests")
         self.import_helper.add(import_="parse_obj_as", from_="pydantic")
         self.import_helper.add(import_=set([
-            f"{foreign_model_name}RelationshipPrimaryKeyModel",
+            f"{foreign_model_name}FindManyRelationshipPrimaryKeyModel",
             f"{foreign_model_name}FindManyForeignTreeRequestBody",
             f"{foreign_model_name}FindManyForeignTreeItemListResponseModel",
             f"{model_name}"]
@@ -321,7 +321,7 @@ class CrudCodeGen():
         self.import_helper.add(import_="Request", from_="starlette.requests")
         self.import_helper.add(import_="parse_obj_as", from_="pydantic")
         self.import_helper.add(import_=set([
-            f"{foreign_model_name}RelationshipPrimaryKeyModel",
+            f"{foreign_model_name}FindOneRelationshipPrimaryKeyModel",
             f"{foreign_model_name}FindOneForeignTreeRequestBody",
             f"{foreign_model_name}FindOneForeignTreeResponseModel",
             f"{model_name}"]

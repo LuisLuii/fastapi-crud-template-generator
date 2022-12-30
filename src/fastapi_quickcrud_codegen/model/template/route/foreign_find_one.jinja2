@@ -2,7 +2,7 @@
 {{ 'async ' if is_async else '' }}def foreign_get_one(
             response: Response,
             request: Request,
-            url_param=Depends({{ model_name }}RelationshipPrimaryKeyModel),
+            url_param=Depends({{ model_name }}FindOneRelationshipPrimaryKeyModel),
             query=Depends({{ model_name }}FindOneForeignTreeRequestBody),
             session=Depends(db_session)):
 
