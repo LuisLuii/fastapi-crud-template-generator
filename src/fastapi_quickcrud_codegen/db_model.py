@@ -149,6 +149,18 @@ class DbModel:
 
             print("\t\tforeign find many API generate successfully")
 
+        def foreign_find_one_api():
+            print("\t\tGenerating foreign find one API")
+            for crud_model in crud_models.GET[CrudMethods.FOREIGN_FIND_ONE]:
+                crud_code_generator.build_startup_event(is_async=is_async, model_name=table_name, file_name=model_name)
+                crud_code_generator.build_foreign_find_one_route(is_async=is_async,
+                                                                  path=crud_model['path'],
+                                                                  file_name=model_name,
+                                                                  model_name=table_name,
+                                                                  foreign_model_name=crud_model['class_name'])
+
+            print("\t\tforeign find many API generate successfully")
+
         api_register = {
             CrudMethods.FIND_ONE.value: find_one_api,
             CrudMethods.FIND_MANY.value: find_many_api,
@@ -161,6 +173,7 @@ class DbModel:
             CrudMethods.DELETE_ONE.value: delete_one_api,
             CrudMethods.DELETE_MANY.value: delete_many_api,
             CrudMethods.FOREIGN_FIND_MANY.value: foreign_find_many_api,
+            CrudMethods.FOREIGN_FIND_ONE.value: foreign_find_one_api,
         }
         for request_method in methods_dependencies:
             value_of_dict_crud_model = crud_models.get_model_by_request_method(request_method)

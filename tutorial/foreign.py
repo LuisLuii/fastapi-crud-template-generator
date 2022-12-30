@@ -37,12 +37,12 @@ from fastapi_quickcrud_codegen import crud_router_builder
 model_list = [
 
     DbModel(db_model=Account, prefix="/v1", tags=["account"], foreign_include=[BlogPost, BlogComment],
-            crud_methods=[CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_MANY]),
+            crud_methods=[  CrudMethods.FOREIGN_FIND_ONE,CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_MANY]),
     DbModel(db_model=BlogPost, prefix="/v1", tags=["Blog post"], foreign_include=[Account, BlogComment],
-            crud_methods=[CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_MANY]),
+            crud_methods=[  CrudMethods.FOREIGN_FIND_ONE,CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_MANY]),
     # build the foreign_include table if not presented
     DbModel(db_model=BlogComment, prefix="/v1", tags=["Blog Comment"], foreign_include=[BlogPost, Account],
-            crud_methods=[CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_MANY])]
+            crud_methods=[ CrudMethods.FOREIGN_FIND_ONE,CrudMethods.FOREIGN_FIND_MANY, CrudMethods.FIND_MANY])]
 crud_router_builder(
     db_model_list=model_list,
     is_async=True,

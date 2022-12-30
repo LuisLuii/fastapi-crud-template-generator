@@ -28,6 +28,7 @@ class CrudMethods(Enum):
     DELETE_ONE = "DELETE_ONE"
     DELETE_MANY = "DELETE_MANY"
     FOREIGN_FIND_MANY = "FOREIGN_FIND_MANY"
+    FOREIGN_FIND_ONE = "FOREIGN_FIND_ONE"
 
     @staticmethod
     def get_full_crud_method():
@@ -53,7 +54,7 @@ class RequestMethods(Enum):
 
 class CRUDRequestMapping(Enum):
     FIND_ONE = RequestMethods.GET
-    FIND_ONE_WITH_FOREIGN_TREE = RequestMethods.GET
+    FOREIGN_FIND_ONE = RequestMethods.GET
 
     FIND_MANY = RequestMethods.GET
     FOREIGN_FIND_MANY = RequestMethods.GET

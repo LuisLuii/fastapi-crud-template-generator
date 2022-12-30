@@ -94,7 +94,9 @@ class ApiParameterSchemaBuilder:
         self.sql_type = sql_type
 
         # relationship api related variable
-        self.foreign_table_response_model_sets: Dict[dict] = {}
+        self.foreign_table_response_model_sets_get_many: Dict[dict] = {}
+        self.foreign_table_response_model_sets_get_one: Dict[dict] = {}
+        self.relationship_list = []
 
         self.foreign_include = foreign_include
 
@@ -106,10 +108,6 @@ class ApiParameterSchemaBuilder:
             self.__db_model)
         self.foreign_join_common_column: Union[dict, None] = self._assign_foreign_join()
 
-        self.relationship_list = []
-        for table_mode, info_dict in self.foreign_table_response_model_sets.items():
-            if table_mode.__tablename__ in self.table_of_foreign:
-                self.relationship_list.append(info_dict["class_name"])
 
     def _foreign_mapper_builder(self) -> Dict[str, Dict[str, Any]]:
         """
@@ -176,7 +174,8 @@ class ApiParameterSchemaBuilder:
         :return: The updated foreign tree with the local reference pairs set assigned.
         """
         table_of_foreign, _ = self._extra_foreign_find_table_from_declarative_base(
-            self.foreign_mapper[target_table_name]["db_model"])
+            self.foreign_mapper[target_table_name]["db_model"],
+            is_gen_code=True)
         tmp_foreign = []
         for foreign_dict in foreign_tree["foreign"]:
             foreign_table_name = foreign_dict["table_name"]
@@ -216,7 +215,8 @@ class ApiParameterSchemaBuilder:
         return foreign_tree
 
     def _extra_foreign_find_table_from_declarative_base(self, db_model: decl_api.DeclarativeMeta,
-                                                        is_foreign_tree: bool = False):
+                                                        is_foreign_tree: bool = False, is_get_many: bool = True,
+                                                        is_gen_code: bool = False):
         """
         This function searches for foreign keys in a SQLAlchemy declarative model and returns a dictionary with information about the foreign keys.
 
@@ -308,17 +308,34 @@ class ApiParameterSchemaBuilder:
                                         i['column_type'],
                                         None))
             if is_foreign_tree:
-                response_model_name = "FindManyForeignTreeResponseModel"
-            else:
-                response_model_name = "FindManyResponseModel"
-            self.code_gen.build_base_model(
-                class_name=db_model.__name__ + "To" + foreign_table.__name__ + response_model_name,
-                forbid=True,
-                fields=response_fields)
+                if is_get_many is True:
+                    response_model_name = "FindManyForeignTreeResponseModel"
+                else:
+                    response_model_name = "FindOneForeignTreeResponseModel"
 
-            self.foreign_table_response_model_sets[
-                foreign_table] = {"class_name": db_model.__name__ + "To" + foreign_table.__name__ + response_model_name,
-                                  "is_foreign_tree": is_foreign_tree}
+            else:
+                if is_get_many is True:
+                    response_model_name = "FindManyResponseModel"
+                else:
+                    response_model_name = "FindOneResponseModel"
+            class_name = db_model.__name__ + "To" + foreign_table.__name__ + response_model_name
+
+            if is_gen_code is True:
+                self.code_gen.build_base_model(
+                    class_name=class_name,
+                    forbid=True,
+                    fields=response_fields)
+
+            if is_get_many is True and foreign_table not in self.foreign_table_response_model_sets_get_many:
+                self.foreign_table_response_model_sets_get_many[
+                    foreign_table] = {"class_name": class_name,
+                                      "is_foreign_tree": is_foreign_tree}
+
+            if is_get_many is False and foreign_table not in self.foreign_table_response_model_sets_get_one:
+                self.foreign_table_response_model_sets_get_one[
+                    foreign_table] = {"class_name": class_name,
+                                      "is_foreign_tree": is_foreign_tree}
+
             foreign_key_table[foreign_table_name] = {'local_reference_pairs_set': local_reference_pairs,
                                                      'fields': all_fields_,
                                                      'instance': foreign_table,
@@ -698,11 +715,14 @@ class ApiParameterSchemaBuilder:
         if model_name is None:
             model_name = self.class_name + 'Relationship'
         else:
-            model_name += 'Relationship'
+            model_name = self.class_name+model_name+'Relationship'
         if not table_of_foreign:
             return None
-        self.code_gen.build_enum(class_name=model_name,
-                                 fields=[(table_name, f"'{table_name}'") for table_name in table_of_foreign])
+        if model_name not in self.relationship_list:
+            self.code_gen.build_enum(class_name=model_name,
+                                     fields=[(table_name, f"'{table_name}'") for table_name in table_of_foreign])
+            self.relationship_list.append(model_name)
+
         if is_foreign_tree:
             return {"column_name": 'relationship', "column_type": f"Optional[List[{model_name}]]",
                     "column_default": f"None",
@@ -842,8 +862,9 @@ class ApiParameterSchemaBuilder:
                self.class_name + "CreateManyItemListRequestModel", \
                self.class_name + "CreateManyItemListResponseModel"
 
-    def foreign_tree_get_many(self, foreign_tree: dict=None, path: str = None, pk_list: List[str] =None, class_name: str=None,
-                              included_model_list: List[Table]=None, is_foreign_tree=False) -> Tuple:
+    def foreign_tree_get_many(self, foreign_tree: dict = None, path: str = None, pk_list: List[str] = None,
+                              class_name: str = None,
+                              included_model_list: List[Table] = None) -> Tuple:
 
         foreign_tree_api_list: List[dict] = []
         if foreign_tree is None:
@@ -902,7 +923,8 @@ class ApiParameterSchemaBuilder:
             _query_param: List[Tuple] = self._assign_pagination_param(_query_param, _all_fields)
 
             table_of_foreign, reference_mapper = self._extra_foreign_find_table_from_declarative_base(_db_model,
-                                                                                                      is_foreign_tree=True)
+                                                                                                      is_foreign_tree=True,
+                                                                                                      is_gen_code=True)
 
             foreign_join_common_column: Union[dict, None] = self._assign_foreign_join(table_of_foreign,
                                                                                       model_name=_db_model.__name__,
@@ -926,13 +948,13 @@ class ApiParameterSchemaBuilder:
                     request_fields.append((i['column_name'],
                                            i['column_type'],
                                            f"Query({i['column_default']}, description={i['column_description']} {', include_in_schema=False' if 'include_in_schema' in i and i['include_in_schema'] is False else ''})"))
-            if self.foreign_table_response_model_sets:
+            if self.foreign_table_response_model_sets_get_many:
                 relationship_table_list = []
                 for local_column, refer_table_info in reference_mapper.items():
-                    if refer_table_info['foreign_table'] in self.foreign_table_response_model_sets:
-
+                    if refer_table_info['foreign_table'] in self.foreign_table_response_model_sets_get_many:
                         relationship_table_list.append(
-                            self.foreign_table_response_model_sets[refer_table_info['foreign_table']]["class_name"])
+                            self.foreign_table_response_model_sets_get_many[refer_table_info['foreign_table']][
+                                "class_name"])
                 if not relationship_table_list:
                     pass
                 response_fields.append((
@@ -971,7 +993,7 @@ class ApiParameterSchemaBuilder:
             if not foreign_table:
                 continue
             foreign_tree_api_list += self.foreign_tree_get_many(foreign_table, path, foreign_tree_pk_list, class_name,
-                                                                foreign_included_model_list, True)
+                                                                foreign_included_model_list)
 
         if _db_name != self.root_table_name:
             # use pk_list to build url
@@ -988,7 +1010,8 @@ class ApiParameterSchemaBuilder:
             _query_param: List[Tuple] = self._assign_pagination_param(_query_param, _all_fields)
 
             table_of_foreign, reference_mapper = self._extra_foreign_find_table_from_declarative_base(_db_model,
-                                                                                                      is_foreign_tree=True)
+                                                                                                      is_foreign_tree=True,
+                                                                                                      is_gen_code=True)
 
             foreign_join_common_column: Union[dict, None] = self._assign_foreign_join(table_of_foreign,
                                                                                       model_name=_db_model.__name__,
@@ -1012,12 +1035,13 @@ class ApiParameterSchemaBuilder:
                     request_fields.append((i['column_name'],
                                            i['column_type'],
                                            f"Query({i['column_default']}, description={i['column_description']} {', include_in_schema=False' if 'include_in_schema' in i and i['include_in_schema'] is False else ''})"))
-            if self.foreign_table_response_model_sets:
+            if self.foreign_table_response_model_sets_get_many:
                 relationship_table_list = []
                 for local_column, refer_table_info in reference_mapper.items():
-                    if refer_table_info['foreign_table'] in self.foreign_table_response_model_sets:
+                    if refer_table_info['foreign_table'] in self.foreign_table_response_model_sets_get_many:
                         relationship_table_list.append(
-                            self.foreign_table_response_model_sets[refer_table_info['foreign_table']]["class_name"])
+                            self.foreign_table_response_model_sets_get_many[refer_table_info['foreign_table']][
+                                "class_name"])
                 if not relationship_table_list:
                     pass
                 response_fields.append((
@@ -1051,6 +1075,211 @@ class ApiParameterSchemaBuilder:
             foreign_tree_api_list.append(_response_model)
         return foreign_tree_api_list
 
+    def foreign_tree_get_one(self, foreign_tree: dict = None, path: str = None, pk_list: List[str] = None,
+                             class_name: str = None,
+                             included_model_list: List[Table] = None) -> Tuple:
+
+        foreign_tree_api_list: List[dict] = []
+        if foreign_tree is None:
+            foreign_tree = self.foreign_tree
+
+        if class_name is None:
+            class_name = foreign_tree["model"].__name__
+        else:
+            class_name += "To" + foreign_tree["model"].__name__
+
+        table_name = foreign_tree["table_name"]
+        table_detail = self.foreign_mapper[table_name]
+        _all_fields = table_detail["all_fields"]
+        _primary_key = table_detail["primary_key"]
+        _db_name = table_detail["db_name"]
+        _db_model = table_detail["db_model"]
+        _db_model_table = table_detail["db_model_table"]
+
+        if path is None:
+            path = '/' + self.db_name + '/{' + _db_name + FOREIGN_PATH_PARAM_KEYWORD + _primary_key + '}'
+        else:
+            if _db_name == self.db_name:
+                return foreign_tree_api_list
+
+        if pk_list is None:
+            pk_list = []
+
+        if included_model_list is None:
+            included_model_list = []
+        foreign_included_model_list = [*included_model_list]
+
+        foreign_tree_pk_list = [*pk_list]
+
+        if _db_name + "." + _primary_key in foreign_tree_pk_list:
+            return foreign_tree_api_list
+        if _db_model_table in foreign_included_model_list:
+            return foreign_tree_api_list
+        foreign_included_model_list.append(_db_model_table)
+        foreign_tree_pk_list.append(_db_name + "." + _primary_key)
+
+        if not foreign_tree["foreign"]:
+            # use pk_list to build url
+            for index, pk in enumerate(foreign_tree_pk_list[1::]):
+                foreign_table_name, foreign_column_name = pk.split(".")
+                path += '/' + foreign_table_name
+                if foreign_table_name != _db_name:
+                    return foreign_tree_api_list
+                else:
+                    path += '/{' + foreign_table_name + FOREIGN_PATH_PARAM_KEYWORD + foreign_column_name + '}'
+
+            _primary_key_dataclass_model = self._extra_relation_primary_key(foreign_included_model_list[:-1:],
+                                                                            class_name)
+            _query_param: List[dict] = self._get_fizzy_query_param(foreign_tree_pk_list, _all_fields)
+
+            table_of_foreign, reference_mapper = self._extra_foreign_find_table_from_declarative_base(_db_model,
+                                                                                                      is_foreign_tree=True,
+                                                                                                      is_get_many=False,
+                                                                                                      is_gen_code=True)
+
+            foreign_join_common_column: Union[dict, None] = self._assign_foreign_join(table_of_foreign,
+                                                                                      model_name=_db_model.__name__,
+                                                                                      is_foreign_tree=True)
+            if foreign_join_common_column is not None:
+                _query_param += [foreign_join_common_column]
+            response_fields = []
+            all_field = deepcopy(_all_fields)
+
+            for i in all_field:
+                response_fields.append((i['column_name'],
+                                        i['column_type'],
+                                        f"Body({i['column_default']})"))
+
+            request_fields = []
+            for i in _query_param:
+                assert isinstance(i, dict) or isinstance(i, tuple)
+                if isinstance(i, Tuple):
+                    request_fields.append(i)
+                else:
+                    request_fields.append((i['column_name'],
+                                           i['column_type'],
+                                           f"Query({i['column_default']}, description={i['column_description']} {', include_in_schema=False' if 'include_in_schema' in i and i['include_in_schema'] is False else ''})"))
+            if self.foreign_table_response_model_sets_get_one:
+                relationship_table_list = []
+                for local_column, refer_table_info in reference_mapper.items():
+                    if refer_table_info['foreign_table'] in self.foreign_table_response_model_sets_get_one:
+                        relationship_table_list.append(
+                            self.foreign_table_response_model_sets_get_one[refer_table_info['foreign_table']][
+                                "class_name"])
+                if not relationship_table_list:
+                    pass
+                response_fields.append((
+                    "relationship",
+                    f"Dict[str, List[Union[{', '.join(relationship_table_list)}]]]",
+                    None
+                ))
+
+            self.code_gen.build_dataclass(class_name=class_name + "FindOneForeignTreeRequestBody",
+                                          fields=request_fields,
+                                          value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
+
+            self.code_gen.build_base_model(class_name=class_name + "FindOneForeignTreeResponseModel",
+                                           fields=response_fields,
+                                           value_of_list_to_str_columns=self.uuid_type_columns)
+
+            self.code_gen.build_base_model_paginate(
+                class_name=class_name + "FindOneForeignTreeItemListResponseModel",
+                field=(
+                    f'{class_name + "FindOneForeignTreeResponseModel"}',
+                    None),
+                base_model="ExcludeUnsetBaseModel")
+
+            _response_model = {}
+            _response_model["primary_key_dataclass_model"] = _primary_key_dataclass_model[1]
+            _response_model["request_query_model"] = class_name + "FindOneForeignTreeRequestBody"
+            _response_model["response_model"] = class_name + "FindOneForeignTreeItemListResponseModel"
+            _response_model["path"] = path
+            _response_model['class_name'] = class_name
+            _response_model["function_name"] = "get_many_by_" + "_".join(
+                [pk.split(".")[0] for pk in pk_list]) + "_foreign_key"
+            foreign_tree_api_list.append(_response_model)
+            return foreign_tree_api_list
+
+        foreign_list_of_this_table = foreign_tree["foreign"]
+        for foreign_table in foreign_list_of_this_table:
+            if not foreign_table:
+                continue
+            foreign_tree_api_list += self.foreign_tree_get_one(foreign_table, path, foreign_tree_pk_list, class_name,
+                                                               foreign_included_model_list)
+
+        if _db_name != self.root_table_name:
+            # use pk_list to build url
+            for index, pk in enumerate(foreign_tree_pk_list[1::]):
+                foreign_table_name, foreign_column_name = pk.split(".")
+                path += '/' + foreign_table_name
+                if foreign_table_name != _db_name:
+                    break
+                else:
+                    path += '/{' + foreign_table_name + FOREIGN_PATH_PARAM_KEYWORD + foreign_column_name + '}'
+
+            _primary_key_dataclass_model = self._extra_relation_primary_key(foreign_included_model_list[:-1:],
+                                                                            class_name)
+            _query_param: List[dict] = self._get_fizzy_query_param(foreign_tree_pk_list, _all_fields)
+
+            table_of_foreign, reference_mapper = self._extra_foreign_find_table_from_declarative_base(_db_model,
+                                                                                                      is_foreign_tree=True,
+                                                                                                      is_get_many=False,
+                                                                                                      is_gen_code=True)
+
+            foreign_join_common_column: Union[dict, None] = self._assign_foreign_join(table_of_foreign,
+                                                                                      model_name=_db_model.__name__,
+                                                                                      is_foreign_tree=True)
+            if foreign_join_common_column is not None:
+                _query_param += [foreign_join_common_column]
+            response_fields = []
+            all_field = deepcopy(_all_fields)
+
+            for i in all_field:
+                response_fields.append((i['column_name'],
+                                        i['column_type'],
+                                        f"Body({i['column_default']})"))
+
+            request_fields = []
+            for i in _query_param:
+                assert isinstance(i, dict) or isinstance(i, tuple)
+                if isinstance(i, Tuple):
+                    request_fields.append(i)
+                else:
+                    request_fields.append((i['column_name'],
+                                           i['column_type'],
+                                           f"Query({i['column_default']}, description={i['column_description']} {', include_in_schema=False' if 'include_in_schema' in i and i['include_in_schema'] is False else ''})"))
+            if self.foreign_table_response_model_sets_get_one:
+                relationship_table_list = []
+                for local_column, refer_table_info in reference_mapper.items():
+                    if refer_table_info['foreign_table'] in self.foreign_table_response_model_sets_get_one:
+                        relationship_table_list.append(
+                            self.foreign_table_response_model_sets_get_one[refer_table_info['foreign_table']][
+                                "class_name"])
+                if not relationship_table_list:
+                    pass
+                response_fields.append((
+                    "relationship",
+                    f"Dict[str, List[Union[{', '.join(relationship_table_list)}]]]",
+                    None
+                ))
+
+            self.code_gen.build_dataclass(class_name=class_name + "FindOneForeignTreeRequestBody",
+                                          fields=request_fields,
+                                          value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
+
+            self.code_gen.build_base_model(class_name=class_name + "FindOneForeignTreeResponseModel",
+                                           fields=response_fields,
+                                           value_of_list_to_str_columns=self.uuid_type_columns)
+
+            _response_model = {}
+            _response_model["primary_key_dataclass_model"] = _primary_key_dataclass_model[1]
+            _response_model["request_query_model"] = class_name + "FindOneForeignTreeRequestBody"
+            _response_model["response_model"] = class_name + "FindOneForeignTreeResponseModel"
+            _response_model["path"] = path
+            _response_model['class_name'] = class_name
+            _response_model["function_name"] = "get_one_by_foreign_key"
+            foreign_tree_api_list.append(_response_model)
+        return foreign_tree_api_list
 
     def find_many(self) -> Tuple:
 
@@ -1065,10 +1294,15 @@ class ApiParameterSchemaBuilder:
             response_fields.append((i['column_name'],
                                     i['column_type'],
                                     None))
-        if self.foreign_table_response_model_sets:
+
+        if self.foreign_table_response_model_sets_get_many:
+            relationship_list = []
+            for table_mode, info_dict in self.foreign_table_response_model_sets_get_many.items():
+                if table_mode.__tablename__ in self.table_of_foreign:
+                    relationship_list.append(info_dict["class_name"])
             response_fields.append((
                 "relationship",
-                f"Dict[str, List[Union[{', '.join(self.relationship_list)}]]]",
+                f"Dict[str, List[Union[{', '.join(relationship_list)}]]]",
                 None
             ))
         request_fields = []
@@ -1107,10 +1341,15 @@ class ApiParameterSchemaBuilder:
             response_fields.append((i['column_name'],
                                     i['column_type'],
                                     f'Body({i["column_default"]})'))
-        if self.foreign_table_response_model_sets:
+        if self.foreign_table_response_model_sets_get_one:
+
+            relationship_list = []
+            for table_mode, info_dict in self.foreign_table_response_model_sets_get_one.items():
+                if table_mode.__tablename__ in self.table_of_foreign:
+                    relationship_list.append(info_dict["class_name"])
             response_fields.append((
                 "relationship",
-                f"Dict[str, List[Union[{', '.join(self.relationship_list)}]]]",
+                f"Dict[str, List[Union[{', '.join(relationship_list)}]]]",
                 None
             ))
         request_fields = []

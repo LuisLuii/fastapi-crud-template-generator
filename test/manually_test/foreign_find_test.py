@@ -13509,8 +13509,7 @@ def blog_comment():
     find_many_with_query_param_and_paging_and_order_by_and_relationship()
     find_many_with_query_param_and_order_by_and_relationship()
 
-
-def blog_comment_blog_post_account():
+def blog_comment_blog_post():
     def basic_find_many_without_any_param():
         params = {
             'id____from_____comparison_operator': 'Greater_than_or_equal_to',
@@ -17808,6 +17807,9 @@ def blog_comment_blog_post_account():
     find_many_with_query_param_and_order_by_and_relationship()
 
 
+
+
+
 account_many()
 account_blog_post_many()
 account_blog_post_blog_comment()
@@ -17817,4 +17819,4 @@ blog_post_account()
 blog_post_comment()
 
 blog_comment()
-blog_comment_blog_post_account()
+blog_comment_blog_post()
