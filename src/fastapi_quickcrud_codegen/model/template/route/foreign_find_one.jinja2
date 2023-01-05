@@ -6,17 +6,11 @@
             query=Depends({{ model_name }}FindOneForeignTreeRequestBody),
             session=Depends(db_session)):
 
-
     request_path = request.url.path.replace(api.prefix, "")
-    target_model = request_path.split("/")[-1]
+    target_model = request_path.split("/")[-2]
 
     path_include_table_regex = re.compile(r'\/([^\/]+)+/')
     path_include_table = path_include_table_regex.findall(request_path)
-
-    filter_args = query.__dict__
-    limit = filter_args.pop('limit', None)
-    offset = filter_args.pop('offset', None)
-    order_by_columns = filter_args.pop('order_by_columns', None)
 
     join_table_list = query.__dict__.pop('relationship', [])
     join_table_list = [str(i) for i in join_table_list]
@@ -32,12 +26,6 @@
     path_filter_list: List[BinaryExpression] = foreign_path_query_builder(param=url_param.__dict__,
                                                                         model=router_data["instance_mapper"])
 
-    # init response format
-    response_format = {
-            "total": 0,
-            "result": []
-        }
-
 
     # prepare a sql stmt that number of total result for response
     relationship_mapper = build_relationship_mapper(foreign_key_table, base_model_name)
@@ -45,7 +33,6 @@
     join_relationship_mapping = join_relationship_mapping_builder(relationship_mapper, target_model, join_table_list)
 
     total_stmt = select(func.count(pk)).where(and_(*filter_list + path_filter_list))
-
 
     # add join expression
     join_relationship_mapping_for_total_count_query_and_path_query = {}
@@ -63,21 +50,13 @@
     total_result = {{ 'await ' if is_async else '' }}session.execute(total_stmt)
     total_result = total_result.scalar()
     if total_result < 1:
-        response_data = parse_obj_as({{ model_name }}FindManyForeignTreeItemListResponseModel, response_format)
-        response.headers["x-total-count"] = str(0)
-        return response_data
+        return Response('specific data not found', status_code=HTTPStatus.NOT_FOUND, headers={"x-total-count": str(0)})
 
     foreign_column_list = relationship_query_builder(join_relationship_mapping_for_data_query)
 
     # if join_table_list and (limit or offset):
     # use sub query and join
     subquery_stmt = select(*[table]).filter(and_(*filter_list + path_filter_list))
-
-    # add page
-    subquery_stmt = subquery_stmt.limit(limit).offset(offset)
-
-    # add orderby
-    subquery_stmt = orderby_expression_builder(subquery_stmt, order_by_columns, model)
 
     # add join expression for path join
     subquery_stmt = join_expression_builder(subquery_stmt, join_relationship_mapping_for_total_count_query_and_path_query)
@@ -89,15 +68,10 @@
     # add join expression
     query_stmt = join_expression_builder(base_query_stmt, join_relationship_mapping_for_data_query, {table: subquery_stmt})
 
-    # add orderby
-    query_stmt = orderby_expression_builder(query_stmt, order_by_columns, subquery_stmt.c)
-
     sql_executed_result = {{ 'await ' if is_async else '' }}session.execute(query_stmt)
     result = sql_executed_result.fetchall()
 
     formatted_result = group_find_many_join(result, [str(i.name) for i in column_list])
-    response_format["total"] = total_result
-    response_format["result"] = formatted_result
-    response_data = parse_obj_as({{ model_name }}FindManyForeignTreeItemListResponseModel, response_format)
+    response_data = parse_obj_as({{ model_name }}FindOneForeignTreeResponseModel, formatted_result[0])
     response.headers["x-total-count"] = str(len(formatted_result))
     return response_data

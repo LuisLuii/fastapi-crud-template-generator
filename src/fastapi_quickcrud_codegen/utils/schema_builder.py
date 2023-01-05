@@ -1133,10 +1133,11 @@ class ApiParameterSchemaBuilder:
             _primary_key_dataclass_model = self._extra_relation_primary_key(foreign_included_list,
                                                                             class_name, postfix="FindOne")
             _query_param: List[dict] = self._get_fizzy_query_param(foreign_tree_pk_list, _all_fields)
-            _query_param: List[Tuple] = self._assign_pagination_param(_query_param, _all_fields)
             table_of_foreign, reference_mapper = self._extra_foreign_find_table_from_declarative_base(_db_model,
                                                                                                       is_foreign_tree=True,
-                                                                                                      is_gen_code=True)
+                                                                                                      is_gen_code=True,
+                                                                                                      is_get_many=False
+                                                                                                      )
             foreign_join_common_column: Union[dict, None] = self._assign_foreign_join(table_of_foreign,
                                                                                       model_name=_db_model.__name__,
                                                                                       is_foreign_tree=True)
@@ -1177,16 +1178,11 @@ class ApiParameterSchemaBuilder:
             self.code_gen.build_base_model(class_name=class_name + "FindOneForeignTreeResponseModel",
                                            fields=response_fields,
                                            value_of_list_to_str_columns=self.uuid_type_columns)
-            self.code_gen.build_base_model_paginate(
-                class_name=class_name + "FindOneForeignTreeItemListResponseModel",
-                field=(
-                    f'{class_name + "FindOneForeignTreeResponseModel"}',
-                    None),
-                base_model="ExcludeUnsetBaseModel")
+
             _response_model = {}
             _response_model["primary_key_dataclass_model"] = _primary_key_dataclass_model[1]
             _response_model["request_query_model"] = class_name + "FindOneForeignTreeRequestBody"
-            _response_model["response_model"] = class_name + "FindOneForeignTreeItemListResponseModel"
+            _response_model["response_model"] = class_name + "FindOneForeignTreeResponseModel"
             _response_model["path"] = path
             _response_model['class_name'] = class_name
             _response_model["function_name"] = "get_one_by_" + "_".join(
@@ -1215,10 +1211,10 @@ class ApiParameterSchemaBuilder:
             _primary_key_dataclass_model = self._extra_relation_primary_key(foreign_included_list,
                                                                             class_name, postfix="FindOne")
             _query_param: List[dict] = self._get_fizzy_query_param(foreign_tree_pk_list, _all_fields)
-            _query_param: List[Tuple] = self._assign_pagination_param(_query_param, _all_fields)
             table_of_foreign, reference_mapper = self._extra_foreign_find_table_from_declarative_base(_db_model,
                                                                                                       is_foreign_tree=True,
-                                                                                                      is_gen_code=True)
+                                                                                                      is_gen_code=True,
+                                                                                                      is_get_many=False)
             foreign_join_common_column: Union[dict, None] = self._assign_foreign_join(table_of_foreign,
                                                                                       model_name=_db_model.__name__,
                                                                                       is_foreign_tree=True)
@@ -1259,16 +1255,10 @@ class ApiParameterSchemaBuilder:
             self.code_gen.build_base_model(class_name=class_name + "FindOneForeignTreeResponseModel",
                                            fields=response_fields,
                                            value_of_list_to_str_columns=self.uuid_type_columns)
-            self.code_gen.build_base_model_paginate(
-                class_name=class_name + "FindOneForeignTreeItemListResponseModel",
-                field=(
-                    f'{class_name + "FindOneForeignTreeResponseModel"}',
-                    None),
-                base_model="ExcludeUnsetBaseModel")
             _response_model = {}
             _response_model["primary_key_dataclass_model"] = _primary_key_dataclass_model[1]
             _response_model["request_query_model"] = class_name + "FindOneForeignTreeRequestBody"
-            _response_model["response_model"] = class_name + "FindOneForeignTreeItemListResponseModel"
+            _response_model["response_model"] = class_name + "FindOneForeignTreeResponseModel"
             _response_model["path"] = path
             _response_model['class_name'] = class_name
             _response_model["function_name"] = "get_one_by_foreign_key"
