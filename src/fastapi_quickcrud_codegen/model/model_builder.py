@@ -26,8 +26,9 @@ class ModelCodeGen():
         self.import_helper.add(import_=set(['*']), from_="sqlalchemy")
         self.import_helper.add(import_=set(['*']), from_=f"sqlalchemy.dialects.{db_type}")
         self.import_helper.add(import_=set(['value_of_list_to_str', 'ExcludeUnsetBaseModel', 'filter_none']),
-                               from_="common.utils")
-        self.import_helper.add(import_=set(['Base']), from_="common.db")
+                               from_="fastapi_quick_crud_template.common.utils")
+        self.import_helper.add(import_=set(['Base']), from_="fastapi_quick_crud_template.common.db")
+        self.import_helper.add(import_=set(['relationship']), from_="sqlalchemy.orm")
         self.import_helper.add(import_=set(['ItemComparisonOperators', 'PGSQLMatchingPatternInString',
                                             'ExtraFieldTypePrefix', 'RangeToComparisonOperators',
                                             'MatchingPatternInStringBase', 'RangeFromComparisonOperators']),
