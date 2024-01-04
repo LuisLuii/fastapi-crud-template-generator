@@ -30,7 +30,7 @@ if __name__ == '__main__':
         long_description_content_type="text/markdown",
         author='Luis Lui',
         author_email='luis11235178@gmail.com',
-        url='https://github.com/LuisLuii/fastapi-crud-project-generator',
+        url='https://github.com/LuisLuii/fastapi-crud-template-generator',
         license="MIT License",
         keywords=["fastapi", "crud", "restful", "routing","SQLAlchemy", "generator", "crudrouter","postgresql","builder"],
         packages=find_packages("src", include="*.jinja2"),

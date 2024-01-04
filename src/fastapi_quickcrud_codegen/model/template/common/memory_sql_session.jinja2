@@ -7,7 +7,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.pool import StaticPool
 
 {% for model in model_list -%}
-from fastapi_quick_crud_template.model.{{ model["model_name"] }} import {{ model["file_name"] }}
+from model.{{ model["model_name"] }} import {{ model["file_name"] }}
 {% endfor -%}
 
 {%- if is_memory_sql %}

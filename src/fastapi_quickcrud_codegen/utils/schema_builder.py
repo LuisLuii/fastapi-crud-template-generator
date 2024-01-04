@@ -81,7 +81,10 @@ class ApiParameterSchemaBuilder:
         primary_key_column, = primary_list
         column_type = str(primary_key_column.type)
         try:
-            python_type = primary_key_column.type.python_type
+            if column_type == "UUID":
+                python_type = uuid.UUID
+            else:
+                python_type = primary_key_column.type.python_type
             if column_type in self.partial_supported_data_types:
                 warnings.warn(
                     f'The type of column {primary_key_column.key} ({column_type}) '
@@ -165,7 +168,11 @@ class ApiParameterSchemaBuilder:
             column_type = str(column.type)
             description = self._get_field_description(column)
             try:
-                python_type = column.type.python_type
+
+                if column_type == "UUID":
+                    python_type = uuid.UUID
+                else:
+                    python_type = column.type.python_type
                 if column_type in self.unsupported_data_types:
                     raise ColumnTypeNotSupportedException(
                         f'The type of column {column_name} ({column_type}) not supported yet')
@@ -278,6 +285,13 @@ class ApiParameterSchemaBuilder:
              'column_description': field_of_param['column_description']}
         ]:
             result_.append(i)
+        for i in [
+            {'column_name': field_of_param['column_name'],
+             'column_type': f'Optional[str]',
+             'column_default': '',
+             'column_description': "None"}
+        ]:
+            result_.append(i)
         return result_
 
     @staticmethod
@@ -340,12 +354,11 @@ class ApiParameterSchemaBuilder:
             if field_['column_name'] in exclude_column:
                 continue
             field_['column_default'] = None
-            if field_['column_name'] in self.str_type_columns:
+            if field_['column_name'] in self.str_type_columns or field_['column_name'] in self.uuid_type_columns:
                 result = self._assign_str_matching_pattern(field_, result)
                 result = self._assign_list_comparison(field_, result)
 
-            elif field_['column_name'] in self.uuid_type_columns or \
-                    field_['column_name'] in self.bool_type_columns:
+            elif field_['column_name'] in self.bool_type_columns:
                 result = self._assign_list_comparison(field_, result)
 
             elif field_['column_name'] in self.number_type_columns or \

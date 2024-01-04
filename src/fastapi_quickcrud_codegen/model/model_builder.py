@@ -32,7 +32,7 @@ class ModelCodeGen():
         self.import_helper.add(import_=set(['ItemComparisonOperators', 'PGSQLMatchingPatternInString',
                                             'ExtraFieldTypePrefix', 'RangeToComparisonOperators',
                                             'MatchingPatternInStringBase', 'RangeFromComparisonOperators']),
-                               from_="fastapi_quick_crud_template.common.typing")
+                               from_="common.typing")
         self.import_helper.add(import_="uuid")
         self.model_template_gen = ModelTemplateGenerator()
 
