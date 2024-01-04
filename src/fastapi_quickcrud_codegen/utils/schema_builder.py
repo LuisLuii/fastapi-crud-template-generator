@@ -87,8 +87,11 @@ class ApiParameterSchemaBuilder:
                     f'The type of column {primary_key_column.key} ({column_type}) '
                     f'is not support data query (as a query parameters )')
         except NotImplementedError:
-            raise ColumnTypeNotSupportedException(
-                f'The type of column {primary_key_column.key} ({column_type}) not supported yet')
+            if column_type == "UUID":
+                python_type = uuid.UUID
+            else:
+                raise ColumnTypeNotSupportedException(
+                    f'The type of column {primary_key_column.key} ({column_type}) not supported yet')
         # handle if python type is UUID
         if python_type.__name__ in ['str',
                                     'int',
@@ -171,8 +174,11 @@ class ApiParameterSchemaBuilder:
                         f'The type of column {column_name} ({column_type}) '
                         f'is not support data query (as a query parameters )')
             except NotImplementedError:
-                raise ColumnTypeNotSupportedException(
-                    f'The type of column {column_name} ({column_type}) not supported yet')
+                if column_type == "UUID":
+                    python_type = uuid.UUID
+                else:
+                    raise ColumnTypeNotSupportedException(
+                        f'The type of column {column_name} ({column_type}) not supported yet')
                 # string filter
             python_type_str = deepcopy(python_type.__name__)
             if python_type_str in ['str']:
