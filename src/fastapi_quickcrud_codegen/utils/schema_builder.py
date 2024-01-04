@@ -285,6 +285,13 @@ class ApiParameterSchemaBuilder:
              'column_description': field_of_param['column_description']}
         ]:
             result_.append(i)
+        for i in [
+            {'column_name': field_of_param['column_name'],
+             'column_type': f'Optional[str]',
+             'column_default': '',
+             'column_description': "None"}
+        ]:
+            result_.append(i)
         return result_
 
     @staticmethod
@@ -347,12 +354,11 @@ class ApiParameterSchemaBuilder:
             if field_['column_name'] in exclude_column:
                 continue
             field_['column_default'] = None
-            if field_['column_name'] in self.str_type_columns:
+            if field_['column_name'] in self.str_type_columns or field_['column_name'] in self.uuid_type_columns:
                 result = self._assign_str_matching_pattern(field_, result)
                 result = self._assign_list_comparison(field_, result)
 
-            elif field_['column_name'] in self.uuid_type_columns or \
-                    field_['column_name'] in self.bool_type_columns:
+            elif field_['column_name'] in self.bool_type_columns:
                 result = self._assign_list_comparison(field_, result)
 
             elif field_['column_name'] in self.number_type_columns or \
