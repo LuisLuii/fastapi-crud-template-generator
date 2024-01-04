@@ -288,7 +288,7 @@ class ApiParameterSchemaBuilder:
         for i in [
             {'column_name': field_of_param['column_name'],
              'column_type': f'Optional[str]',
-             'column_default': '',
+             'column_default': 'None',
              'column_description': "None"}
         ]:
             result_.append(i)

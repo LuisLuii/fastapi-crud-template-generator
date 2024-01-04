@@ -151,6 +151,7 @@ from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import *
 from common.utils import ExcludeUnsetBaseModel, filter_none, value_of_list_to_str
 from common.db import Base
+from sqlalchemy.orm import relationship
 from common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
 PRIMARY_KEY_NAME = "primary_key"
@@ -218,6 +219,7 @@ from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import *
 from common.utils import ExcludeUnsetBaseModel, filter_none, value_of_list_to_str
 from common.db import Base
+from sqlalchemy.orm import relationship
 from common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
 PRIMARY_KEY_NAME = "primary_key"
@@ -274,6 +276,7 @@ class SampleTableFindOneRequestBodyModel:
     bool_value____list: Optional[List[bool]] = Query(None)
     char_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive])
     char_value____str: Optional[List[str]] = Query(None)
+    char_value: Optional[str] = Query(None)
     char_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In)
     char_value____list: Optional[List[str]] = Query(None)
     date_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to)
@@ -320,6 +323,7 @@ class SampleTableFindOneRequestBodyModel:
     numeric_value____list: Optional[List[Decimal]] = Query(None)
     text_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive])
     text_value____str: Optional[List[str]] = Query(None)
+    text_value: Optional[str] = Query(None)
     text_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In)
     text_value____list: Optional[List[str]] = Query(None)
     time_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to)
@@ -346,10 +350,14 @@ class SampleTableFindOneRequestBodyModel:
     timetz_value____to: Optional[NewType(ExtraFieldTypePrefix.To, time)] = Query(None)
     timetz_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In)
     timetz_value____list: Optional[List[time]] = Query(None)
+    uuid_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive])
+    uuid_value____str: Optional[List[uuid.UUID]] = Query(None)
+    uuid_value: Optional[str] = Query(None)
     uuid_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In)
     uuid_value____list: Optional[List[uuid.UUID]] = Query(None)
     varchar_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive])
     varchar_value____str: Optional[List[str]] = Query(None)
+    varchar_value: Optional[str] = Query(None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In)
     varchar_value____list: Optional[List[str]] = Query(None)
 

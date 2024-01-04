@@ -131,6 +131,7 @@ from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import *
 from common.utils import ExcludeUnsetBaseModel, filter_none, value_of_list_to_str
 from common.db import Base
+from sqlalchemy.orm import relationship
 from common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
 PRIMARY_KEY_NAME = "primary_key"
@@ -179,6 +180,9 @@ class TestUuidPrimaryPrimaryKeyModel:
 
 @dataclass
 class TestUuidPrimaryFindManyRequestBodyModel:
+    primary_key____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
+    primary_key____str: Optional[List[uuid.UUID]] = Query(None, description=None)
+    primary_key: Optional[str] = Query(None, description=None)
     primary_key____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     primary_key____list: Optional[List[uuid.UUID]] = Query(None, description=None)
     bool_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
@@ -209,6 +213,7 @@ class TestUuidPrimaryFindManyRequestBodyModel:
     int4_value____list: Optional[List[int]] = Query(None, description=None)
     char_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     char_value____str: Optional[List[str]] = Query(None, description=None)
+    char_value: Optional[str] = Query(None, description=None)
     char_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     char_value____list: Optional[List[str]] = Query(None, description=None)
     date_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -231,6 +236,7 @@ class TestUuidPrimaryFindManyRequestBodyModel:
     numeric_value____list: Optional[List[Decimal]] = Query(None, description=None)
     text_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     text_value____str: Optional[List[str]] = Query(None, description=None)
+    text_value: Optional[str] = Query(None, description=None)
     text_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     text_value____list: Optional[List[str]] = Query(None, description=None)
     time_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -259,6 +265,7 @@ class TestUuidPrimaryFindManyRequestBodyModel:
     timetz_value____list: Optional[List[time]] = Query(None, description=None)
     varchar_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
+    varchar_value: Optional[str] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
     limit: Optional[int] = Query(None)
@@ -351,6 +358,7 @@ class TestUuidPrimaryFindOneRequestBodyModel:
     int4_value____list: Optional[List[int]] = Query(None)
     char_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive])
     char_value____str: Optional[List[str]] = Query(None)
+    char_value: Optional[str] = Query(None)
     char_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In)
     char_value____list: Optional[List[str]] = Query(None)
     date_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to)
@@ -373,6 +381,7 @@ class TestUuidPrimaryFindOneRequestBodyModel:
     numeric_value____list: Optional[List[Decimal]] = Query(None)
     text_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive])
     text_value____str: Optional[List[str]] = Query(None)
+    text_value: Optional[str] = Query(None)
     text_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In)
     text_value____list: Optional[List[str]] = Query(None)
     time_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to)
@@ -401,6 +410,7 @@ class TestUuidPrimaryFindOneRequestBodyModel:
     timetz_value____list: Optional[List[time]] = Query(None)
     varchar_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive])
     varchar_value____str: Optional[List[str]] = Query(None)
+    varchar_value: Optional[str] = Query(None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In)
     varchar_value____list: Optional[List[str]] = Query(None)
 
@@ -553,6 +563,7 @@ class TestUuidPrimaryPatchOneRequestQueryModel:
     int4_value____list: Optional[List[int]] = Query(None, description=None)
     char_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     char_value____str: Optional[List[str]] = Query(None, description=None)
+    char_value: Optional[str] = Query(None, description=None)
     char_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     char_value____list: Optional[List[str]] = Query(None, description=None)
     date_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -575,6 +586,7 @@ class TestUuidPrimaryPatchOneRequestQueryModel:
     numeric_value____list: Optional[List[Decimal]] = Query(None, description=None)
     text_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     text_value____str: Optional[List[str]] = Query(None, description=None)
+    text_value: Optional[str] = Query(None, description=None)
     text_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     text_value____list: Optional[List[str]] = Query(None, description=None)
     time_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -603,6 +615,7 @@ class TestUuidPrimaryPatchOneRequestQueryModel:
     timetz_value____list: Optional[List[time]] = Query(None, description=None)
     varchar_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
+    varchar_value: Optional[str] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
 
@@ -677,6 +690,9 @@ class TestUuidPrimaryPatchOneResponseModel(BaseModel):
 
 @dataclass
 class TestUuidPrimaryPatchManyRequestQueryModel:
+    primary_key____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
+    primary_key____str: Optional[List[uuid.UUID]] = Query(None, description=None)
+    primary_key: Optional[str] = Query(None, description=None)
     primary_key____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     primary_key____list: Optional[List[uuid.UUID]] = Query(None, description=None)
     bool_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
@@ -707,6 +723,7 @@ class TestUuidPrimaryPatchManyRequestQueryModel:
     int4_value____list: Optional[List[int]] = Query(None, description=None)
     char_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     char_value____str: Optional[List[str]] = Query(None, description=None)
+    char_value: Optional[str] = Query(None, description=None)
     char_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     char_value____list: Optional[List[str]] = Query(None, description=None)
     date_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -729,6 +746,7 @@ class TestUuidPrimaryPatchManyRequestQueryModel:
     numeric_value____list: Optional[List[Decimal]] = Query(None, description=None)
     text_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     text_value____str: Optional[List[str]] = Query(None, description=None)
+    text_value: Optional[str] = Query(None, description=None)
     text_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     text_value____list: Optional[List[str]] = Query(None, description=None)
     time_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -757,6 +775,7 @@ class TestUuidPrimaryPatchManyRequestQueryModel:
     timetz_value____list: Optional[List[time]] = Query(None, description=None)
     varchar_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
+    varchar_value: Optional[str] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
 
@@ -866,6 +885,7 @@ class TestUuidPrimaryPatchOneRequestQueryModel:
     int4_value____list: Optional[List[int]] = Query(None, description=None)
     char_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     char_value____str: Optional[List[str]] = Query(None, description=None)
+    char_value: Optional[str] = Query(None, description=None)
     char_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     char_value____list: Optional[List[str]] = Query(None, description=None)
     date_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -888,6 +908,7 @@ class TestUuidPrimaryPatchOneRequestQueryModel:
     numeric_value____list: Optional[List[Decimal]] = Query(None, description=None)
     text_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     text_value____str: Optional[List[str]] = Query(None, description=None)
+    text_value: Optional[str] = Query(None, description=None)
     text_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     text_value____list: Optional[List[str]] = Query(None, description=None)
     time_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -916,6 +937,7 @@ class TestUuidPrimaryPatchOneRequestQueryModel:
     timetz_value____list: Optional[List[time]] = Query(None, description=None)
     varchar_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
+    varchar_value: Optional[str] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
 
@@ -990,6 +1012,9 @@ class TestUuidPrimaryPatchOneResponseModel(BaseModel):
 
 @dataclass
 class TestUuidPrimaryUpdateManyRequestQueryModel:
+    primary_key____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
+    primary_key____str: Optional[List[uuid.UUID]] = Query(None, description=None)
+    primary_key: Optional[str] = Query(None, description=None)
     primary_key____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     primary_key____list: Optional[List[uuid.UUID]] = Query(None, description=None)
     bool_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
@@ -1020,6 +1045,7 @@ class TestUuidPrimaryUpdateManyRequestQueryModel:
     int4_value____list: Optional[List[int]] = Query(None, description=None)
     char_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     char_value____str: Optional[List[str]] = Query(None, description=None)
+    char_value: Optional[str] = Query(None, description=None)
     char_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     char_value____list: Optional[List[str]] = Query(None, description=None)
     date_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -1042,6 +1068,7 @@ class TestUuidPrimaryUpdateManyRequestQueryModel:
     numeric_value____list: Optional[List[Decimal]] = Query(None, description=None)
     text_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     text_value____str: Optional[List[str]] = Query(None, description=None)
+    text_value: Optional[str] = Query(None, description=None)
     text_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     text_value____list: Optional[List[str]] = Query(None, description=None)
     time_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -1070,6 +1097,7 @@ class TestUuidPrimaryUpdateManyRequestQueryModel:
     timetz_value____list: Optional[List[time]] = Query(None, description=None)
     varchar_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
+    varchar_value: Optional[str] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
 
@@ -1179,6 +1207,7 @@ class TestUuidPrimaryUpdateOneRequestQueryModel:
     int4_value____list: Optional[List[int]] = Query(None, description=None)
     char_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     char_value____str: Optional[List[str]] = Query(None, description=None)
+    char_value: Optional[str] = Query(None, description=None)
     char_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     char_value____list: Optional[List[str]] = Query(None, description=None)
     date_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -1201,6 +1230,7 @@ class TestUuidPrimaryUpdateOneRequestQueryModel:
     numeric_value____list: Optional[List[Decimal]] = Query(None, description=None)
     text_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     text_value____str: Optional[List[str]] = Query(None, description=None)
+    text_value: Optional[str] = Query(None, description=None)
     text_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     text_value____list: Optional[List[str]] = Query(None, description=None)
     time_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -1229,6 +1259,7 @@ class TestUuidPrimaryUpdateOneRequestQueryModel:
     timetz_value____list: Optional[List[time]] = Query(None, description=None)
     varchar_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
+    varchar_value: Optional[str] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
 
@@ -1303,6 +1334,9 @@ class TestUuidPrimaryUpdateOneResponseModel(BaseModel):
 
 @dataclass
 class TestUuidPrimaryDeleteManyRequestQueryModel:
+    primary_key____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
+    primary_key____str: Optional[List[uuid.UUID]] = Query(None, description=None)
+    primary_key: Optional[str] = Query(None, description=None)
     primary_key____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     primary_key____list: Optional[List[uuid.UUID]] = Query(None, description=None)
     bool_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
@@ -1333,6 +1367,7 @@ class TestUuidPrimaryDeleteManyRequestQueryModel:
     int4_value____list: Optional[List[int]] = Query(None, description=None)
     char_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     char_value____str: Optional[List[str]] = Query(None, description=None)
+    char_value: Optional[str] = Query(None, description=None)
     char_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     char_value____list: Optional[List[str]] = Query(None, description=None)
     date_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -1355,6 +1390,7 @@ class TestUuidPrimaryDeleteManyRequestQueryModel:
     numeric_value____list: Optional[List[Decimal]] = Query(None, description=None)
     text_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     text_value____str: Optional[List[str]] = Query(None, description=None)
+    text_value: Optional[str] = Query(None, description=None)
     text_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     text_value____list: Optional[List[str]] = Query(None, description=None)
     time_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -1383,6 +1419,7 @@ class TestUuidPrimaryDeleteManyRequestQueryModel:
     timetz_value____list: Optional[List[time]] = Query(None, description=None)
     varchar_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
+    varchar_value: Optional[str] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
 
@@ -1461,6 +1498,7 @@ class TestUuidPrimaryDeleteOneRequestQueryModel:
     int4_value____list: Optional[List[int]] = Query(None, description=None)
     char_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     char_value____str: Optional[List[str]] = Query(None, description=None)
+    char_value: Optional[str] = Query(None, description=None)
     char_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     char_value____list: Optional[List[str]] = Query(None, description=None)
     date_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -1483,6 +1521,7 @@ class TestUuidPrimaryDeleteOneRequestQueryModel:
     numeric_value____list: Optional[List[Decimal]] = Query(None, description=None)
     text_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     text_value____str: Optional[List[str]] = Query(None, description=None)
+    text_value: Optional[str] = Query(None, description=None)
     text_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     text_value____list: Optional[List[str]] = Query(None, description=None)
     time_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -1511,6 +1550,7 @@ class TestUuidPrimaryDeleteOneRequestQueryModel:
     timetz_value____list: Optional[List[time]] = Query(None, description=None)
     varchar_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
+    varchar_value: Optional[str] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
 
@@ -1683,7 +1723,10 @@ async def insert_many(
             new_inserted_data.append(model(**i))
     session.add_all(new_inserted_data)
     try:
+        result = parse_obj_as(TestUuidPrimaryCreateManyItemListResponseModel, new_inserted_data)
+        response.headers["x-total-count"] = str(len(new_inserted_data))
         await session.flush()
+        return result
     except IntegrityError as e:
         err_msg, = e.orig.args
         if 'unique constraint' not in err_msg.lower():
@@ -1691,9 +1734,6 @@ async def insert_many(
         result = Response(status_code=HTTPStatus.CONFLICT, headers={"x-total-count": str(0)})
         return result
 
-    result = parse_obj_as(TestUuidPrimaryCreateManyItemListResponseModel, new_inserted_data)
-    response.headers["x-total-count"] = str(len(new_inserted_data))
-    return result
 
 @api.put("", status_code=200, response_model=TestUuidPrimaryUpdateManyItemListResponseModel)
 async def entire_update_many_by_query(

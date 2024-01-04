@@ -154,6 +154,7 @@ from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import *
 from common.utils import ExcludeUnsetBaseModel, filter_none, value_of_list_to_str
 from common.db import Base
+from sqlalchemy.orm import relationship
 from common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
 PRIMARY_KEY_NAME = "primary_key"
@@ -214,6 +215,7 @@ from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import *
 from common.utils import ExcludeUnsetBaseModel, filter_none, value_of_list_to_str
 from common.db import Base
+from sqlalchemy.orm import relationship
 from common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
 PRIMARY_KEY_NAME = "primary_key"
@@ -365,17 +367,18 @@ def insert_one(
             new_inserted_data.append(model(**i))
     session.add_all(new_inserted_data)
     try:
+        inserted_data, = new_inserted_data
+        result = parse_obj_as(SampleTableTwoCreateOneResponseModel, inserted_data)
+        response.headers["x-total-count"] = str(1)
         session.flush()
+        return result
     except IntegrityError as e:
         err_msg, = e.orig.args
         if 'unique constraint' not in err_msg.lower():
             raise e
         result = Response(status_code=HTTPStatus.CONFLICT, headers={"x-total-count": str(0)})
         return result
-    inserted_data, = new_inserted_data
-    result = parse_obj_as(SampleTableTwoCreateOneResponseModel, inserted_data)
-    response.headers["x-total-count"] = str(1)
-    return result
+    
 
 '''
         validate_route("test_build_myself_two", route_test_build_myself_two_expected)
@@ -412,17 +415,18 @@ def insert_one(
             new_inserted_data.append(model(**i))
     session.add_all(new_inserted_data)
     try:
+        inserted_data, = new_inserted_data
+        result = parse_obj_as(SampleTableCreateOneResponseModel, inserted_data)
+        response.headers["x-total-count"] = str(1)
         session.flush()
+        return result
     except IntegrityError as e:
         err_msg, = e.orig.args
         if 'unique constraint' not in err_msg.lower():
             raise e
         result = Response(status_code=HTTPStatus.CONFLICT, headers={"x-total-count": str(0)})
         return result
-    inserted_data, = new_inserted_data
-    result = parse_obj_as(SampleTableCreateOneResponseModel, inserted_data)
-    response.headers["x-total-count"] = str(1)
-    return result
+    
 
 '''
         validate_route("test_build_myself", route_test_build_myself_expected)

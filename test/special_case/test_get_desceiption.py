@@ -131,6 +131,7 @@ from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import *
 from common.utils import ExcludeUnsetBaseModel, filter_none, value_of_list_to_str
 from common.db import Base
+from sqlalchemy.orm import relationship
 from common.typing import ExtraFieldTypePrefix, ItemComparisonOperators, MatchingPatternInStringBase, PGSQLMatchingPatternInString, RangeFromComparisonOperators, RangeToComparisonOperators
 
 PRIMARY_KEY_NAME = "primary_key"
@@ -179,6 +180,9 @@ class TestUuidPrimaryPrimaryKeyModel:
 
 @dataclass
 class TestUuidPrimaryFindManyRequestBodyModel:
+    primary_key____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
+    primary_key____str: Optional[List[uuid.UUID]] = Query(None, description="hello")
+    primary_key: Optional[str] = Query(None, description=None)
     primary_key____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     primary_key____list: Optional[List[uuid.UUID]] = Query(None, description="hello")
     bool_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
@@ -209,6 +213,7 @@ class TestUuidPrimaryFindManyRequestBodyModel:
     int4_value____list: Optional[List[int]] = Query(None, description=None)
     char_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     char_value____str: Optional[List[str]] = Query(None, description=None)
+    char_value: Optional[str] = Query(None, description=None)
     char_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     char_value____list: Optional[List[str]] = Query(None, description=None)
     date_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -231,6 +236,7 @@ class TestUuidPrimaryFindManyRequestBodyModel:
     numeric_value____list: Optional[List[Decimal]] = Query(None, description=None)
     text_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     text_value____str: Optional[List[str]] = Query(None, description=None)
+    text_value: Optional[str] = Query(None, description=None)
     text_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     text_value____list: Optional[List[str]] = Query(None, description=None)
     time_value____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
@@ -259,6 +265,7 @@ class TestUuidPrimaryFindManyRequestBodyModel:
     timetz_value____list: Optional[List[time]] = Query(None, description=None)
     varchar_value____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     varchar_value____str: Optional[List[str]] = Query(None, description=None)
+    varchar_value: Optional[str] = Query(None, description=None)
     varchar_value____list_____comparison_operator: Optional[ItemComparisonOperators] = Query(ItemComparisonOperators.In, description=None)
     varchar_value____list: Optional[List[str]] = Query(None, description=None)
     limit: Optional[int] = Query(None)
