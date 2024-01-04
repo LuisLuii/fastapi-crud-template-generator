@@ -81,7 +81,10 @@ class ApiParameterSchemaBuilder:
         primary_key_column, = primary_list
         column_type = str(primary_key_column.type)
         try:
-            python_type = primary_key_column.type.python_type
+            if column_type == "UUID":
+                python_type = uuid.UUID
+            else:
+                python_type = primary_key_column.type.python_type
             if column_type in self.partial_supported_data_types:
                 warnings.warn(
                     f'The type of column {primary_key_column.key} ({column_type}) '
@@ -165,7 +168,11 @@ class ApiParameterSchemaBuilder:
             column_type = str(column.type)
             description = self._get_field_description(column)
             try:
-                python_type = column.type.python_type
+
+                if column_type == "UUID":
+                    python_type = uuid.UUID
+                else:
+                    python_type = column.type.python_type
                 if column_type in self.unsupported_data_types:
                     raise ColumnTypeNotSupportedException(
                         f'The type of column {column_name} ({column_type}) not supported yet')
