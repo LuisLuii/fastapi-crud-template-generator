@@ -471,7 +471,7 @@ class ApiParameterSchemaBuilder:
                                        i['column_type'],
                                        f'Query({i["column_default"]}, description={i["column_description"]})'))
 
-        self.code_gen.build_dataclass(class_name=self.class_name + "FindManyRequestBodyModel", fields=request_fields,
+        self.code_gen.build_dataclass(class_name=self.class_name + "FindManyQueryParamModel", fields=request_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns, filter_none=True)
         self.code_gen.build_base_model(class_name=self.class_name + "FindManyResponseModel", fields=response_fields)
 
@@ -632,7 +632,7 @@ class ApiParameterSchemaBuilder:
             if i['column_name'] not in [self.primary_key_str]:
                 request_body_fields.append((i['column_name'],
                                             i['column_type'],
-                                            f"Body(..., description={i['column_description']})"))
+                                            f"Body(None, description={i['column_description']})"))
 
         request_query_fields = []
         for i in query_param:
@@ -649,7 +649,7 @@ class ApiParameterSchemaBuilder:
         self.code_gen.build_dataclass(class_name=self.class_name + "UpdateOneRequestBodyModel",
                                       fields=request_body_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns,
-                                      filter_none=True)
+                                      filter_none=False)
 
         # I have removed filter none and valuexxx for response model
         self.code_gen.build_base_model(class_name=self.class_name + "UpdateOneResponseModel",
@@ -682,7 +682,7 @@ class ApiParameterSchemaBuilder:
             if i['column_name'] not in [self.primary_key_str]:
                 request_body_fields.append((i['column_name'],
                                             i['column_type'],
-                                            f"Body(..., description={i['column_description']})"))
+                                            f"Body(None, description={i['column_description']})"))
 
         request_query_fields = []
         for i in query_param:
@@ -698,7 +698,7 @@ class ApiParameterSchemaBuilder:
         self.code_gen.build_dataclass(class_name=self.class_name + "UpdateManyRequestBodyModel",
                                       fields=request_body_fields,
                                       value_of_list_to_str_columns=self.uuid_type_columns,
-                                      filter_none=True)
+                                      filter_none=False)
 
         self.code_gen.build_base_model(class_name=self.class_name + "UpdateManyResponseItemModel",
                                        fields=response_fields)

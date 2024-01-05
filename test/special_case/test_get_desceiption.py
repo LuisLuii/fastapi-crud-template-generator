@@ -179,7 +179,7 @@ class TestUuidPrimaryPrimaryKeyModel:
 
 
 @dataclass
-class TestUuidPrimaryFindManyRequestBodyModel:
+class TestUuidPrimaryFindManyQueryParamModel:
     primary_key____str_____matching_pattern: Optional[List[PGSQLMatchingPatternInString]] = Query([MatchingPatternInStringBase.case_sensitive], description=None)
     primary_key____str: Optional[List[uuid.UUID]] = Query(None, description="hello")
     primary_key: Optional[str] = Query(None, description=None)
@@ -339,7 +339,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
 from common.utils import find_query_builder
 from common.sql_session import db_session
-from model.test_uuid_primary import TestUuidPrimary, TestUuidPrimaryFindManyItemListResponseModel, TestUuidPrimaryFindManyRequestBodyModel, TestUuidPrimaryFindManyResponseModel
+from model.test_uuid_primary import TestUuidPrimary, TestUuidPrimaryFindManyItemListResponseModel, TestUuidPrimaryFindManyQueryParamModel, TestUuidPrimaryFindManyResponseModel
 from pydantic import parse_obj_as
 from common.http_exception import UnknownColumn, UnknownOrderType
 from common.typing import Ordering
@@ -350,7 +350,7 @@ api = APIRouter(tags=['sample api'],prefix="/uuid_pk_api")
 @api.get("", status_code=200, response_model=TestUuidPrimaryFindManyItemListResponseModel)
 async def get_many(
             response: Response,
-            query=Depends(TestUuidPrimaryFindManyRequestBodyModel),
+            query=Depends(TestUuidPrimaryFindManyQueryParamModel),
             session=Depends(db_session)):
     filter_args = query.__dict__
     limit = filter_args.pop('limit', None)

@@ -195,13 +195,7 @@ class SampleTableTwoUpdateManyRequestQueryModel:
 
 @dataclass
 class SampleTableTwoUpdateManyRequestBodyModel:
-    bool_value: bool = Body(..., description=None)
-
-    def __post_init__(self):
-        """
-        auto gen by FastApi quick CRUD
-        """
-        filter_none(self)
+    bool_value: bool = Body(None, description=None)
 
 
 class SampleTableTwoUpdateManyResponseItemModel(BaseModel):
@@ -394,34 +388,33 @@ class SampleTableUpdateManyRequestQueryModel:
 
 @dataclass
 class SampleTableUpdateManyRequestBodyModel:
-    bool_value: bool = Body(..., description=None)
-    char_value: str = Body(..., description=None)
-    date_value: date = Body(..., description=None)
-    float4_value: float = Body(..., description=None)
-    float8_value: float = Body(..., description=None)
-    int2_value: int = Body(..., description=None)
-    int4_value: int = Body(..., description=None)
-    int8_value: int = Body(..., description=None)
-    interval_value: timedelta = Body(..., description=None)
-    json_value: dict = Body(..., description=None)
-    jsonb_value: Union[dict, list] = Body(..., description=None)
-    numeric_value: Decimal = Body(..., description=None)
-    text_value: str = Body(..., description=None)
-    time_value: time = Body(..., description=None)
-    timestamp_value: datetime = Body(..., description=None)
-    timestamptz_value: datetime = Body(..., description=None)
-    timetz_value: time = Body(..., description=None)
-    uuid_value: uuid.UUID = Body(..., description=None)
-    varchar_value: str = Body(..., description=None)
-    array_value: List[int] = Body(..., description=None)
-    array_str__value: List[str] = Body(..., description=None)
+    bool_value: bool = Body(None, description=None)
+    char_value: str = Body(None, description=None)
+    date_value: date = Body(None, description=None)
+    float4_value: float = Body(None, description=None)
+    float8_value: float = Body(None, description=None)
+    int2_value: int = Body(None, description=None)
+    int4_value: int = Body(None, description=None)
+    int8_value: int = Body(None, description=None)
+    interval_value: timedelta = Body(None, description=None)
+    json_value: dict = Body(None, description=None)
+    jsonb_value: Union[dict, list] = Body(None, description=None)
+    numeric_value: Decimal = Body(None, description=None)
+    text_value: str = Body(None, description=None)
+    time_value: time = Body(None, description=None)
+    timestamp_value: datetime = Body(None, description=None)
+    timestamptz_value: datetime = Body(None, description=None)
+    timetz_value: time = Body(None, description=None)
+    uuid_value: uuid.UUID = Body(None, description=None)
+    varchar_value: str = Body(None, description=None)
+    array_value: List[int] = Body(None, description=None)
+    array_str__value: List[str] = Body(None, description=None)
 
     def __post_init__(self):
         """
         auto gen by FastApi quick CRUD
         """
         value_of_list_to_str(self, ['uuid_value'])
-        filter_none(self)
 
 
 class SampleTableUpdateManyResponseItemModel(BaseModel):

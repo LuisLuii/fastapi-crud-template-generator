@@ -55,7 +55,7 @@ class CrudCodeGen():
 
         self.import_helper.add(import_=set([
             f"{model_name}FindManyResponseModel",
-            f"{model_name}FindManyRequestBodyModel",
+            f"{model_name}FindManyQueryParamModel",
             f"{model_name}FindManyItemListResponseModel",
             f"{model_name}"]
         ), from_=f"model.{file_name}")
