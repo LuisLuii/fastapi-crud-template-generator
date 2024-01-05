@@ -1723,10 +1723,7 @@ async def insert_many(
             new_inserted_data.append(model(**i))
     session.add_all(new_inserted_data)
     try:
-        result = parse_obj_as(TestUuidPrimaryCreateManyItemListResponseModel, new_inserted_data)
-        response.headers["x-total-count"] = str(len(new_inserted_data))
         await session.flush()
-        return result
     except IntegrityError as e:
         err_msg, = e.orig.args
         if 'unique constraint' not in err_msg.lower():
@@ -1734,6 +1731,9 @@ async def insert_many(
         result = Response(status_code=HTTPStatus.CONFLICT, headers={"x-total-count": str(0)})
         return result
 
+    result = parse_obj_as(TestUuidPrimaryCreateManyItemListResponseModel, [i.__dict__ for i in new_inserted_data])
+    response.headers["x-total-count"] = str(len(new_inserted_data))
+    return result
 
 @api.put("", status_code=200, response_model=TestUuidPrimaryUpdateManyItemListResponseModel)
 async def entire_update_many_by_query(

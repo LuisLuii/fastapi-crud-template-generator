@@ -364,18 +364,17 @@ async def insert_one(
             new_inserted_data.append(model(**i))
     session.add_all(new_inserted_data)
     try:
-        inserted_data, = new_inserted_data
-        result = parse_obj_as(SampleTableTwoCreateOneResponseModel, inserted_data)
-        response.headers["x-total-count"] = str(1)
         await session.flush()
-        return result
     except IntegrityError as e:
         err_msg, = e.orig.args
         if 'unique constraint' not in err_msg.lower():
             raise e
         result = Response(status_code=HTTPStatus.CONFLICT, headers={"x-total-count": str(0)})
         return result
-    
+    inserted_data, = new_inserted_data
+    result = SampleTableTwoCreateOneResponseModel(**inserted_data.__dict__)
+    response.headers["x-total-count"] = str(1)
+    return result
 
 '''
         validate_route("test_build_myself_two", route_test_build_myself_two_expected)
@@ -412,18 +411,17 @@ async def insert_one(
             new_inserted_data.append(model(**i))
     session.add_all(new_inserted_data)
     try:
-        inserted_data, = new_inserted_data
-        result = parse_obj_as(SampleTableCreateOneResponseModel, inserted_data)
-        response.headers["x-total-count"] = str(1)
         await session.flush()
-        return result
     except IntegrityError as e:
         err_msg, = e.orig.args
         if 'unique constraint' not in err_msg.lower():
             raise e
         result = Response(status_code=HTTPStatus.CONFLICT, headers={"x-total-count": str(0)})
         return result
-    
+    inserted_data, = new_inserted_data
+    result = SampleTableCreateOneResponseModel(**inserted_data.__dict__)
+    response.headers["x-total-count"] = str(1)
+    return result
 
 '''
         validate_route("test_build_myself", route_test_build_myself_expected)
