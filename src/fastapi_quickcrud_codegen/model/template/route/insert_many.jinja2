@@ -18,10 +18,7 @@
             new_inserted_data.append(model(**i))
     session.add_all(new_inserted_data)
     try:
-        result = parse_obj_as({{ model_name }}CreateManyItemListResponseModel, new_inserted_data)
-        response.headers["x-total-count"] = str(len(new_inserted_data))
         {{ 'await ' if is_async else '' }}session.flush()
-        return result
     except IntegrityError as e:
         err_msg, = e.orig.args
         if 'unique constraint' not in err_msg.lower():
@@ -29,3 +26,6 @@
         result = Response(status_code=HTTPStatus.CONFLICT, headers={"x-total-count": str(0)})
         return result
 
+    result = parse_obj_as({{ model_name }}CreateManyItemListResponseModel, [i.__dict__ for i in new_inserted_data])
+    response.headers["x-total-count"] = str(len(new_inserted_data))
+    return result
