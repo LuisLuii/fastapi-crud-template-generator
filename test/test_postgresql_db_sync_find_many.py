@@ -179,7 +179,7 @@ class SampleTableTwoPrimaryKeyModel:
 
 
 @dataclass
-class SampleTableTwoFindManyRequestBodyModel:
+class SampleTableTwoFindManyQueryParamModel:
     primary_key____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
     primary_key____to_____comparison_operator: Optional[RangeToComparisonOperators] = Query(RangeToComparisonOperators.Less_than.Less_than_or_equal_to, description=None)
     primary_key____from: Optional[NewType(ExtraFieldTypePrefix.From, int)] = Query(None, description=None)
@@ -294,7 +294,7 @@ class SampleTablePrimaryKeyModel:
 
 
 @dataclass
-class SampleTableFindManyRequestBodyModel:
+class SampleTableFindManyQueryParamModel:
     primary_key____from_____comparison_operator: Optional[RangeFromComparisonOperators] = Query(RangeFromComparisonOperators.Greater_than_or_equal_to, description=None)
     primary_key____to_____comparison_operator: Optional[RangeToComparisonOperators] = Query(RangeToComparisonOperators.Less_than.Less_than_or_equal_to, description=None)
     primary_key____from: Optional[NewType(ExtraFieldTypePrefix.From, int)] = Query(None, description=None)
@@ -461,7 +461,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
 from common.utils import find_query_builder
 from common.sql_session import db_session
-from model.test_build_myself_two import SampleTableTwo, SampleTableTwoFindManyItemListResponseModel, SampleTableTwoFindManyRequestBodyModel, SampleTableTwoFindManyResponseModel
+from model.test_build_myself_two import SampleTableTwo, SampleTableTwoFindManyItemListResponseModel, SampleTableTwoFindManyQueryParamModel, SampleTableTwoFindManyResponseModel
 from pydantic import parse_obj_as
 from common.http_exception import UnknownColumn, UnknownOrderType
 from common.typing import Ordering
@@ -472,7 +472,7 @@ api = APIRouter(tags=['sample api'],prefix="/my_second_api")
 @api.get("", status_code=200, response_model=SampleTableTwoFindManyItemListResponseModel)
 def get_many(
             response: Response,
-            query=Depends(SampleTableTwoFindManyRequestBodyModel),
+            query=Depends(SampleTableTwoFindManyQueryParamModel),
             session=Depends(db_session)):
     filter_args = query.__dict__
     limit = filter_args.pop('limit', None)
@@ -542,7 +542,7 @@ from fastapi import APIRouter, Depends, Response
 from sqlalchemy.sql.elements import BinaryExpression
 from common.utils import find_query_builder
 from common.sql_session import db_session
-from model.test_build_myself import SampleTable, SampleTableFindManyItemListResponseModel, SampleTableFindManyRequestBodyModel, SampleTableFindManyResponseModel
+from model.test_build_myself import SampleTable, SampleTableFindManyItemListResponseModel, SampleTableFindManyQueryParamModel, SampleTableFindManyResponseModel
 from pydantic import parse_obj_as
 from common.http_exception import UnknownColumn, UnknownOrderType
 from common.typing import Ordering
@@ -553,7 +553,7 @@ api = APIRouter(tags=['sample api'],prefix="/my_first_api")
 @api.get("", status_code=200, response_model=SampleTableFindManyItemListResponseModel)
 def get_many(
             response: Response,
-            query=Depends(SampleTableFindManyRequestBodyModel),
+            query=Depends(SampleTableFindManyQueryParamModel),
             session=Depends(db_session)):
     filter_args = query.__dict__
     limit = filter_args.pop('limit', None)
