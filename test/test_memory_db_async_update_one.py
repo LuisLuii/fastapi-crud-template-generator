@@ -192,7 +192,7 @@ class SampleTableTwoUpdateOneRequestQueryModel:
 
 @dataclass
 class SampleTableTwoUpdateOneRequestBodyModel:
-    bool_value: bool = Body(None, description=None)
+    bool_value: bool = Body(False, description=None)
 
 
 class SampleTableTwoUpdateOneResponseModel(BaseModel):
@@ -346,14 +346,14 @@ class SampleTableUpdateOneRequestQueryModel:
 
 @dataclass
 class SampleTableUpdateOneRequestBodyModel:
-    bool_value: bool = Body(None, description=None)
+    bool_value: bool = Body(False, description=None)
     char_value: str = Body(None, description=None)
     date_value: date = Body(None, description=None)
-    float4_value: float = Body(None, description=None)
-    float8_value: float = Body(None, description=None)
-    int2_value: int = Body(None, description=None)
-    int4_value: int = Body(None, description=None)
-    int8_value: int = Body(None, description=None)
+    float4_value: float = Body(..., description=None)
+    float8_value: float = Body(10.1, description=None)
+    int2_value: int = Body(..., description=None)
+    int4_value: int = Body(..., description=None)
+    int8_value: int = Body(99, description=None)
     text_value: str = Body(None, description=None)
     time_value: time = Body(None, description=None)
     timestamp_value: datetime = Body(None, description=None)
