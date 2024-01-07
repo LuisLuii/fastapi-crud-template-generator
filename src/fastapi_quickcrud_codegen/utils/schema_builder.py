@@ -632,7 +632,7 @@ class ApiParameterSchemaBuilder:
             if i['column_name'] not in [self.primary_key_str]:
                 request_body_fields.append((i['column_name'],
                                             i['column_type'],
-                                            f"Body(None, description={i['column_description']})"))
+                                            f"Body({i['column_default']}, description={i['column_description']})"))
 
         request_query_fields = []
         for i in query_param:
